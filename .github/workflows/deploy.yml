@@ -50,17 +50,18 @@ jobs:
 
       - name: Rsync built frontend to public_html
         env:
-          USER: ${{ secrets.HOSTINGER_USER }}
-          HOST: ${{ secrets.HOSTINGER_HOST }}
-          PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          DEPLOY_USER: ${{ secrets.HOSTINGER_USER }}
+          DEPLOY_HOST: ${{ secrets.HOSTINGER_HOST }}
+          DEPLOY_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
         run: |
-          rsync -az --delete \
-            -e "ssh -p $PORT -o StrictHostKeyChecking=accept-new" \
+          set -eo pipefail
+          rsync -avz --delete \
+            -e "ssh -p ${DEPLOY_PORT} -o StrictHostKeyChecking=accept-new -o LogLevel=ERROR" \
             --exclude '_api.php' \
             --exclude '.htaccess' \
             --exclude 'uploads' \
             frontend/dist/ \
-            "${USER}@${HOST}:domains/renarvo.com/public_html/"
+            "${DEPLOY_USER}@${DEPLOY_HOST}:domains/renarvo.com/public_html/" | tail -40
 
       - name: Run remote deploy.sh (composer / migrate / cache / OPcache reset)
         uses: appleboy/ssh-action@v1.0.3
