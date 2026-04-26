@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DemoSeeder::class,
             FxRateSeeder::class,
+            TestUsersSeeder::class,
         ]);
     }
 }
