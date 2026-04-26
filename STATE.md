@@ -5,28 +5,93 @@
 ## Mission
 Deploy Renarvo (React frontend + Laravel 11 backend) to Hostinger Business shared hosting at `renarvo.com`, push code to `github.com/stockley12/Renarvo`, set up auto-deploy.
 
+## Status: LIVE
+- https://renarvo.com → SPA (React) loads
+- https://renarvo.com/api/v1/health → `{"data":{"status":"ok",...}}`
+- https://renarvo.com/api/v1/cities → JSON list
+- DB: SQLite at `~/renarvo/backend/database/renarvo.sqlite` — migrated + seeded with `TestUsersSeeder` + `DemoSeeder`
+
 ## Server (Hostinger Business)
 - **IP**: 92.112.189.210
 - **SSH port**: 65002
 - **SSH user**: u273509288
 - **SSH password**: `Tested1337!`  (User-provided. Rotate after launch.)
 - **Host key (pinned)**: `SHA256:ZJkk5J/8g0ieMWrhAhaPLSXpc3ooAy4QPswPN3whd8g`
-- **PHP**: 8.2.30 at `/usr/bin/php`
+- **PHP**: 8.2.30 at `/usr/bin/php` (default), `/opt/alt/php82/usr/bin/php` (alt-php)
 - **Composer**: 2.8.11 at `/usr/local/bin/composer`
-- **Node.js**: NOT installed (frontend must be built locally)
+- **Node.js**: NOT in PATH by default. Use `/opt/alt/alt-nodejs20/root/usr/bin/{node,npm}` (PATH set inside `deploy/deploy.sh`).
+- **Cron CLI**: NOT available — schedule jobs via hPanel → Advanced → Cron Jobs.
 - **Domain root**: `~/domains/renarvo.com/public_html/` (also `renarvo-com-462287.hostingersite.com`)
 - **App working dir**: `~/renarvo` (git clone of the repo)
-- **Database**: SQLite at `~/renarvo/backend/database/renarvo.sqlite`  (Hostinger Business shared hosting can't create MySQL DBs without hPanel UI; SQLite is sufficient for v1.)
+- **Database**: SQLite at `~/renarvo/backend/database/renarvo.sqlite`. Migrate to MySQL after first MySQL DB is created in hPanel.
+
+## Architecture on Hostinger
+The backend front controller lives at `public_html/_api.php` (NOT a symlinked subfolder), and the root `.htaccess` rewrites `/api/*` to `_api.php`. This keeps Symfony's URI parsing correct so Laravel sees the full `/api/v1/...` path. SPA fallback rewrites everything else to `index.html`.
+
+```
+public_html/
+├── .htaccess              # SPA fallback + /api/* -> _api.php + HTTPS + caching
+├── _api.php               # Laravel front controller (bootstraps from ~/renarvo/backend)
+├── index.html             # Vite SPA build
+├── assets/                # Vite hashed assets
+└── uploads/               # symlink → ~/renarvo/backend/storage/app/public
+```
 
 ## GitHub
 - **Repo**: https://github.com/stockley12/Renarvo (owner: stockley12)
-- **Branch**: main
-- **Initial commit**: `ba8a6c4`
+- **Branch**: `main`
+- **CI**: `.github/workflows/deploy.yml` is now a CI-only "Build verify" job (frontend `npm ci` + `npm run build` + curl smoke tests against the live site). It does NOT deploy — Hostinger blocks GitHub Actions IPs at the SSH layer.
 - **Hostinger SSH public key** registered as Deploy Key id `149730320` (read-only, name `hostinger-prod`) — server can `git pull` over SSH (`git@github.com:stockley12/Renarvo.git`).
 - **GitHub Actions deploy keypair** (Ed25519) at:
   - Private: `c:\Users\Anon\Desktop\Renarvo\.tools\gha_deploy_ed25519`
   - Public: `c:\Users\Anon\Desktop\Renarvo\.tools\gha_deploy_ed25519.pub`
-  - Server `~/.ssh/authorized_keys` already contains the public key.
+
+## Deployment flow (current, working)
+Local dev → push to `main` → ssh to server → run `bash ~/renarvo/deploy/deploy.sh`. The script:
+
+1. `git pull --ff-only` already done by user (or by Hostinger hPanel git auto-deploy if configured)
+2. `composer install --no-dev --prefer-dist --optimize-autoloader` in `backend/`
+3. Touches sqlite db if missing, runs `php artisan migrate --force`
+4. `php artisan config:cache && route:cache && view:cache`
+5. `chmod -R 775 storage bootstrap/cache`
+6. `npm install --no-audit --no-fund` in `frontend/` (using alt-nodejs20)
+7. `VITE_API_BASE_URL=/api/v1 npm run build`
+8. `rsync -a --delete` `frontend/dist/` → `public_html/` (excluding `_api.php`, `.htaccess`, `uploads`)
+9. Copies `deploy/_api.php` → `public_html/_api.php`
+10. Copies `deploy/hostinger.htaccess` → `public_html/.htaccess`
+11. Ensures `public_html/uploads` symlink → `backend/storage/app/public`
+12. Resets OPcache via curl ping
+13. Smoke tests: `/api/v1/health`, `/api/v1/cities` → expect 200
+
+End-to-end run time on server: ~25-30s (npm cached) or ~90s (cold npm install).
+
+### Trigger deployment
+**Option A (manual, currently active):** SSH and run the script.
+```powershell
+& .\.tools\rssh.ps1 -Cmd "cd ~/renarvo && git pull --ff-only origin main && bash deploy/deploy.sh"
+```
+
+**Option B (Hostinger hPanel Git auto-deploy):** USER MUST CONFIGURE in hPanel:
+1. hPanel → Websites → renarvo.com → Manage → Advanced → Git
+2. Connect repo `https://github.com/stockley12/Renarvo` (already deploy-keyed) on branch `main`
+3. Repository path: `/home/u273509288/renarvo`
+4. Enable auto-deploy on push
+5. Post-deploy command (if hPanel exposes it): `bash $HOME/renarvo/deploy/deploy.sh`
+6. If hPanel does not expose a post-deploy hook, set up a cron (below) that runs `deploy.sh` after every git pull.
+
+### Required cron jobs (USER MUST ADD via hPanel → Advanced → Cron Jobs)
+```
+# Laravel scheduler — runs every minute (handles all background work)
+* * * * * cd /home/u273509288/renarvo/backend && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
+
+# Optional: auto-redeploy when new commits land on main (every 1 min)
+* * * * * cd /home/u273509288/renarvo && (git fetch origin main 2>/dev/null && [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ] && bash deploy/deploy.sh) >> /home/u273509288/renarvo/deploy/deploy-cron.log 2>&1
+```
+
+## Hostinger MCP (verified 2026-04-26)
+API key configured. Server identifier `user-hostinger-mcp`. Confirmed `renarvo.com` is registered as an addon vhost on `u273509288`, root `/home/u273509288/domains/renarvo.com/public_html`.
+- **Useful**: `hosting_listWebsitesV1` (verify hosting state), `domains_*` (DNS/WHOIS), `billing_*` (subscription mgmt).
+- **NOT useful for our deploy**: no MySQL DB creation API, no cron management API, no PHP file deploy API. `hosting_deployStaticWebsite` would overwrite our `_api.php` setup, so DO NOT call it. SSH `deploy.sh` remains the canonical path.
 
 ## SSH automation helpers (Windows)
 - `c:\Users\Anon\Desktop\Renarvo\.tools\rssh.ps1` — runs a bash command on the server via plink
@@ -34,39 +99,35 @@ Deploy Renarvo (React frontend + Laravel 11 backend) to Hostinger Business share
 - Usage: `& .\.tools\rssh.ps1 -Cmd 'whoami'`
 - plink/pscp installed at `C:\Program Files\PuTTY\`
 - Local OpenSSH key path: `C:\Users\Anon\Desktop\Renarvo\.tools\gha_deploy_ed25519`
-  - `ssh -i ... -p 65002 u273509288@92.112.189.210` works without password prompt.
+- Server `~/.ssh/authorized_keys` contains GHA key — passwordless login works.
 
-## Done
-- [x] Monorepo restructured (`frontend/`, `backend/`, `deploy/`, `.github/`, `docs/`)
-- [x] Laravel 11 backend coded (controllers, models, migrations, seeders, services, jobs)
-- [x] React frontend integration hooks + API client
-- [x] Initial commit pushed to GitHub `main`
-- [x] Hostinger SSH key as GitHub Deploy Key
-- [x] GHA deploy SSH keypair generated and authorized on server
-- [x] Frontend built locally → `frontend/dist/`
-- [x] Repo cloned to `~/renarvo` on server
-- [x] `composer install --no-dev` complete on server (Laravel 11.51.0)
-- [x] Storage perms set (775)
+## Test accounts (seeded by `TestUsersSeeder`)
+| Role            | Email                  | Password         |
+|-----------------|------------------------|------------------|
+| Super admin     | admin@renarvo.com      | `RenarvoTest!1`  |
+| Company owner   | company@renarvo.com    | `RenarvoTest!1`  |
+| Customer        | customer@renarvo.com   | `RenarvoTest!1`  |
 
-## In Progress / Next
-1. Generate `APP_KEY`, `JWT_SECRET`, write `backend/.env` (SQLite)
-2. Run migrations + seed (DemoSeeder + new TestUsersSeeder for all 3 roles)
-3. Upload built `dist/*` to `~/domains/renarvo.com/public_html/`
-4. Symlink `public_html/api` → `~/renarvo/backend/public`
-5. Write public_html `.htaccess` for SPA fallback + CORS
-6. Configure GitHub Actions secrets and trigger first deploy workflow
-7. Provide cron job command (Hostinger has no `crontab` CLI — must paste in hPanel → Cron Jobs)
-8. Test https://renarvo.com/api/v1/health and full SPA load
+Company owner is attached to the auto-approved `Renarvo Test Cars` company (slug `renarvo-test-cars`, city Girne).
 
-## Test accounts (TO BE SEEDED)
-Will be created in `database/seeders/TestUsersSeeder.php` with these emails:
-- Customer:       `customer@renarvo.com`         / `RenarvoTest!1`
-- Company owner:  `company@renarvo.com`          / `RenarvoTest!1`
-- Super admin:    `admin@renarvo.com`            / `RenarvoTest!1`
+To re-seed without dropping data:
+```bash
+cd ~/renarvo/backend && php artisan db:seed --class=TestUsersSeeder --force
+```
 
-## Open follow-ups (post-launch)
+## Open follow-ups (post-launch, optional)
 - Rotate SSH password
-- Migrate from SQLite → MySQL (create DB in hPanel; update `DB_*` in `backend/.env`; `php artisan migrate:fresh --seed`)
-- Frontend pages still import from `src/mock/data.ts` — wire to `useCars`, `useReservations`, etc. hooks
-- Configure SMTP (Hostinger email or third party) — currently logs only
+- Migrate from SQLite → MySQL: create DB in hPanel → update `DB_*` in `backend/.env` → `php artisan migrate:fresh --seed`
+- Wire remaining frontend pages from `src/mock/data.ts` to live API hooks (`useCars`, `useReservations`, etc.)
+- Configure SMTP (Hostinger email) — currently mail driver = `log`
 - Configure Stripe / İyzico for real payments
+- Set up Cloudflare in front of Hostinger for free CDN + DDoS
+
+## Recent changes (2026-04-26)
+- Switched front controller from `public_html/api/index.php` symlink → `public_html/_api.php` flat file (fixes Laravel route 404s)
+- Updated `deploy/hostinger.htaccess` to rewrite `/api/*` → `_api.php` and force HTTPS via X-Forwarded-Proto
+- Added server-side npm build to `deploy/deploy.sh` (uses alt-nodejs20)
+- Made `2024_01_01_000024_add_performance_indexes` migration idempotent
+- Added `TestUsersSeeder` (admin, company, customer)
+- Converted `.github/workflows/deploy.yml` to "Build verify" CI-only (Hostinger blocks GHA IPs)
+- Hostinger MCP API key verified working (confirmed site exists)
