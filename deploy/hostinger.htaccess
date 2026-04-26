@@ -1,39 +1,43 @@
 # Renarvo SPA + API root .htaccess (placed in public_html)
+#
 # Layout:
-#   public_html/                      <- this .htaccess
-#   public_html/index.html            <- React SPA entry
-#   public_html/assets/...            <- Vite-hashed JS/CSS/images
-#   public_html/api -> ~/renarvo/backend/public/   (symlink)
+#   public_html/                                    <- this .htaccess
+#   public_html/index.html                          <- React SPA entry
+#   public_html/assets/...                          <- Vite-hashed JS/CSS
+#   public_html/_api.php                            <- Laravel front controller (loads /home/.../renarvo/backend)
 #
 # Behaviour:
 #   GET /assets/foo.js   -> served as static file
-#   GET /api/v1/health   -> Laravel (via symlinked public/.htaccess -> index.php)
+#   GET /api/v1/health   -> rewritten to /_api.php, Laravel matches "api/v1/health" route
 #   GET /cars            -> SPA fallback to /index.html
 
 Options -MultiViews -Indexes +FollowSymLinks +SymLinksIfOwnerMatch
+DirectoryIndex index.html
 RewriteEngine On
 
-# 1) Force HTTPS (Hostinger sets X-Forwarded-Proto when terminating TLS at the LB)
+# Force HTTPS (Hostinger terminates TLS at the LB and sets X-Forwarded-Proto)
 RewriteCond %{HTTPS} off
 RewriteCond %{HTTP:X-Forwarded-Proto} !=https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# 2) /api/* -> let Apache descend into the symlinked Laravel public dir.
-# We do NOTHING here; Laravel's own .htaccess inside ./api/ rewrites missing
-# paths to ./api/index.php while preserving REQUEST_URI.
-RewriteRule ^api(/|$) - [L]
+# Preserve Authorization header for PHP (some LSAPI/PHP-FPM setups strip it)
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-# 3) Existing static files in public_html are served as-is (assets, favicon, etc.)
+# /api/* -> Laravel front controller at docroot (NOT a subdirectory, so Symfony
+# baseUrl="" and pathInfo="/api/v1/health"; the route prefix "api" then matches)
+RewriteRule ^api(/.*)?$ /_api.php [L,QSA]
+
+# Serve real static files (Vite assets, favicons, robots.txt, etc.)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -l
 RewriteRule ^ - [L]
 
-# 4) SPA fallback for everything else (deep links: /cars/123, /dashboard, ...)
+# SPA fallback: any other path -> index.html (React Router handles it)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.html [L]
 
-# Cache static assets aggressively (filenames are content-hashed by Vite)
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresByType image/webp "access plus 1 year"
@@ -49,7 +53,6 @@ RewriteRule ^ index.html [L]
     <FilesMatch "\.(js|css|woff2|svg|webp|png|jpg|jpeg)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
     </FilesMatch>
-    # index.html and the API responses must never be cached at the edge
     <FilesMatch "(?:^|/)index\.html$">
         Header set Cache-Control "no-store, must-revalidate"
     </FilesMatch>
@@ -58,7 +61,6 @@ RewriteRule ^ index.html [L]
     Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# gzip/brotli if available
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
 </IfModule>
