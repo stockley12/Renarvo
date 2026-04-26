@@ -1,0 +1,31 @@
+name: Daily DB backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    name: mysqldump via SSH
+    runs-on: ubuntu-latest
+    steps:
+      - name: Backup
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT }}
+          script: |
+            set -euo pipefail
+            DATE=$(date +%Y%m%d-%H%M)
+            mkdir -p "$HOME/backups"
+            mysqldump --no-tablespaces -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" \
+              | gzip > "$HOME/backups/db-$DATE.sql.gz"
+            ls -t "$HOME/backups"/db-*.sql.gz | tail -n +15 | xargs -r rm
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_NAME: ${{ secrets.DB_NAME }}

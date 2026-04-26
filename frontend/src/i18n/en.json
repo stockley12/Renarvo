@@ -1,0 +1,109 @@
+{
+  "brand": "Renarvo",
+  "tagline": "North Cyprus' trusted car rental marketplace",
+  "nav": {
+    "home": "Home",
+    "cars": "Cars",
+    "companies": "Companies",
+    "howItWorks": "How it works",
+    "forCompanies": "For companies",
+    "help": "Help",
+    "login": "Log in",
+    "register": "List your company",
+    "dashboard": "Dashboard",
+    "admin": "Admin"
+  },
+  "search": {
+    "pickup": "Pick-up location",
+    "return": "Return location",
+    "pickupDate": "Pick-up date",
+    "returnDate": "Return date",
+    "driverAge": "Driver age",
+    "search": "Search cars",
+    "samePlace": "Return to same place"
+  },
+  "home": {
+    "heroTitle": "Rent a car anywhere in North Cyprus",
+    "heroSubtitle": "From Ercan Airport to Karpaz beaches. Compare local rental companies, see real prices, book in under a minute.",
+    "categories": "Browse by category",
+    "popularCars": "Popular this week",
+    "whyUs": "Why Renarvo?",
+    "featuredCompanies": "Trusted local companies",
+    "howItWorksTitle": "Three steps to your keys",
+    "testimonials": "What renters say",
+    "faq": "Common questions",
+    "ctaTitle": "Run a rental company in North Cyprus?",
+    "ctaSubtitle": "Reach travellers landing at Ercan and Larnaca every day. No setup fees, only commission on confirmed bookings.",
+    "listFleet": "List your fleet"
+  },
+  "trust": {
+    "insurance": "Full insurance",
+    "insuranceDesc": "Included on every rental",
+    "support": "Local 24/7 support",
+    "supportDesc": "WhatsApp & phone, in 3 languages",
+    "freeCancel": "Free cancellation",
+    "freeCancelDesc": "Up to 48 hours before pickup",
+    "verified": "Verified companies",
+    "verifiedDesc": "Licensed local operators only"
+  },
+  "cars": {
+    "perDay": "/ day",
+    "filters": "Filters",
+    "category": "Category",
+    "brand": "Brand",
+    "transmission": "Transmission",
+    "fuel": "Fuel",
+    "seats": "Seats",
+    "price": "Price",
+    "rating": "Rating",
+    "sortBy": "Sort by",
+    "viewDetails": "View details",
+    "bookNow": "Book now",
+    "noResults": "No cars match these filters"
+  },
+  "booking": {
+    "step1": "Dates & extras",
+    "step2": "Driver details",
+    "step3": "Payment",
+    "step4": "Confirmation",
+    "extras": "Extras",
+    "gps": "GPS navigation",
+    "childSeat": "Child seat",
+    "additionalDriver": "Additional driver",
+    "fullInsurance": "Full insurance",
+    "next": "Continue",
+    "back": "Back",
+    "confirm": "Confirm reservation",
+    "success": "Reservation confirmed"
+  },
+  "demo": {
+    "title": "Demo mode",
+    "subtitle": "Pick a role",
+    "visitor": "Visitor",
+    "visitorDesc": "Browse as a customer",
+    "company": "Company panel",
+    "companyDesc": "Sign in as a rental company",
+    "admin": "Super admin",
+    "adminDesc": "Sign in as platform admin",
+    "switch": "Switch role",
+    "currentRole": "Current role"
+  },
+  "common": {
+    "viewAll": "View all",
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "company": "Company",
+    "support": "Support",
+    "legal": "Legal",
+    "language": "Language",
+    "currency": "Currency"
+  }
+}

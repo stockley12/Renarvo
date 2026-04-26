@@ -1,0 +1,32 @@
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.env
+.env.*
+!.env.example
+
+# Backend
+/backend/vendor/
+/backend/storage/logs/*
+!/backend/storage/logs/.gitkeep
+/backend/storage/framework/cache/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+/backend/storage/app/uploads/
+/backend/storage/app/documents/
+/backend/.phpunit.cache
+/backend/.phpunit.result.cache
+/backend/bootstrap/cache/*
+!/backend/bootstrap/cache/.gitkeep
+
+# Frontend
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.vite/
+
+# Lovable
+/.lovable/
+
+# Backups
+/backups/

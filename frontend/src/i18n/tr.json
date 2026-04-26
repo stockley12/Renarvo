@@ -1,0 +1,109 @@
+{
+  "brand": "Renarvo",
+  "tagline": "Kuzey Kıbrıs'ın güvenilir araç kiralama pazaryeri",
+  "nav": {
+    "home": "Ana Sayfa",
+    "cars": "Araçlar",
+    "companies": "Firmalar",
+    "howItWorks": "Nasıl Çalışır",
+    "forCompanies": "Firmalar için",
+    "help": "Yardım",
+    "login": "Giriş Yap",
+    "register": "Firmanı Listele",
+    "dashboard": "Panel",
+    "admin": "Yönetim"
+  },
+  "search": {
+    "pickup": "Alış yeri",
+    "return": "İade yeri",
+    "pickupDate": "Alış tarihi",
+    "returnDate": "İade tarihi",
+    "driverAge": "Sürücü yaşı",
+    "search": "Araç Ara",
+    "samePlace": "Aynı yere iade"
+  },
+  "home": {
+    "heroTitle": "Kuzey Kıbrıs'ta arabanız hazır",
+    "heroSubtitle": "Ercan Havalimanı'ndan Karpaz'a kadar. Yerel firmaları karşılaştırın, gerçek fiyatları görün, bir dakikadan kısa sürede rezervasyon yapın.",
+    "categories": "Kategoriler",
+    "popularCars": "Bu hafta popüler",
+    "whyUs": "Neden Renarvo?",
+    "featuredCompanies": "Güvenilir yerel firmalar",
+    "howItWorksTitle": "3 adımda anahtarlar sizin",
+    "testimonials": "Müşterilerimiz ne diyor?",
+    "faq": "Sıkça sorulanlar",
+    "ctaTitle": "KKTC'de araç kiralama firması mısınız?",
+    "ctaSubtitle": "Her gün Ercan ve Larnaka'ya inen yolculara ulaşın. Kurulum ücreti yok, sadece onaylı rezervasyon başına komisyon.",
+    "listFleet": "Filonu Listele"
+  },
+  "trust": {
+    "insurance": "Tam Sigorta",
+    "insuranceDesc": "Her kiralamaya dahil",
+    "support": "Yerel 7/24 destek",
+    "supportDesc": "WhatsApp & telefon, 3 dilde",
+    "freeCancel": "Ücretsiz İptal",
+    "freeCancelDesc": "Alıştan 48 saat öncesine kadar",
+    "verified": "Doğrulanmış firmalar",
+    "verifiedDesc": "Sadece lisanslı yerel firmalar"
+  },
+  "cars": {
+    "perDay": "/ gün",
+    "filters": "Filtreler",
+    "category": "Kategori",
+    "brand": "Marka",
+    "transmission": "Vites",
+    "fuel": "Yakıt",
+    "seats": "Koltuk",
+    "price": "Fiyat",
+    "rating": "Puan",
+    "sortBy": "Sırala",
+    "viewDetails": "Detay",
+    "bookNow": "Hemen Kirala",
+    "noResults": "Bu filtrelere uygun araç yok"
+  },
+  "booking": {
+    "step1": "Tarih ve Ekstralar",
+    "step2": "Sürücü Bilgileri",
+    "step3": "Ödeme",
+    "step4": "Onay",
+    "extras": "Ekstralar",
+    "gps": "GPS Navigasyon",
+    "childSeat": "Çocuk Koltuğu",
+    "additionalDriver": "Ek Sürücü",
+    "fullInsurance": "Tam Kasko",
+    "next": "Devam",
+    "back": "Geri",
+    "confirm": "Rezervasyonu Onayla",
+    "success": "Rezervasyon onaylandı"
+  },
+  "demo": {
+    "title": "Demo Modu",
+    "subtitle": "Bir rol seçin",
+    "visitor": "Ziyaretçi",
+    "visitorDesc": "Müşteri olarak gezin",
+    "company": "Firma Paneli",
+    "companyDesc": "Kiralama firması olarak girin",
+    "admin": "Süper Admin",
+    "adminDesc": "Platform yöneticisi olarak girin",
+    "switch": "Rol Değiştir",
+    "currentRole": "Aktif rol"
+  },
+  "common": {
+    "viewAll": "Tümünü Gör",
+    "loading": "Yükleniyor…",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "create": "Oluştur",
+    "search": "Ara"
+  },
+  "footer": {
+    "rights": "Tüm hakları saklıdır.",
+    "company": "Şirket",
+    "support": "Destek",
+    "legal": "Yasal",
+    "language": "Dil",
+    "currency": "Para Birimi"
+  }
+}

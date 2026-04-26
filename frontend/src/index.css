@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Renarvo design system. All colors HSL. */
+
+@layer base {
+  :root {
+    --background: 210 40% 99%;
+    --foreground: 219 64% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 219 64% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 219 64% 14%;
+
+    /* Renarvo brand */
+    --navy: 219 71% 14%;          /* #0B1E3F */
+    --navy-foreground: 210 40% 98%;
+    --brand: 220 73% 49%;         /* #1E5BD8 */
+    --brand-foreground: 0 0% 100%;
+    --brand-glow: 187 70% 51%;    /* #2BC4D9 */
+
+    --primary: 220 73% 49%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 219 30% 96%;
+    --secondary-foreground: 219 64% 14%;
+
+    --muted: 219 25% 95%;
+    --muted-foreground: 219 16% 45%;
+
+    --accent: 187 70% 51%;
+    --accent-foreground: 219 64% 14%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 60% 40%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 219 64% 14%;
+
+    --border: 219 22% 90%;
+    --input: 219 22% 90%;
+    --ring: 220 73% 49%;
+
+    --radius: 1rem;
+
+    --gradient-brand: linear-gradient(135deg, hsl(220 73% 49%), hsl(187 70% 51%));
+    --gradient-hero: linear-gradient(135deg, hsl(219 71% 14%) 0%, hsl(220 73% 30%) 50%, hsl(187 70% 35%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(219 30% 98%), hsl(0 0% 100%));
+
+    --shadow-soft: 0 4px 16px -4px hsl(219 64% 14% / 0.06);
+    --shadow-elevated: 0 12px 40px -12px hsl(220 73% 49% / 0.25);
+    --shadow-card: 0 2px 8px -2px hsl(219 64% 14% / 0.04), 0 8px 24px -8px hsl(219 64% 14% / 0.06);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 219 30% 30%;
+    --sidebar-primary: 220 73% 49%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 219 30% 96%;
+    --sidebar-accent-foreground: 219 64% 14%;
+    --sidebar-border: 219 22% 92%;
+    --sidebar-ring: 220 73% 49%;
+  }
+
+  .dark {
+    --background: 219 50% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 219 45% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 219 45% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    --navy: 219 71% 14%;
+    --navy-foreground: 210 40% 98%;
+    --brand: 220 80% 60%;
+    --brand-foreground: 0 0% 100%;
+    --brand-glow: 187 75% 55%;
+
+    --primary: 220 80% 60%;
+    --primary-foreground: 219 64% 10%;
+
+    --secondary: 219 35% 14%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 219 30% 15%;
+    --muted-foreground: 219 15% 65%;
+
+    --accent: 187 70% 45%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 152 55% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 219 64% 10%;
+
+    --border: 219 30% 18%;
+    --input: 219 30% 18%;
+    --ring: 220 80% 60%;
+
+    --gradient-brand: linear-gradient(135deg, hsl(220 80% 55%), hsl(187 75% 50%));
+    --gradient-hero: linear-gradient(135deg, hsl(219 60% 8%) 0%, hsl(220 70% 18%) 50%, hsl(187 60% 22%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(219 50% 8%), hsl(219 45% 10%));
+
+    --shadow-soft: 0 4px 16px -4px hsl(0 0% 0% / 0.4);
+    --shadow-elevated: 0 12px 40px -12px hsl(220 80% 60% / 0.4);
+    --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.3), 0 8px 24px -8px hsl(0 0% 0% / 0.3);
+
+    --sidebar-background: 219 50% 8%;
+    --sidebar-foreground: 219 15% 75%;
+    --sidebar-primary: 220 80% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 219 35% 14%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 219 30% 16%;
+    --sidebar-ring: 220 80% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-brand { background-image: var(--gradient-brand); }
+  .bg-gradient-hero { background-image: var(--gradient-hero); }
+  .bg-gradient-soft { background-image: var(--gradient-soft); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-elevated { box-shadow: var(--shadow-elevated); }
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .text-gradient-brand {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
