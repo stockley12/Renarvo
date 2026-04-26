@@ -35,21 +35,32 @@ jobs:
         run: npm run build
 
       - name: Setup SSH
+        env:
+          KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
         run: |
+          set -eo pipefail
           mkdir -p ~/.ssh
-          echo "${{ secrets.HOSTINGER_SSH_KEY }}" > ~/.ssh/id_ed25519
+          printf '%s\n' "$KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p ${{ secrets.HOSTINGER_SSH_PORT }} -H ${{ secrets.HOSTINGER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keygen -y -f ~/.ssh/id_ed25519 > /dev/null
+          ssh-keyscan -p "$PORT" -H "$HOST" >> ~/.ssh/known_hosts || true
+          ls -la ~/.ssh
 
       - name: Rsync built frontend to public_html
+        env:
+          USER: ${{ secrets.HOSTINGER_USER }}
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
         run: |
           rsync -az --delete \
-            -e "ssh -p ${{ secrets.HOSTINGER_SSH_PORT }} -o StrictHostKeyChecking=accept-new" \
+            -e "ssh -p $PORT -o StrictHostKeyChecking=accept-new" \
             --exclude '_api.php' \
             --exclude '.htaccess' \
             --exclude 'uploads' \
             frontend/dist/ \
-            ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }}:domains/renarvo.com/public_html/
+            "${USER}@${HOST}:domains/renarvo.com/public_html/"
 
       - name: Run remote deploy.sh (composer / migrate / cache / OPcache reset)
         uses: appleboy/ssh-action@v1.0.3
