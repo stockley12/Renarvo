@@ -30,3 +30,7 @@ Thumbs.db
 
 # Backups
 /backups/
+
+# Local dev tooling and SSH keys (NEVER commit)
+/.tools/
+/.runme.*
