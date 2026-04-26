@@ -131,3 +131,21 @@ cd ~/renarvo/backend && php artisan db:seed --class=TestUsersSeeder --force
 - Added `TestUsersSeeder` (admin, company, customer)
 - Converted `.github/workflows/deploy.yml` to "Build verify" CI-only (Hostinger blocks GHA IPs)
 - Hostinger MCP API key verified working (confirmed site exists)
+
+## Frontend polish pass (2026-04-26 evening, commit `ac2a971`/`b6ba823`)
+- **ScrollToTop** component mounted under `<BrowserRouter>` resets scroll on every route change (fixes "page opens at the bottom" issue).
+- **Public mobile menu** now auto-closes after navigation; sheet width sized to viewport.
+- **Dashboard + admin topbars** wired to the real `useSession()` user and dispatch a real sign-out (`POST /auth/logout` + token clear + redirect to `/login`). Heights/paddings tightened for small screens; sub-`sm` viewports hide the search input.
+- **DemoPill** is more compact on mobile and clamped inside the viewport.
+- **Real API on public surface** via new `frontend/src/lib/adapters.ts`:
+  - `/cars` lists from `GET /api/v1/cars` (mock fallback when seeded inventory is empty).
+  - `/cars/:id` reads from `GET /api/v1/cars/:id`.
+  - `/book/:id` is fully controlled and posts to `POST /api/v1/me/reservations` with an idempotency key for authenticated customers; falls back to a clearly labeled demo path otherwise.
+- **SEO/social**: added `/og-image.svg`, `/sitemap.xml`, tightened `<head>` (canonical, theme-color, og + twitter card with image, alternate locales). `robots.txt` disallows `/admin`, `/dashboard`, `/api/` and references the sitemap.
+- **deploy.sh**: now `chmod 0640` on the sqlite db on every deploy.
+
+### QA gate re-run after polish (2026-04-26)
+- All 27 auth + flow checks PASS (login/me/refresh/logout for all three roles, customer reservation create + idempotency, company overview / fleet / reservations + cross-tenant isolation 404, all admin endpoints, cleanup cancel).
+- All public smoke endpoints 200: `/`, `/api/v1/health`, `/api/v1/cities`, `/api/v1/cars`, `/og-image.svg`, `/sitemap.xml`, `/robots.txt`.
+- Sensitive paths blocked: `/.env` → 403, `/composer.json` → 403.
+- Security headers present on `/`: HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, CSP `upgrade-insecure-requests`.
