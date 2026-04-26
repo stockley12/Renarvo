@@ -1,19 +1,34 @@
 # Renarvo SPA + API root .htaccess (placed in public_html)
-RewriteEngine On
-Options -MultiViews -Indexes
+# Layout:
+#   public_html/                      <- this .htaccess
+#   public_html/index.html            <- React SPA entry
+#   public_html/assets/...            <- Vite-hashed JS/CSS/images
+#   public_html/api -> ~/renarvo/backend/public/   (symlink)
+#
+# Behaviour:
+#   GET /assets/foo.js   -> served as static file
+#   GET /api/v1/health   -> Laravel (via symlinked public/.htaccess -> index.php)
+#   GET /cars            -> SPA fallback to /index.html
 
-# Force HTTPS
+Options -MultiViews -Indexes +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+
+# 1) Force HTTPS (Hostinger sets X-Forwarded-Proto when terminating TLS at the LB)
 RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# API routes -> Laravel front controller
-RewriteRule ^api/(.*)$ api/index.php [L,QSA]
+# 2) /api/* -> let Apache descend into the symlinked Laravel public dir.
+# We do NOTHING here; Laravel's own .htaccess inside ./api/ rewrites missing
+# paths to ./api/index.php while preserving REQUEST_URI.
+RewriteRule ^api(/|$) - [L]
 
-# If a real file exists, serve it directly (built JS/CSS/images, etc.)
-RewriteCond %{REQUEST_FILENAME} -f
+# 3) Existing static files in public_html are served as-is (assets, favicon, etc.)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -l
 RewriteRule ^ - [L]
 
-# Otherwise SPA fallback to index.html
+# 4) SPA fallback for everything else (deep links: /cars/123, /dashboard, ...)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.html [L]
@@ -34,7 +49,16 @@ RewriteRule ^ index.html [L]
     <FilesMatch "\.(js|css|woff2|svg|webp|png|jpg|jpeg)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
     </FilesMatch>
+    # index.html and the API responses must never be cached at the edge
+    <FilesMatch "(?:^|/)index\.html$">
+        Header set Cache-Control "no-store, must-revalidate"
+    </FilesMatch>
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# gzip/brotli if available
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
 </IfModule>
