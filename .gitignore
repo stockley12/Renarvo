@@ -8,6 +8,8 @@ Thumbs.db
 
 # Backend
 /backend/vendor/
+/backend/database/*.sqlite
+/backend/database/*.sqlite-journal
 /backend/storage/logs/*
 !/backend/storage/logs/.gitkeep
 /backend/storage/framework/cache/*

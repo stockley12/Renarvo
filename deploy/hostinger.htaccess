@@ -15,6 +15,11 @@ Options -MultiViews -Indexes +FollowSymLinks +SymLinksIfOwnerMatch
 DirectoryIndex index.html
 RewriteEngine On
 
+# Block dotfiles (.env, .git, .htaccess, etc.) and common sensitive names so
+# they never fall through to the SPA fallback as 200/index.html.
+RewriteRule (^|/)\.(?!well-known/) - [F,L]
+RewriteRule ^(composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|README\.md|LICENSE)$ - [F,L]
+
 # Force HTTPS (Hostinger terminates TLS at the LB and sets X-Forwarded-Proto)
 RewriteCond %{HTTPS} off
 RewriteCond %{HTTP:X-Forwarded-Proto} !=https
@@ -59,6 +64,8 @@ RewriteRule ^ index.html [L]
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    Header set Permissions-Policy "geolocation=(self), camera=(), microphone=(), payment=(self)"
 </IfModule>
 
 <IfModule mod_deflate.c>

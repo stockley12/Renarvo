@@ -12,11 +12,11 @@ Deploy Renarvo (React frontend + Laravel 11 backend) to Hostinger Business share
 - DB: SQLite at `~/renarvo/backend/database/renarvo.sqlite` — migrated + seeded with `TestUsersSeeder` + `DemoSeeder`
 
 ## Server (Hostinger Business)
-- **IP**: 92.112.189.210
-- **SSH port**: 65002
-- **SSH user**: u273509288
-- **SSH password**: `Tested1337!`  (User-provided. Rotate after launch.)
-- **Host key (pinned)**: `SHA256:ZJkk5J/8g0ieMWrhAhaPLSXpc3ooAy4QPswPN3whd8g`
+- **IP**: see `.tools/server.local` (not committed)
+- **SSH port**: see `.tools/server.local`
+- **SSH user**: see `.tools/server.local`
+- **SSH password**: REDACTED — stored locally in `.tools/server.local` (gitignored). Earlier versions of this file leaked it to the public repo; the user has been told to rotate.
+- **Host key (pinned)**: REDACTED — pinned in `.tools/rssh.ps1` (gitignored)
 - **PHP**: 8.2.30 at `/usr/bin/php` (default), `/opt/alt/php82/usr/bin/php` (alt-php)
 - **Composer**: 2.8.11 at `/usr/local/bin/composer`
 - **Node.js**: NOT in PATH by default. Use `/opt/alt/alt-nodejs20/root/usr/bin/{node,npm}` (PATH set inside `deploy/deploy.sh`).
