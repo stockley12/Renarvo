@@ -50,7 +50,7 @@ composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist 2
 log "ensuring sqlite db"
 mkdir -p database
 [ -f database/renarvo.sqlite ] || touch database/renarvo.sqlite
-chmod 664 database/renarvo.sqlite || true
+chmod 640 database/renarvo.sqlite || true
 
 log "migrate"
 php artisan migrate --force 2>&1 | tail -10
