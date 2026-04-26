@@ -1,9 +1,12 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   Shield, LayoutDashboard, Building2, ClipboardCheck, Car, CalendarRange,
   Users, Star, FileText, BadgeDollarSign, Settings, Search, Bell,
   ShieldAlert, Activity, FileSearch, Megaphone, Sparkles,
 } from 'lucide-react';
+import { useSession } from '@/store/session';
+import { logout as apiLogout } from '@/lib/api';
+import { toast } from 'sonner';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger,
@@ -174,10 +177,22 @@ function AdminSidebar() {
 
 function Topbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const user = useSession((s) => s.user);
+  const setUser = useSession((s) => s.setUser);
   const segments = location.pathname.split('/').filter(Boolean);
   const title = segments[1] ? segments[1].replace(/-/g, ' ') : 'Dashboard';
+  const initials = (user?.name ?? 'SA').split(/\s+/).map((s) => s[0]).slice(0, 2).join('').toUpperCase() || 'SA';
+
+  async function handleSignOut() {
+    try { await apiLogout(); } catch { /* ignore */ }
+    setUser(null);
+    toast.success('Signed out');
+    navigate('/login');
+  }
+
   return (
-    <header className="h-16 border-b border-border/60 bg-background/80 backdrop-blur-xl sticky top-0 z-30 flex items-center gap-3 px-4">
+    <header className="h-14 md:h-16 border-b border-border/60 bg-background/80 backdrop-blur-xl sticky top-0 z-30 flex items-center gap-2 md:gap-3 px-3 md:px-4">
       <SidebarTrigger />
       <div className="hidden md:flex items-center gap-2">
         <Shield className="h-4 w-4 text-brand" />
@@ -186,38 +201,36 @@ function Topbar() {
           <span className="font-display font-semibold text-base capitalize">{title}</span>
         </div>
       </div>
-      <div className="flex-1 max-w-md mx-auto">
+      <div className="flex-1 max-w-md mx-auto hidden sm:block">
         <div className="relative">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder="Search platform — companies, users, reservations…" className="pl-9 h-9 bg-muted/50 border-border/60 rounded-full" />
-          <kbd className="hidden md:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center rounded border bg-muted px-1.5 font-mono text-[10px] text-muted-foreground">⌘K</kbd>
+          <kbd className="hidden lg:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center rounded border bg-muted px-1.5 font-mono text-[10px] text-muted-foreground">⌘K</kbd>
         </div>
       </div>
-      <div className="ml-auto flex items-center gap-1">
-        <LanguageSwitcher />
+      <div className="ml-auto flex items-center gap-0.5 md:gap-1">
+        <div className="hidden sm:flex"><LanguageSwitcher /></div>
         <ThemeToggle />
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-4 w-4" />
-          <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-destructive animate-pulse" />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Avatar className="h-8 w-8"><AvatarFallback className="bg-navy text-white text-xs">SA</AvatarFallback></Avatar>
+            <Button variant="ghost" size="icon" className="rounded-full" aria-label="Account">
+              <Avatar className="h-8 w-8"><AvatarFallback className="bg-navy text-white text-xs">{initials}</AvatarFallback></Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
-              <div className="font-semibold">Super Admin</div>
-              <div className="text-xs text-muted-foreground font-normal">Platform owner</div>
+              <div className="font-semibold truncate">{user?.name ?? 'Super Admin'}</div>
+              <div className="text-xs text-muted-foreground font-normal truncate">{user?.email ?? 'Platform owner'}</div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild><NavLink to="/admin/settings">Settings</NavLink></DropdownMenuItem>
             <DropdownMenuItem asChild><NavLink to="/admin/audit">Audit log</NavLink></DropdownMenuItem>
-            <DropdownMenuItem asChild><NavLink to="/demo">Switch role</NavLink></DropdownMenuItem>
             <DropdownMenuItem asChild><NavLink to="/">Public site</NavLink></DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">Sign out</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onSelect={handleSignOut}>Sign out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -232,7 +245,7 @@ export function AdminLayout() {
         <AdminSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           <Topbar />
-          <main className="flex-1 p-6 animate-fade-in"><Outlet /></main>
+          <main className="flex-1 p-3 sm:p-4 md:p-6 animate-fade-in"><Outlet /></main>
         </div>
         <DemoPill />
       </div>

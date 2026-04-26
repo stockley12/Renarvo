@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0B1220"/>
+      <stop offset="60%" stop-color="#1B2A4A"/>
+      <stop offset="100%" stop-color="#5B6CFF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="80%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#7C5CFF" stop-opacity="0.6"/>
+      <stop offset="60%" stop-color="#7C5CFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5B6CFF"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <g transform="translate(80,80)">
+    <rect x="0" y="0" rx="14" ry="14" width="64" height="64" fill="url(#accent)"/>
+    <text x="84" y="44" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="34" font-weight="800" fill="#fff" letter-spacing="0.5">renarvo</text>
+  </g>
+
+  <g transform="translate(80,210)" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif">
+    <text x="0" y="0" font-size="84" font-weight="800" fill="#fff" letter-spacing="-1.5">Rent a car in</text>
+    <text x="0" y="100" font-size="84" font-weight="800" fill="url(#accent)" letter-spacing="-1.5">North Cyprus</text>
+    <text x="0" y="180" font-size="30" font-weight="500" fill="#cbd5e1">Compare local companies. Book in under a minute.</text>
+  </g>
+
+  <g transform="translate(80,500)" font-family="Inter, system-ui, sans-serif" font-size="22" fill="#94a3b8">
+    <text x="0" y="0">Ercan · Larnaca pickup · TRY · USD · EUR · RUB</text>
+  </g>
+
+  <g transform="translate(960,470)" opacity="0.9">
+    <circle cx="0" cy="0" r="100" fill="#0B1220" stroke="#5B6CFF" stroke-width="2"/>
+    <text x="0" y="-10" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700" fill="#fff">renarvo.com</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="14" fill="#94a3b8">KKTC marketplace</text>
+  </g>
+</svg>

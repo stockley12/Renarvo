@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { SlidersHorizontal, Zap } from 'lucide-react';
+import { Loader2, SlidersHorizontal, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -10,7 +10,9 @@ import { Slider } from '@/components/ui/slider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { CarCard } from '@/components/public/CarCard';
 import { SearchWidget } from '@/components/public/SearchWidget';
-import { cars, brands, categories, type CarCategory, type Transmission } from '@/mock/data';
+import { cars as mockCars, brands, categories, type CarCategory, type Transmission, type Car } from '@/mock/data';
+import { usePublicCars } from '@/lib/hooks/useCars';
+import { apiCarToCar, unwrapCars } from '@/lib/adapters';
 
 function FilterPanel({ state, set }: { state: any; set: any }) {
   const { t } = useTranslation();
@@ -86,6 +88,13 @@ export default function Cars() {
   });
   const [sort, setSort] = useState<'price-asc' | 'price-desc' | 'rating' | 'newest'>('rating');
 
+  const apiQuery = usePublicCars({ city: cityFilter ?? undefined, limit: 60 });
+  const cars: Car[] = useMemo(() => {
+    const apiList = unwrapCars(apiQuery.data).map(apiCarToCar);
+    return apiList.length > 0 ? apiList : mockCars;
+  }, [apiQuery.data]);
+  const usingDemo = !apiQuery.isLoading && unwrapCars(apiQuery.data).length === 0;
+
   const filtered = useMemo(() => {
     let r = cars.filter(c =>
       c.pricePerDay >= state.price[0] && c.pricePerDay <= state.price[1] &&
@@ -100,7 +109,7 @@ export default function Cars() {
     if (sort === 'rating') r = [...r].sort((a, b) => b.rating - a.rating);
     if (sort === 'newest') r = [...r].sort((a, b) => b.year - a.year);
     return r;
-  }, [state, sort, cityFilter]);
+  }, [cars, state, sort, cityFilter]);
 
   return (
     <div>
@@ -138,12 +147,22 @@ export default function Cars() {
               </select>
             </div>
           </div>
-          {filtered.length === 0 ? (
+          {apiQuery.isLoading ? (
+            <Card className="p-16 text-center text-muted-foreground flex flex-col items-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Loading cars…
+            </Card>
+          ) : filtered.length === 0 ? (
             <Card className="p-16 text-center text-muted-foreground">{t('cars.noResults')}</Card>
           ) : (
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-              {filtered.map(c => <CarCard key={c.id} car={c} />)}
-            </div>
+            <>
+              {usingDemo && (
+                <p className="text-xs text-muted-foreground mb-3">Showing demo inventory while live cars sync.</p>
+              )}
+              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                {filtered.map(c => <CarCard key={c.id} car={c} />)}
+              </div>
+            </>
           )}
         </div>
       </div>

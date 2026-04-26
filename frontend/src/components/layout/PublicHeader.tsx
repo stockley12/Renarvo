@@ -1,4 +1,5 @@
-import { Link, NavLink as RRNavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink as RRNavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,10 @@ export function PublicHeader() {
   const { role } = useApp();
   const dashLink = role === 'admin' ? '/admin' : role === 'company' ? '/dashboard' : '/login';
   const dashLabel = role === 'admin' ? 'nav.admin' : role === 'company' ? 'nav.dashboard' : 'nav.login';
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  useEffect(() => { setMobileOpen(false); }, [location.pathname, location.search]);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
@@ -62,11 +67,11 @@ export function PublicHeader() {
             <Link to="/register-company">{t('nav.register')}</Link>
           </Button>
 
-          <Sheet>
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden"><Menu className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Menu"><Menu className="h-5 w-5" /></Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72">
+            <SheetContent side="right" className="w-[85vw] max-w-sm">
               <div className="flex flex-col gap-1 mt-8">
                 {navItems.map((item) => (
                   <RRNavLink

@@ -10,6 +10,7 @@ import { useApp } from "@/store/app";
 import { useSession } from "@/store/session";
 import { bootstrapSession } from "@/lib/bootstrap";
 import { tokenStore } from "@/lib/tokenStore";
+import { ScrollToTop } from "@/components/common/ScrollToTop";
 
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { CompanyLayout } from "@/components/layout/CompanyLayout";
@@ -81,6 +82,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <I18nSync />
         <SessionBootstrap />
         <Routes>

@@ -1,26 +1,60 @@
+import { useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Star, Users, Fuel, Settings2, MapPin, Calendar, Shield, Check, X, ArrowLeft } from 'lucide-react';
+import { Star, Users, Fuel, Settings2, MapPin, Calendar, Shield, Check, X, ArrowLeft, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CarImage } from '@/components/brand/CarImage';
 import { CarCard } from '@/components/public/CarCard';
-import { cars, companies } from '@/mock/data';
+import { cars as mockCars, companies as mockCompanies } from '@/mock/data';
 import { useApp } from '@/store/app';
 import { formatPrice } from '@/lib/format';
+import { usePublicCar, usePublicCars } from '@/lib/hooks/useCars';
+import { apiCarToCar, apiCompanyMini, unwrapCars } from '@/lib/adapters';
 
 export default function CarDetail() {
   const { id } = useParams();
   const { t } = useTranslation();
   const { currency, locale } = useApp();
   const navigate = useNavigate();
-  const car = cars.find(c => c.id === id);
 
-  if (!car) return <div className="container py-20 text-center">Car not found. <Link to="/cars" className="text-primary">Browse cars</Link></div>;
-  const company = companies.find(c => c.id === car.companyId);
-  const similar = cars.filter(c => c.id !== car.id && c.category === car.category).slice(0, 4);
+  const apiCar = usePublicCar(id);
+  const apiSimilar = usePublicCars({ limit: 8 });
+
+  const car = useMemo(() => {
+    if (apiCar.data) return apiCarToCar(apiCar.data);
+    return mockCars.find(c => c.id === id) ?? null;
+  }, [apiCar.data, id]);
+
+  if (apiCar.isLoading && !car) {
+    return (
+      <div className="container py-20 text-center text-muted-foreground flex flex-col items-center gap-2">
+        <Loader2 className="h-5 w-5 animate-spin" /> Loading car…
+      </div>
+    );
+  }
+  if (!car) {
+    return <div className="container py-20 text-center">Car not found. <Link to="/cars" className="text-primary">Browse cars</Link></div>;
+  }
+
+  const company = apiCar.data?.company
+    ? apiCompanyMini(apiCar.data.company)
+    : mockCompanies.find(c => c.id === car.companyId)
+      ? {
+          id: mockCompanies.find(c => c.id === car.companyId)!.id,
+          slug: mockCompanies.find(c => c.id === car.companyId)!.slug,
+          name: mockCompanies.find(c => c.id === car.companyId)!.name,
+          logoColor: mockCompanies.find(c => c.id === car.companyId)!.logoColor,
+          rating: mockCompanies.find(c => c.id === car.companyId)!.rating,
+          reviewCount: mockCompanies.find(c => c.id === car.companyId)!.reviewCount,
+        }
+      : null;
+
+  const apiSimilarList = unwrapCars(apiSimilar.data).map(apiCarToCar);
+  const similarPool = apiSimilarList.length > 0 ? apiSimilarList : mockCars;
+  const similar = similarPool.filter(c => c.id !== car.id && c.category === car.category).slice(0, 4);
 
   return (
     <div className="container py-6">
