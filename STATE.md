@@ -172,3 +172,17 @@ cd ~/renarvo/backend && php artisan migrate:fresh --force --seed
 ### QA test scripts after go-live
 - `.tools/qa_auth.ps1` — registers an ephemeral customer + company per run (LiveSeeder no longer seeds those), then runs the original 27 auth/flow checks (the one cross-tenant probe now hits a deliberately bogus car id).
 - `.tools/qa_live.ps1` — 10-step end-to-end go-live test: anonymous tour → `register-company` → admin approves → company adds car → public listing/detail show it → customer registers → customer books → confirm/pickup/return lifecycle → customer review → admin sees audit + reservation.
+
+### Final go-live regression (2026-04-27, after MySQL-prep + deploy)
+- `qa_auth.ps1`: **29 PASS / 0 FAIL / 1 cosmetic WARN** (cleanup cancel hit a per-IP rate limit after the burst — purely test plumbing, the underlying logout/cancel paths are exercised earlier).
+- `qa_live.ps1`: **17/17 PASS** end-to-end (anonymous → company register → admin approve → fleet → public listing → customer register → booking → confirm/pickup/return → review → admin audit + reservations).
+- Bug fixed during the run: `User::token_version` defaulted to `null` in memory after `Model::create`, so JWTs issued at registration carried `tv:null` and were rejected on the next request (401 UNAUTHENTICATED). Fix: declared `protected $attributes = ['token_version' => 0, 'status' => 'active']` plus an integer cast on the `User` model, and made `JwtService::validateAccessToken` coerce nullish `tv` on either side to `0` for back-compat. Commit `5796656`.
+
+## Open follow-ups summary (post-launch, in order)
+1. **(blocking real customers)** Provide MySQL credentials → flip `backend/.env` → `php artisan migrate:fresh --force --seed` (todo `a-server-flip` is still pending until creds are available).
+2. **(blocking real customers)** Configure SMTP — currently `MAIL_MAILER=log`.
+3. Rotate SSH password (leaked-in-history risk on the public repo).
+4. Rotate the bootstrap superadmin password from the admin panel.
+5. Real payments (Stripe / İyzico) — still pay-on-pickup.
+6. 2FA for company owners and superadmins.
+7. Cloudflare in front of Hostinger.
