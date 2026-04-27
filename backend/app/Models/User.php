@@ -25,9 +25,15 @@ class User extends Authenticatable
 
     protected $hidden = ['password_hash', 'token_version'];
 
+    protected $attributes = [
+        'token_version' => 0,
+        'status' => 'active',
+    ];
+
     protected $casts = [
         'email_verified_at' => 'datetime',
         'last_login_at' => 'datetime',
+        'token_version' => 'integer',
     ];
 
     public function getAuthPassword(): string

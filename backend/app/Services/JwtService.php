@@ -56,7 +56,7 @@ class JwtService
             return null;
         }
 
-        if ((int) ($decoded->tv ?? -1) !== (int) $user->token_version) {
+        if ((int) ($decoded->tv ?? 0) !== (int) ($user->token_version ?? 0)) {
             return null;
         }
 
