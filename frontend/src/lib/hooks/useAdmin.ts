@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { api, type ApiCompany, type ApiUser, type Paginated } from '../api';
+import { api, type ApiCar, type ApiCompany, type ApiReservation, type ApiUser, type Paginated } from '../api';
 
 type AdminOverview = {
   companies_total: number;
@@ -21,7 +21,7 @@ export function useAdminOverview() {
   });
 }
 
-export function useAdminCompanies(query?: { status?: string; search?: string; page?: number }) {
+export function useAdminCompanies(query?: { status?: string; search?: string; page?: number; limit?: number }) {
   return useQuery({
     queryKey: ['admin', 'companies', query],
     queryFn: () => api.get<Paginated<ApiCompany>>('/admin/companies', query),
@@ -42,7 +42,7 @@ export function useCompanyAction() {
   });
 }
 
-export function useAdminUsers(query?: { role?: string; status?: string; search?: string; page?: number }) {
+export function useAdminUsers(query?: { role?: string; status?: string; search?: string; page?: number; limit?: number }) {
   return useQuery({
     queryKey: ['admin', 'users', query],
     queryFn: () => api.get<Paginated<ApiUser>>('/admin/users', query),
@@ -139,5 +139,135 @@ export function useAdminFinanceOverview() {
         pending_payouts: number;
         paid_payouts: number;
       }>('/admin/finance'),
+  });
+}
+
+/* -------------------- Admin catalog -------------------- */
+export function useAdminCatalog(query?: { status?: string; search?: string; page?: number; limit?: number }) {
+  return useQuery({
+    queryKey: ['admin', 'catalog', query],
+    queryFn: () => api.get<Paginated<ApiCar>>('/admin/catalog', query),
+  });
+}
+
+export function useCatalogAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, action, reason }: { id: number; action: 'hide' | 'flag'; reason?: string }) =>
+      api.patch(`/admin/catalog/${id}/${action}`, reason ? { reason } : undefined),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'catalog'] }),
+  });
+}
+
+/* -------------------- Admin reservations -------------------- */
+export function useAdminReservations(query?: { status?: string; search?: string; page?: number; limit?: number }) {
+  return useQuery({
+    queryKey: ['admin', 'reservations', query],
+    queryFn: () => api.get<Paginated<ApiReservation>>('/admin/reservations', query),
+  });
+}
+
+/* -------------------- Admin reviews -------------------- */
+export type AdminReview = {
+  id: number;
+  rating: number;
+  text: string;
+  status: string;
+  customer?: { id: number; name: string; email: string };
+  company?: { id: number; name: string };
+  car?: { id: number; brand: string; model: string };
+  created_at: string;
+};
+
+export function useAdminReviews(query?: { status?: string; search?: string; page?: number; limit?: number }) {
+  return useQuery({
+    queryKey: ['admin', 'reviews', query],
+    queryFn: () => api.get<Paginated<AdminReview>>('/admin/reviews', query),
+  });
+}
+
+export function useReviewAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, action, reason }: { id: number; action: 'hide' | 'restore'; reason?: string }) =>
+      api.patch(`/admin/reviews/${id}/${action}`, reason ? { reason } : undefined),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'reviews'] }),
+  });
+}
+
+/* -------------------- Risk actions -------------------- */
+export function useRiskAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, action, note }: { id: number; action: 'clear' | 'escalate'; note?: string }) =>
+      api.patch(`/admin/risk/${id}/${action}`, note ? { note } : undefined),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'risk'] }),
+  });
+}
+
+/* -------------------- Admin payouts / finance -------------------- */
+export type AdminPayout = {
+  id: number;
+  company_id: number;
+  period: string;
+  gross: number;
+  commission: number;
+  net: number;
+  status: string;
+  paid_at: string | null;
+  reference: string | null;
+  company?: { id: number; name: string };
+};
+
+export function useAdminPayouts(query?: { status?: string; period?: string; page?: number; limit?: number }) {
+  return useQuery({
+    queryKey: ['admin', 'payouts', query],
+    queryFn: () => api.get<Paginated<AdminPayout>>('/admin/finance/payouts', query),
+  });
+}
+
+export function useProcessPayout() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, reference }: { id: number; reference: string }) =>
+      api.post(`/admin/finance/payouts/${id}/process`, { reference }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'payouts'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'finance', 'overview'] });
+    },
+  });
+}
+
+/* -------------------- Notifications history -------------------- */
+export type Broadcast = {
+  id: number;
+  audience: string;
+  channels: string[];
+  subject: string;
+  body: string;
+  total_recipients: number;
+  sent_at: string;
+};
+
+export function useAdminBroadcastHistory() {
+  return useQuery({
+    queryKey: ['admin', 'notifications', 'history'],
+    queryFn: () => api.get<Broadcast[]>('/admin/notifications'),
+  });
+}
+
+/* -------------------- Settings -------------------- */
+export function useAdminSettings() {
+  return useQuery({
+    queryKey: ['admin', 'settings'],
+    queryFn: () => api.get<Record<string, unknown>>('/admin/settings'),
+  });
+}
+
+export function useUpdateAdminSettings() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (settings: Record<string, unknown>) => api.put('/admin/settings', { settings }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'settings'] }),
   });
 }

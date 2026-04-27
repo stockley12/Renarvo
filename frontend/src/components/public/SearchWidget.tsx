@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Calendar, Search, ArrowRightLeft } from 'lucide-react';
@@ -6,19 +6,30 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { cities } from '@/mock/data';
+import { useCities } from '@/lib/hooks/usePublic';
+
+const FALLBACK_CITIES = ['Girne', 'Lefkoşa', 'Gazimağusa', 'İskele', 'Güzelyurt', 'Lefke', 'Karpaz', 'Bafra'];
 
 export function SearchWidget({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const defaultCity = cities[0]; // Girne
-  const [pickup, setPickup] = useState(defaultCity);
-  const [returnLoc, setReturnLoc] = useState(defaultCity);
+  const citiesQ = useCities();
+  const cities = citiesQ.data && citiesQ.data.length > 0 ? citiesQ.data : FALLBACK_CITIES;
+
+  const [pickup, setPickup] = useState(cities[0]);
+  const [returnLoc, setReturnLoc] = useState(cities[0]);
   const [same, setSame] = useState(true);
   const today = new Date().toISOString().slice(0, 10);
   const tomorrow = new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10);
   const [pickupDate, setPickupDate] = useState(today);
   const [returnDate, setReturnDate] = useState(tomorrow);
+
+  useEffect(() => {
+    if (citiesQ.data && citiesQ.data.length > 0 && !citiesQ.data.includes(pickup)) {
+      setPickup(citiesQ.data[0]);
+      if (same) setReturnLoc(citiesQ.data[0]);
+    }
+  }, [citiesQ.data, pickup, same]);
 
   const handleSearch = () => {
     const params = new URLSearchParams({ city: pickup, from: pickupDate, to: returnDate });
@@ -41,7 +52,7 @@ export function SearchWidget({ compact = false }: { compact?: boolean }) {
             onChange={(e) => { setPickup(e.target.value); if (same) setReturnLoc(e.target.value); }}
             className="w-full h-11 rounded-lg border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           >
-            {cities.map(c => <option key={c} value={c}>{c}</option>)}
+            {cities.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
         {!same && (
@@ -54,7 +65,7 @@ export function SearchWidget({ compact = false }: { compact?: boolean }) {
               onChange={(e) => setReturnLoc(e.target.value)}
               className="w-full h-11 rounded-lg border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {cities.map(c => <option key={c} value={c}>{c}</option>)}
+              {cities.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
         )}

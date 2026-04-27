@@ -11,6 +11,7 @@ import { useSession } from "@/store/session";
 import { bootstrapSession } from "@/lib/bootstrap";
 import { tokenStore } from "@/lib/tokenStore";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
+import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { CompanyLayout } from "@/components/layout/CompanyLayout";
@@ -24,8 +25,8 @@ import Companies from "@/pages/public/Companies";
 import CompanyDetail from "@/pages/public/CompanyDetail";
 import { About, HowItWorks, ForCompanies, Help, Contact, Terms, Privacy } from "@/pages/public/Static";
 import { Login, ForgotPassword, ResetPassword } from "@/pages/auth/Auth";
+import Register from "@/pages/auth/Register";
 import RegisterCompany from "@/pages/auth/RegisterCompany";
-import Demo from "@/pages/Demo";
 import NotFound from "@/pages/NotFound";
 
 import DashOverview from "@/pages/dashboard/Overview";
@@ -86,7 +87,8 @@ const App = () => (
         <I18nSync />
         <SessionBootstrap />
         <Routes>
-          <Route path="/demo" element={<Demo />} />
+          {/* Legacy demo route, now permanently redirected. */}
+          <Route path="/demo" element={<Navigate to="/" replace />} />
 
           {/* Public site */}
           <Route element={<PublicLayout />}>
@@ -104,46 +106,51 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/register-company" element={<RegisterCompany />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
           </Route>
 
-          {/* Company dashboard */}
-          <Route path="/dashboard" element={<CompanyLayout />}>
-            <Route index element={<DashOverview />} />
-            <Route path="calendar" element={<DashCalendar />} />
-            <Route path="cars" element={<DashFleet />} />
-            <Route path="reservations" element={<DashReservations />} />
-            <Route path="messages" element={<DashMessages />} />
-            <Route path="customers" element={<DashCustomers />} />
-            <Route path="statistics" element={<DashStats />} />
-            <Route path="branches" element={<DashBranches />} />
-            <Route path="staff" element={<DashStaff />} />
-            <Route path="reviews" element={<DashReviews />} />
-            <Route path="pricing" element={<DashPricing />} />
-            <Route path="payouts" element={<DashPayouts />} />
-            <Route path="documents" element={<DashDocuments />} />
-            <Route path="integrations" element={<DashIntegrations />} />
-            <Route path="settings" element={<DashSettings />} />
+          {/* Company dashboard (company_owner | company_staff) */}
+          <Route element={<ProtectedRoute allow={['company_owner', 'company_staff']} />}>
+            <Route path="/dashboard" element={<CompanyLayout />}>
+              <Route index element={<DashOverview />} />
+              <Route path="calendar" element={<DashCalendar />} />
+              <Route path="cars" element={<DashFleet />} />
+              <Route path="reservations" element={<DashReservations />} />
+              <Route path="messages" element={<DashMessages />} />
+              <Route path="customers" element={<DashCustomers />} />
+              <Route path="statistics" element={<DashStats />} />
+              <Route path="branches" element={<DashBranches />} />
+              <Route path="staff" element={<DashStaff />} />
+              <Route path="reviews" element={<DashReviews />} />
+              <Route path="pricing" element={<DashPricing />} />
+              <Route path="payouts" element={<DashPayouts />} />
+              <Route path="documents" element={<DashDocuments />} />
+              <Route path="integrations" element={<DashIntegrations />} />
+              <Route path="settings" element={<DashSettings />} />
+            </Route>
           </Route>
 
-          {/* Super admin */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminOverview />} />
-            <Route path="companies" element={<AdminCompanies />} />
-            <Route path="approvals" element={<AdminApprovals />} />
-            <Route path="catalog" element={<AdminCatalog />} />
-            <Route path="reservations" element={<AdminReservations />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="reviews" element={<AdminReviews />} />
-            <Route path="risk" element={<AdminRisk />} />
-            <Route path="notifications" element={<AdminNotifications />} />
-            <Route path="content" element={<AdminContent />} />
-            <Route path="finance" element={<AdminFinance />} />
-            <Route path="audit" element={<AdminAuditLog />} />
-            <Route path="system" element={<AdminSystem />} />
-            <Route path="settings" element={<AdminSettings />} />
+          {/* Super admin (superadmin only) */}
+          <Route element={<ProtectedRoute allow={['superadmin']} />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminOverview />} />
+              <Route path="companies" element={<AdminCompanies />} />
+              <Route path="approvals" element={<AdminApprovals />} />
+              <Route path="catalog" element={<AdminCatalog />} />
+              <Route path="reservations" element={<AdminReservations />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="reviews" element={<AdminReviews />} />
+              <Route path="risk" element={<AdminRisk />} />
+              <Route path="notifications" element={<AdminNotifications />} />
+              <Route path="content" element={<AdminContent />} />
+              <Route path="finance" element={<AdminFinance />} />
+              <Route path="audit" element={<AdminAuditLog />} />
+              <Route path="system" element={<AdminSystem />} />
+              <Route path="settings" element={<AdminSettings />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<NotFound />} />

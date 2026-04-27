@@ -1,5 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { useSession } from '@/store/session';
 
 export function Login() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const setUser = useSession((s) => s.setUser);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,10 +24,12 @@ export function Login() {
       const data = await apiLogin(email, password);
       setUser(data.user);
       toast.success('Logged in');
-      const dest =
+      const next = params.get('next');
+      const fallback =
         data.user.role === 'superadmin' ? '/admin' :
         data.user.role === 'company_owner' || data.user.role === 'company_staff' ? '/dashboard' :
         '/';
+      const dest = next && next.startsWith('/') ? next : fallback;
       navigate(dest);
     } catch (err) {
       if (err instanceof ApiClientError) toast.error(err.message);
@@ -77,10 +79,10 @@ export function Login() {
             </Link>
           </div>
           <div className="text-center text-sm">
-            Or <Link to="/demo" className="text-primary font-semibold">try the demo</Link>
+            New here? <Link to="/register" className="text-primary font-semibold">Create an account</Link>
           </div>
-          <div className="text-center text-sm">
-            New company? <Link to="/register-company" className="text-primary font-semibold">Register here</Link>
+          <div className="text-center text-xs text-muted-foreground">
+            Are you a rental company? <Link to="/register-company" className="text-primary font-semibold">Register your fleet</Link>
           </div>
         </form>
       </Card>

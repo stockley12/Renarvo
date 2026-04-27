@@ -126,6 +126,9 @@ async function request<T>(path: string, opts: FetchOptions = {}): Promise<T> {
     throw new ApiClientError({ ...err, status: res.status });
   }
 
+  if (body && typeof body === 'object' && 'data' in (body as object) && 'meta' in (body as object)) {
+    return body as T;
+  }
   return ((body as { data?: T })?.data ?? (body as T));
 }
 
@@ -282,6 +285,15 @@ export type ApiReservation = {
   };
   car?: { id: number; brand: string; model: string; image_seed?: string | null };
   company?: { id: number; name: string; slug: string; phone?: string };
+  customer?: { id: number; name: string; email: string; phone?: string | null };
+  promo_code?: string | null;
+  flight_number?: string | null;
+  notes?: string | null;
+  cancellation_reason?: string | null;
+  return_location?: string | null;
+  actual_return_at?: string | null;
+  created_at?: string;
+  extras?: Array<{ type: string; label: string; price_per_day: number }>;
 };
 
 export type Paginated<T> = {

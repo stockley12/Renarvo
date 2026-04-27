@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { api, type ApiCar, type Paginated } from '@/lib/api';
 
 export function usePublicCars(filters: Record<string, string | number | boolean | undefined> = {}) {
-  return useQuery<Paginated<ApiCar> | ApiCar[]>({
+  return useQuery<Paginated<ApiCar>>({
     queryKey: ['public-cars', filters],
-    queryFn: () => api.get<Paginated<ApiCar> | ApiCar[]>('/cars', filters),
+    queryFn: () => api.get<Paginated<ApiCar>>('/cars', filters),
     staleTime: 60_000,
   });
 }

@@ -18,7 +18,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
-import { DemoPill } from '@/components/common/DemoPill';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -239,7 +238,6 @@ export function CompanyLayout() {
           <Topbar />
           <main className="flex-1 p-3 sm:p-4 md:p-6 animate-fade-in"><Outlet /></main>
         </div>
-        <DemoPill />
       </div>
     </SidebarProvider>
   );

@@ -46,6 +46,14 @@ class CarPublicController extends Controller
             $query->where('brand', $brand);
         }
 
+        if ($companySlug = $request->query('company')) {
+            $query->whereHas('company', fn ($q) => $q->where('slug', $companySlug));
+        }
+
+        if ($companyId = $request->query('company_id')) {
+            $query->where('company_id', (int) $companyId);
+        }
+
         if ($search = $request->query('q')) {
             $query->where(function ($q) use ($search) {
                 $q->where('brand', 'like', "%{$search}%")

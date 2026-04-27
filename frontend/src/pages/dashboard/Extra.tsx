@@ -1,99 +1,169 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  CalendarDays, ChevronLeft, ChevronRight, Plus, Tag, Percent, Send,
-  Plug, Check, MessageSquare, Sparkles,
+  ChevronLeft, ChevronRight, Plus, Percent, Send, Plug, Check, Loader2, Trash2,
 } from 'lucide-react';
-import { cars } from '@/mock/data';
+import { toast } from 'sonner';
+import { useApp } from '@/store/app';
+import { formatDate } from '@/lib/format';
+import {
+  useCompanyCalendar,
+  useCompanyPricing,
+  useUpdatePricing,
+  useCompanyPromos,
+  useCreatePromo,
+  useUpdatePromo,
+  useDeletePromo,
+  useCompanyMessages,
+  useCompanyMessageThread,
+  useReplyMessage,
+} from '@/lib/hooks/useCompany';
 
 /* ============== CALENDAR ============== */
 export function DashCalendar() {
+  const { locale } = useApp();
   const today = new Date();
-  const month = today.toLocaleString('en', { month: 'long', year: 'numeric' });
-  const days = Array.from({ length: 35 }, (_, i) => i - 2);
-  const myCars = cars.filter(c => c.companyId === 'c1').slice(0, 6);
+  const [monthOffset, setMonthOffset] = useState(0);
+
+  const monthStart = useMemo(() => {
+    const d = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+    return d;
+  }, [monthOffset, today]);
+  const monthEnd = useMemo(() => new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0), [monthStart]);
+  const fromIso = monthStart.toISOString().slice(0, 10);
+  const toIso = monthEnd.toISOString().slice(0, 10);
+
+  const events = useCompanyCalendar(fromIso, toIso);
+  const monthLabel = monthStart.toLocaleString('en', { month: 'long', year: 'numeric' });
+
+  const eventsByDay: Record<number, Array<{ id: number; code: string; status: string; car: string | null }>> = {};
+  (events.data ?? []).forEach((e) => {
+    const day = new Date(e.start).getDate();
+    if (new Date(e.start).getMonth() === monthStart.getMonth()) {
+      eventsByDay[day] = [...(eventsByDay[day] ?? []), { id: e.id, code: e.code, status: e.status, car: e.car }];
+    }
+  });
+
+  const days = Array.from({ length: 35 }, (_, i) => {
+    const startDay = monthStart.getDay() === 0 ? 6 : monthStart.getDay() - 1;
+    return i - startDay + 1;
+  });
 
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="font-display text-3xl font-extrabold">Calendar</h1>
-          <p className="text-muted-foreground mt-1">Visual fleet availability and bookings</p>
+          <p className="text-muted-foreground mt-1">Reservations across your fleet</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm"><ChevronLeft className="h-4 w-4" /></Button>
-          <span className="font-semibold text-sm w-32 text-center">{month}</span>
-          <Button variant="outline" size="sm"><ChevronRight className="h-4 w-4" /></Button>
-          <Button className="bg-gradient-brand text-white border-0" size="sm">
-            <Plus className="h-4 w-4 mr-1.5" /> Block dates
+          <Button variant="outline" size="sm" onClick={() => setMonthOffset((m) => m - 1)}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="font-semibold text-sm w-32 text-center">{monthLabel}</span>
+          <Button variant="outline" size="sm" onClick={() => setMonthOffset((m) => m + 1)}>
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      {/* Month grid */}
       <Card className="p-5">
-        <div className="grid grid-cols-7 gap-1.5 mb-2 text-[11px] font-semibold uppercase text-muted-foreground">
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
-            <div key={d} className="text-center">{d}</div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-1.5">
-          {days.map((d) => {
-            const inMonth = d > 0 && d <= 30;
-            const bookings = inMonth ? Math.floor(Math.random() * 6) : 0;
-            const isToday = d === today.getDate();
-            return (
-              <div
-                key={d}
-                className={`aspect-square rounded-lg border p-2 text-xs ${
-                  inMonth ? 'bg-background hover:border-primary cursor-pointer' : 'bg-muted/20 text-muted-foreground/40'
-                } ${isToday ? 'border-primary border-2' : 'border-border/60'}`}
-              >
-                <div className="font-semibold">{inMonth ? d : ''}</div>
-                {bookings > 0 && (
-                  <div className="mt-1 space-y-0.5">
-                    <div className="h-1 rounded-full bg-primary/60" />
-                    {bookings > 2 && <div className="h-1 rounded-full bg-success/60" />}
-                    {bookings > 4 && <div className="h-1 rounded-full bg-warning/60" />}
+        {events.isLoading && (
+          <div className="py-12 text-center text-muted-foreground">
+            <Loader2 className="h-5 w-5 mx-auto animate-spin" />
+          </div>
+        )}
+        {!events.isLoading && (
+          <>
+            <div className="grid grid-cols-7 gap-1.5 mb-2 text-[11px] font-semibold uppercase text-muted-foreground">
+              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
+                <div key={d} className="text-center">
+                  {d}
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-1.5">
+              {days.map((d, idx) => {
+                const inMonth = d > 0 && d <= monthEnd.getDate();
+                const isToday = inMonth && d === today.getDate() && monthStart.getMonth() === today.getMonth();
+                const dayEvents = inMonth ? eventsByDay[d] ?? [] : [];
+                return (
+                  <div
+                    key={idx}
+                    className={`min-h-[80px] rounded-lg border p-2 text-xs ${
+                      inMonth ? 'bg-background' : 'bg-muted/20 text-muted-foreground/40'
+                    } ${isToday ? 'border-primary border-2' : 'border-border/60'}`}
+                  >
+                    <div className="font-semibold">{inMonth ? d : ''}</div>
+                    <div className="mt-1 space-y-0.5">
+                      {dayEvents.slice(0, 3).map((e) => (
+                        <div
+                          key={e.id}
+                          className={`text-[10px] truncate rounded px-1 ${
+                            e.status === 'active'
+                              ? 'bg-success/20 text-success'
+                              : e.status === 'confirmed'
+                              ? 'bg-primary/20 text-primary'
+                              : e.status === 'pending'
+                              ? 'bg-warning/20 text-warning'
+                              : 'bg-muted'
+                          }`}
+                          title={`${e.code} · ${e.car ?? ''}`}
+                        >
+                          {e.code}
+                        </div>
+                      ))}
+                      {dayEvents.length > 3 && (
+                        <div className="text-[10px] text-muted-foreground">+{dayEvents.length - 3}</div>
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                );
+              })}
+            </div>
+            <div className="flex flex-wrap gap-3 mt-4 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded bg-warning/70" /> Pending
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded bg-primary/70" /> Confirmed
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded bg-success/70" /> Active rental
+              </span>
+            </div>
+          </>
+        )}
       </Card>
 
-      {/* Per-car timeline */}
       <Card className="p-5">
-        <h3 className="font-display font-bold text-lg mb-4">Fleet timeline · next 14 days</h3>
-        <div className="space-y-2">
-          {myCars.map((c, i) => (
-            <div key={c.id} className="grid grid-cols-[180px_1fr] items-center gap-3">
-              <div className="text-sm font-medium truncate">{c.brand} {c.model}</div>
-              <div className="grid gap-0.5 h-7 rounded-md overflow-hidden bg-muted/30" style={{ gridTemplateColumns: 'repeat(14, minmax(0, 1fr))' }}>
-                {Array.from({ length: 14 }).map((_, d) => {
-                  const r = (i + d) % 5;
-                  const cls = r === 0 ? 'bg-primary/70' : r === 1 ? 'bg-success/70' : r === 4 ? 'bg-warning/70' : 'bg-transparent';
-                  return <div key={d} className={cls} title={`Day ${d + 1}`} />;
-                })}
+        <h3 className="font-display font-bold text-lg mb-4">All bookings this month</h3>
+        {(events.data ?? []).length === 0 ? (
+          <p className="text-sm text-muted-foreground">No bookings in this month.</p>
+        ) : (
+          <div className="space-y-2">
+            {(events.data ?? []).map((e) => (
+              <div key={e.id} className="grid grid-cols-[80px_1fr_1fr_120px] items-center gap-3 text-sm py-2 border-b last:border-0">
+                <span className="font-mono text-xs">{e.code}</span>
+                <span className="truncate">{e.car ?? '—'}</span>
+                <span className="text-muted-foreground text-xs">
+                  {formatDate(e.start, locale)} → {formatDate(e.end, locale)}
+                </span>
+                <Badge variant="outline" className="capitalize">
+                  {e.status}
+                </Badge>
               </div>
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-3 mt-4 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded bg-primary/70" /> Confirmed</span>
-          <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded bg-success/70" /> Active rental</span>
-          <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded bg-warning/70" /> Maintenance</span>
-        </div>
+            ))}
+          </div>
+        )}
       </Card>
     </div>
   );
@@ -101,48 +171,105 @@ export function DashCalendar() {
 
 /* ============== PRICING & PROMOS ============== */
 export function DashPricing() {
+  const pricing = useCompanyPricing();
+  const updatePricing = useUpdatePricing();
+  const promos = useCompanyPromos();
+  const createPromo = useCreatePromo();
+  const updatePromo = useUpdatePromo();
+  const deletePromo = useDeletePromo();
+
+  // Promo form
+  const [promoCode, setPromoCode] = useState('');
+  const [promoType, setPromoType] = useState<'percent' | 'fixed'>('percent');
+  const [promoValue, setPromoValue] = useState(10);
+  const [promoMaxUses, setPromoMaxUses] = useState<number | ''>('');
+  const [promoExpires, setPromoExpires] = useState('');
+
+  async function onCreatePromo(e: React.FormEvent) {
+    e.preventDefault();
+    if (!promoCode.trim()) {
+      toast.error('Promo code required');
+      return;
+    }
+    try {
+      await createPromo.mutateAsync({
+        code: promoCode,
+        discount_type: promoType,
+        discount_value: promoValue,
+        max_uses: promoMaxUses === '' ? null : Number(promoMaxUses),
+        expires_at: promoExpires || null,
+        active: true,
+      });
+      toast.success('Promo code created');
+      setPromoCode('');
+      setPromoValue(10);
+      setPromoMaxUses('');
+      setPromoExpires('');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not create promo');
+    }
+  }
+
+  async function togglePromo(id: number, active: boolean) {
+    try {
+      await updatePromo.mutateAsync({ id, input: { active } });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not update');
+    }
+  }
+
+  async function onDeletePromo(id: number) {
+    if (!window.confirm('Delete this promo code?')) return;
+    try {
+      await deletePromo.mutateAsync(id);
+      toast.success('Promo deleted');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not delete');
+    }
+  }
+
+  // Length discounts simple form
+  const seasonal = pricing.data?.seasonal ?? [];
+  const lengthDiscounts = pricing.data?.length_discounts ?? [];
+  const [weekly, setWeekly] = useState(0);
+  const [monthly, setMonthly] = useState(0);
+  const [primed, setPrimed] = useState(false);
+
+  if (!primed && pricing.data) {
+    const w = lengthDiscounts.find((d) => d.min_days === 7);
+    const m = lengthDiscounts.find((d) => d.min_days === 28);
+    setWeekly(w?.discount_pct ?? 0);
+    setMonthly(m?.discount_pct ?? 0);
+    setPrimed(true);
+  }
+
+  async function onSaveDiscounts() {
+    try {
+      const next: Array<{ min_days: number; discount_pct: number }> = [];
+      if (weekly > 0) next.push({ min_days: 7, discount_pct: weekly });
+      if (monthly > 0) next.push({ min_days: 28, discount_pct: monthly });
+      await updatePricing.mutateAsync({
+        seasonal: seasonal.map(({ id: _id, ...rest }) => rest as never),
+        length_discounts: next as never,
+      });
+      toast.success('Length discounts saved');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not save');
+    }
+  }
+
   return (
     <div className="space-y-5 max-w-6xl">
       <div>
         <h1 className="font-display text-3xl font-extrabold">Pricing & promotions</h1>
-        <p className="text-muted-foreground mt-1">Seasonal rates, weekly discounts and promo codes</p>
+        <p className="text-muted-foreground mt-1">Length discounts and promo codes</p>
       </div>
 
-      <Tabs defaultValue="seasonal">
+      <Tabs defaultValue="discounts">
         <TabsList>
-          <TabsTrigger value="seasonal">Seasonal pricing</TabsTrigger>
           <TabsTrigger value="discounts">Length discounts</TabsTrigger>
           <TabsTrigger value="promos">Promo codes</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="seasonal" className="mt-4 space-y-4">
-          <Card className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-display font-bold">Seasonal rate adjustments</h3>
-              <Button size="sm" className="bg-gradient-brand text-white border-0"><Plus className="h-4 w-4 mr-1.5" /> Add season</Button>
-            </div>
-            <div className="space-y-3">
-              {[
-                { name: 'High season (Jun – Sep)', adj: '+25%', dates: '01 Jun → 30 Sep', active: true },
-                { name: 'Christmas & NYE', adj: '+40%', dates: '20 Dec → 05 Jan', active: true },
-                { name: 'Low season', adj: '-10%', dates: '15 Jan → 31 Mar', active: false },
-              ].map(s => (
-                <div key={s.name} className="flex items-center justify-between p-4 rounded-xl border bg-muted/20">
-                  <div>
-                    <div className="font-semibold text-sm">{s.name}</div>
-                    <div className="text-xs text-muted-foreground">{s.dates}</div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge variant="outline" className={s.adj.startsWith('+') ? 'border-success/40 text-success' : 'border-warning/40 text-warning'}>
-                      {s.adj}
-                    </Badge>
-                    <Switch defaultChecked={s.active} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="discounts" className="mt-4">
           <Card className="p-5">
@@ -150,54 +277,128 @@ export function DashPricing() {
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <Label>Weekly discount (7+ days)</Label>
-                <div className="relative"><Input type="number" defaultValue="10" /><Percent className="h-4 w-4 absolute right-3 top-3 text-muted-foreground" /></div>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    value={weekly}
+                    min={0}
+                    max={90}
+                    onChange={(e) => setWeekly(parseInt(e.target.value) || 0)}
+                  />
+                  <Percent className="h-4 w-4 absolute right-3 top-3 text-muted-foreground" />
+                </div>
               </div>
               <div>
                 <Label>Monthly discount (28+ days)</Label>
-                <div className="relative"><Input type="number" defaultValue="25" /><Percent className="h-4 w-4 absolute right-3 top-3 text-muted-foreground" /></div>
-              </div>
-              <div>
-                <Label>Last-minute discount (within 3 days)</Label>
-                <div className="relative"><Input type="number" defaultValue="15" /><Percent className="h-4 w-4 absolute right-3 top-3 text-muted-foreground" /></div>
-              </div>
-              <div>
-                <Label>Early-bird discount (60+ days ahead)</Label>
-                <div className="relative"><Input type="number" defaultValue="8" /><Percent className="h-4 w-4 absolute right-3 top-3 text-muted-foreground" /></div>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    value={monthly}
+                    min={0}
+                    max={90}
+                    onChange={(e) => setMonthly(parseInt(e.target.value) || 0)}
+                  />
+                  <Percent className="h-4 w-4 absolute right-3 top-3 text-muted-foreground" />
+                </div>
               </div>
             </div>
-            <Button className="mt-5 bg-gradient-brand text-white border-0">Save changes</Button>
+            <Button onClick={onSaveDiscounts} disabled={updatePricing.isPending} className="mt-5 bg-gradient-brand text-white border-0">
+              {updatePricing.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save changes
+            </Button>
           </Card>
         </TabsContent>
 
-        <TabsContent value="promos" className="mt-4">
+        <TabsContent value="promos" className="mt-4 space-y-4">
+          <Card className="p-5">
+            <h3 className="font-display font-bold mb-4">Create promo code</h3>
+            <form onSubmit={onCreatePromo} className="grid sm:grid-cols-5 gap-3 items-end">
+              <div>
+                <Label>Code</Label>
+                <Input value={promoCode} onChange={(e) => setPromoCode(e.target.value.toUpperCase())} placeholder="WELCOME10" />
+              </div>
+              <div>
+                <Label>Type</Label>
+                <select
+                  value={promoType}
+                  onChange={(e) => setPromoType(e.target.value as 'percent' | 'fixed')}
+                  className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
+                >
+                  <option value="percent">Percent</option>
+                  <option value="fixed">Fixed (₺)</option>
+                </select>
+              </div>
+              <div>
+                <Label>Value</Label>
+                <Input type="number" value={promoValue} onChange={(e) => setPromoValue(parseInt(e.target.value) || 0)} />
+              </div>
+              <div>
+                <Label>Max uses</Label>
+                <Input
+                  type="number"
+                  value={promoMaxUses}
+                  onChange={(e) => setPromoMaxUses(e.target.value === '' ? '' : parseInt(e.target.value))}
+                  placeholder="∞"
+                />
+              </div>
+              <div>
+                <Label>Expires</Label>
+                <Input type="date" value={promoExpires} onChange={(e) => setPromoExpires(e.target.value)} />
+              </div>
+              <div className="sm:col-span-5">
+                <Button type="submit" disabled={createPromo.isPending} className="bg-gradient-brand text-white border-0">
+                  <Plus className="h-4 w-4 mr-1.5" /> Create code
+                </Button>
+              </div>
+            </form>
+          </Card>
+
           <Card className="overflow-hidden">
-            <div className="p-5 border-b flex items-center justify-between">
-              <h3 className="font-display font-bold">Promo codes</h3>
-              <Button size="sm" className="bg-gradient-brand text-white border-0"><Plus className="h-4 w-4 mr-1.5" /> New code</Button>
-            </div>
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
-                <tr><th className="px-4 py-3">Code</th><th className="px-4 py-3">Discount</th><th className="px-4 py-3">Used</th><th className="px-4 py-3">Expires</th><th className="px-4 py-3">Status</th></tr>
-              </thead>
-              <tbody>
-                {[
-                  { code: 'WELCOME10', off: '10%', used: '47/100', exp: '2025-12-31', status: 'active' },
-                  { code: 'SUMMER25', off: '25%', used: '128/200', exp: '2025-09-30', status: 'active' },
-                  { code: 'KARPAZ4X4', off: '€20', used: '12/50', exp: '2025-11-15', status: 'active' },
-                  { code: 'EARLYBIRD', off: '15%', used: '210/210', exp: '2025-04-01', status: 'used up' },
-                ].map(p => (
-                  <tr key={p.code} className="border-t">
-                    <td className="px-4 py-3 font-mono font-semibold">{p.code}</td>
-                    <td className="px-4 py-3"><Badge variant="outline">{p.off}</Badge></td>
-                    <td className="px-4 py-3 text-muted-foreground">{p.used}</td>
-                    <td className="px-4 py-3 text-muted-foreground text-xs">{p.exp}</td>
-                    <td className="px-4 py-3">
-                      <Badge variant={p.status === 'active' ? 'secondary' : 'outline'}>{p.status}</Badge>
-                    </td>
+            <div className="p-5 border-b font-display font-bold">Existing codes</div>
+            {promos.isLoading ? (
+              <div className="py-12 text-center text-muted-foreground">
+                <Loader2 className="h-5 w-5 mx-auto animate-spin" />
+              </div>
+            ) : (promos.data ?? []).length === 0 ? (
+              <div className="p-10 text-center text-muted-foreground">No promo codes yet.</div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-3">Code</th>
+                    <th className="px-4 py-3">Discount</th>
+                    <th className="px-4 py-3">Used</th>
+                    <th className="px-4 py-3">Expires</th>
+                    <th className="px-4 py-3">Active</th>
+                    <th className="px-4 py-3 w-16"></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {(promos.data ?? []).map((p) => (
+                    <tr key={p.id} className="border-t">
+                      <td className="px-4 py-3 font-mono font-semibold">{p.code}</td>
+                      <td className="px-4 py-3">
+                        <Badge variant="outline">
+                          {p.discount_type === 'percent' ? `${p.discount_value}%` : `₺${p.discount_value}`}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {p.used_count}
+                        {p.max_uses ? `/${p.max_uses}` : ''}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground text-xs">{p.expires_at?.slice(0, 10) ?? '—'}</td>
+                      <td className="px-4 py-3">
+                        <Switch checked={p.active} onCheckedChange={(v) => togglePromo(p.id, v)} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Button variant="ghost" size="icon" onClick={() => onDeletePromo(p.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </Card>
         </TabsContent>
       </Tabs>
@@ -205,17 +406,26 @@ export function DashPricing() {
   );
 }
 
-/* ============== MESSAGES (inbox) ============== */
+/* ============== MESSAGES ============== */
 export function DashMessages() {
-  const threads = [
-    { id: 1, name: 'Sophie Bennett', last: 'Hi, can I pick up at 8 AM?', time: '2m', unread: true, ini: 'SB' },
-    { id: 2, name: 'Иван Петров', last: 'Спасибо большое!', time: '1h', unread: true, ini: 'ИП' },
-    { id: 3, name: 'Mehmet Özkan', last: 'Anahtarları teslim aldım, teşekkürler.', time: '3h', unread: false, ini: 'MÖ' },
-    { id: 4, name: 'Hans Müller', last: 'Booking confirmed, danke!', time: '1d', unread: false, ini: 'HM' },
-    { id: 5, name: 'James Whitcombe', last: 'Is the GPS English-language?', time: '2d', unread: false, ini: 'JW' },
-  ];
-  const [active, setActive] = useState(1);
-  const current = threads.find(t => t.id === active)!;
+  const threads = useCompanyMessages();
+  const [active, setActive] = useState<number | null>(null);
+  const thread = useCompanyMessageThread(active);
+  const reply = useReplyMessage();
+  const [body, setBody] = useState('');
+
+  const items = threads.data?.data ?? [];
+  if (active === null && items.length > 0) setActive(items[0].id);
+
+  async function onSend() {
+    if (!active || !body.trim()) return;
+    try {
+      await reply.mutateAsync({ threadId: active, body });
+      setBody('');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not send message');
+    }
+  }
 
   return (
     <div className="space-y-5 max-w-7xl">
@@ -224,108 +434,119 @@ export function DashMessages() {
         <p className="text-muted-foreground mt-1">Customer chat and pre-booking inquiries</p>
       </div>
 
-      <Card className="grid grid-cols-1 md:grid-cols-[300px_1fr] h-[600px] overflow-hidden">
-        {/* Thread list */}
-        <div className="border-r flex flex-col">
-          <div className="p-3 border-b">
-            <Input placeholder="Search messages…" className="h-9 bg-muted/40 border-0" />
-          </div>
-          <ScrollArea className="flex-1">
-            {threads.map(t => (
-              <button
-                key={t.id}
-                onClick={() => setActive(t.id)}
-                className={`w-full flex items-start gap-3 p-3 border-b text-left hover:bg-muted/40 transition-colors ${
-                  active === t.id ? 'bg-primary/5' : ''
-                }`}
-              >
-                <Avatar className="h-9 w-9"><AvatarFallback className="bg-gradient-brand text-white text-xs">{t.ini}</AvatarFallback></Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-sm truncate">{t.name}</span>
-                    <span className="text-[10px] text-muted-foreground">{t.time}</span>
+      {threads.isLoading ? (
+        <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
+          <Loader2 className="h-6 w-6 mr-2 animate-spin" /> Loading messages...
+        </div>
+      ) : items.length === 0 ? (
+        <Card className="p-10 text-center text-muted-foreground">
+          No conversations yet.
+        </Card>
+      ) : (
+        <Card className="grid grid-cols-1 md:grid-cols-[300px_1fr] h-[600px] overflow-hidden">
+          <div className="border-r flex flex-col">
+            <ScrollArea className="flex-1">
+              {items.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setActive(t.id)}
+                  className={`w-full flex items-start gap-3 p-3 border-b text-left hover:bg-muted/40 transition-colors ${
+                    active === t.id ? 'bg-primary/5' : ''
+                  }`}
+                >
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback className="bg-gradient-brand text-white text-xs">
+                      {(t.customer?.name ?? '?').split(' ').map((w) => w[0]).slice(0, 2).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-sm truncate">{t.customer?.name ?? 'Customer'}</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate">{t.subject ?? 'Conversation'}</div>
                   </div>
-                  <div className={`text-xs truncate ${t.unread ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
-                    {t.last}
+                </button>
+              ))}
+            </ScrollArea>
+          </div>
+
+          <div className="flex flex-col">
+            {!thread.data ? (
+              <div className="flex items-center justify-center flex-1 text-muted-foreground">
+                <Loader2 className="h-5 w-5 mr-2 animate-spin" /> Loading...
+              </div>
+            ) : (
+              <>
+                <div className="p-4 border-b flex items-center gap-3">
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback className="bg-gradient-brand text-white text-xs">
+                      {(thread.data.customer?.name ?? '?').split(' ').map((w) => w[0]).slice(0, 2).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="font-semibold text-sm">{thread.data.customer?.name ?? 'Customer'}</div>
+                    <div className="text-xs text-muted-foreground">{thread.data.customer?.email}</div>
                   </div>
                 </div>
-                {t.unread && <span className="h-2 w-2 rounded-full bg-primary mt-1.5" />}
-              </button>
-            ))}
-          </ScrollArea>
-        </div>
-
-        {/* Conversation */}
-        <div className="flex flex-col">
-          <div className="p-4 border-b flex items-center gap-3">
-            <Avatar className="h-9 w-9"><AvatarFallback className="bg-gradient-brand text-white text-xs">{current.ini}</AvatarFallback></Avatar>
-            <div className="flex-1">
-              <div className="font-semibold text-sm">{current.name}</div>
-              <div className="text-xs text-muted-foreground">Booking RNV-10042 · Toyota Corolla</div>
-            </div>
-            <Button size="sm" variant="outline">View booking</Button>
+                <ScrollArea className="flex-1 p-4">
+                  <div className="space-y-3 max-w-xl mx-auto">
+                    {(thread.data.messages ?? []).map((m) => {
+                      const isMine = m.sender?.role === 'company_owner' || m.sender?.role === 'company_staff';
+                      return (
+                        <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+                          <div
+                            className={`rounded-2xl px-4 py-2 text-sm max-w-[80%] whitespace-pre-line ${
+                              isMine ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                            }`}
+                          >
+                            {m.body}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </ScrollArea>
+                <div className="p-3 border-t flex gap-2">
+                  <Input
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        onSend();
+                      }
+                    }}
+                    placeholder="Type a message..."
+                    className="flex-1"
+                  />
+                  <Button onClick={onSend} disabled={reply.isPending} className="bg-gradient-brand text-white border-0">
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
-          <ScrollArea className="flex-1 p-4">
-            <div className="space-y-3 max-w-xl mx-auto">
-              <div className="flex justify-start"><div className="rounded-2xl bg-muted px-4 py-2 text-sm">Hi! Picking up tomorrow at Ercan.</div></div>
-              <div className="flex justify-end"><div className="rounded-2xl bg-primary text-primary-foreground px-4 py-2 text-sm">Welcome! What time does your flight land?</div></div>
-              <div className="flex justify-start"><div className="rounded-2xl bg-muted px-4 py-2 text-sm">{current.last}</div></div>
-            </div>
-          </ScrollArea>
-          <div className="p-3 border-t flex gap-2">
-            <Input placeholder="Type a message…" className="flex-1" />
-            <Button className="bg-gradient-brand text-white border-0"><Send className="h-4 w-4" /></Button>
-          </div>
-        </div>
-      </Card>
+        </Card>
+      )}
     </div>
   );
 }
 
 /* ============== INTEGRATIONS ============== */
 export function DashIntegrations() {
-  const items = [
-    { name: 'Stripe', desc: 'Accept card payments worldwide', connected: true, color: 'bg-[#635bff]/10 text-[#635bff]' },
-    { name: 'WhatsApp Business', desc: 'Send booking confirmations on WhatsApp', connected: true, color: 'bg-success/10 text-success' },
-    { name: 'Google Calendar', desc: 'Sync reservations to your calendar', connected: false, color: 'bg-primary/10 text-primary' },
-    { name: 'Zapier', desc: '5000+ apps via Zapier', connected: false, color: 'bg-warning/10 text-warning' },
-    { name: 'Mailchimp', desc: 'Email marketing for past customers', connected: false, color: 'bg-warning/10 text-warning' },
-    { name: 'Webhook', desc: 'Real-time event push to your system', connected: false, color: 'bg-muted text-foreground' },
-  ];
   return (
     <div className="space-y-5 max-w-5xl">
       <div>
         <h1 className="font-display text-3xl font-extrabold">Integrations</h1>
         <p className="text-muted-foreground mt-1">Connect Renarvo with your tools</p>
       </div>
-      <div className="grid md:grid-cols-2 gap-4">
-        {items.map(i => (
-          <Card key={i.name} className="p-5">
-            <div className="flex items-start gap-3">
-              <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${i.color}`}>
-                <Plug className="h-5 w-5" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-display font-bold">{i.name}</h3>
-                  {i.connected && <Badge variant="outline" className="border-success/40 text-success gap-1"><Check className="h-3 w-3" /> Connected</Badge>}
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">{i.desc}</p>
-              </div>
-            </div>
-            <div className="mt-4 flex gap-2">
-              {i.connected ? (
-                <>
-                  <Button size="sm" variant="outline">Configure</Button>
-                  <Button size="sm" variant="ghost" className="text-destructive">Disconnect</Button>
-                </>
-              ) : (
-                <Button size="sm" className="bg-gradient-brand text-white border-0">Connect</Button>
-              )}
-            </div>
-          </Card>
-        ))}
-      </div>
+      <Card className="p-10 text-center text-muted-foreground">
+        <Plug className="h-10 w-10 mx-auto mb-3 opacity-50" />
+        <p className="text-sm">
+          Integrations are coming soon. Stripe payments, WhatsApp Business, Google Calendar, and webhook
+          subscriptions will be configurable here once enabled by your platform admin.
+        </p>
+      </Card>
     </div>
   );
 }

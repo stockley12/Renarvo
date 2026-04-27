@@ -5,11 +5,14 @@
 ## Mission
 Deploy Renarvo (React frontend + Laravel 11 backend) to Hostinger Business shared hosting at `renarvo.com`, push code to `github.com/stockley12/Renarvo`, set up auto-deploy.
 
-## Status: LIVE
+## Status: LIVE (go-live mode, no demo data)
 - https://renarvo.com → SPA (React) loads
 - https://renarvo.com/api/v1/health → `{"data":{"status":"ok",...}}`
 - https://renarvo.com/api/v1/cities → JSON list
-- DB: SQLite at `~/renarvo/backend/database/renarvo.sqlite` — migrated + seeded with `TestUsersSeeder` + `DemoSeeder`
+- DB: SQLite at `~/renarvo/backend/database/renarvo.sqlite` — migrated, seeded with `LiveSeeder` (only `admin@renarvo.com`).
+- The frontend has zero mock data; all public, customer, company-dashboard, and admin pages consume the real API.
+- Real `/register` page exists for customers; companies sign up via the existing `/register-company` page; `/dashboard` and `/admin` are gated by `ProtectedRoute` against the real session.
+- The `/demo` route, `Demo.tsx`, `DemoPill`, `RoleGuard`, `frontend/src/mock/data.ts`, and `frontend/src/lib/adapters.ts` have been deleted.
 
 ## Server (Hostinger Business)
 - **IP**: see `.tools/server.local` (not committed)
@@ -101,27 +104,34 @@ API key configured. Server identifier `user-hostinger-mcp`. Confirmed `renarvo.c
 - Local OpenSSH key path: `C:\Users\Anon\Desktop\Renarvo\.tools\gha_deploy_ed25519`
 - Server `~/.ssh/authorized_keys` contains GHA key — passwordless login works.
 
-## Test accounts (seeded by `TestUsersSeeder`)
+## Bootstrap account (seeded by `LiveSeeder`)
 | Role            | Email                  | Password         |
 |-----------------|------------------------|------------------|
 | Super admin     | admin@renarvo.com      | `RenarvoTest!1`  |
-| Company owner   | company@renarvo.com    | `RenarvoTest!1`  |
-| Customer        | customer@renarvo.com   | `RenarvoTest!1`  |
 
-Company owner is attached to the auto-approved `Renarvo Test Cars` company (slug `renarvo-test-cars`, city Girne).
+Rotate the password from the admin panel as soon as you log in. There are **no other seeded accounts** — companies and customers must register through the public flow.
 
-To re-seed without dropping data:
+To rebuild a clean DB on the server:
 ```bash
-cd ~/renarvo/backend && php artisan db:seed --class=TestUsersSeeder --force
+cd ~/renarvo/backend && php artisan migrate:fresh --force --seed
 ```
 
-## Open follow-ups (post-launch, optional)
-- Rotate SSH password
-- Migrate from SQLite → MySQL: create DB in hPanel → update `DB_*` in `backend/.env` → `php artisan migrate:fresh --seed`
-- Wire remaining frontend pages from `src/mock/data.ts` to live API hooks (`useCars`, `useReservations`, etc.)
-- Configure SMTP (Hostinger email) — currently mail driver = `log`
-- Configure Stripe / İyzico for real payments
-- Set up Cloudflare in front of Hostinger for free CDN + DDoS
+## Open follow-ups (post-launch)
+- **(blocking real customers)** Configure SMTP (Hostinger email) — currently `MAIL_MAILER=log`, password resets land in `backend/storage/logs/laravel.log`.
+- **(blocking real customers)** Migrate SQLite → MySQL: hPanel → Databases → MySQL Databases → Create DB. Then on server:
+  ```bash
+  cd ~/renarvo/backend
+  cp .env .env.bak
+  # edit .env: DB_CONNECTION=mysql, DB_HOST=localhost, DB_DATABASE=..., DB_USERNAME=..., DB_PASSWORD=...
+  php artisan migrate:status              # dry-run sanity check
+  php artisan migrate:fresh --force --seed
+  curl -fsS https://renarvo.com/api/v1/health
+  ```
+- Rotate SSH password (still leaked-in-history risk on the public repo).
+- Rotate the bootstrap superadmin password from the admin panel.
+- Configure Stripe / İyzico for real payments (still pay-on-pickup today).
+- Add 2FA for company owners and superadmins.
+- Set up Cloudflare in front of Hostinger for CDN + DDoS protection.
 
 ## Recent changes (2026-04-26)
 - Switched front controller from `public_html/api/index.php` symlink → `public_html/_api.php` flat file (fixes Laravel route 404s)
@@ -149,3 +159,16 @@ cd ~/renarvo/backend && php artisan db:seed --class=TestUsersSeeder --force
 - All public smoke endpoints 200: `/`, `/api/v1/health`, `/api/v1/cities`, `/api/v1/cars`, `/og-image.svg`, `/sitemap.xml`, `/robots.txt`.
 - Sensitive paths blocked: `/.env` → 403, `/composer.json` → 403.
 - Security headers present on `/`: HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, CSP `upgrade-insecure-requests`.
+
+## Go-live cutover (2026-04-27)
+- Backend seeders rewritten: `DemoSeeder` and `TestUsersSeeder` deleted; `LiveSeeder` plants only `admin@renarvo.com`.
+- Public pages (Home, Cars, Car detail, Companies, Company detail, Booking, SearchWidget) consume the API directly; no `mock/data.ts` or `adapters.ts` is left.
+- Company dashboard fully wired (Overview, Fleet+image upload, Reservations lifecycle, Calendar, Pricing+Promos, Branches, Staff, Reviews, Payouts, Documents, Messages, Statistics, Settings).
+- Admin panel fully wired (Overview, Companies, Approvals, Catalog, Reservations, Users, Reviews, Risk, Notifications, Audit log, Finance, System health, Settings).
+- New `ProtectedRoute` gate on `/dashboard` (company_owner/company_staff) and `/admin` (superadmin); unauthenticated visits redirect to `/login?next=...`.
+- New customer `/register` page; `/demo` redirects to `/`.
+- API client now correctly preserves `{data, meta}` paginated payloads so dashboards render real totals.
+
+### QA test scripts after go-live
+- `.tools/qa_auth.ps1` — registers an ephemeral customer + company per run (LiveSeeder no longer seeds those), then runs the original 27 auth/flow checks (the one cross-tenant probe now hits a deliberately bogus car id).
+- `.tools/qa_live.ps1` — 10-step end-to-end go-live test: anonymous tour → `register-company` → admin approves → company adds car → public listing/detail show it → customer registers → customer books → confirm/pickup/return lifecycle → customer review → admin sees audit + reservation.

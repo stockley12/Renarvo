@@ -1,19 +1,28 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Shield, Clock, BadgeCheck, RefreshCcw, MapPin } from 'lucide-react';
+import { ArrowRight, Shield, Clock, BadgeCheck, RefreshCcw, MapPin, Loader2 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { SearchWidget } from '@/components/public/SearchWidget';
 import { CarCard } from '@/components/public/CarCard';
-import { cars, categories, cities } from '@/mock/data';
+import { usePublicCars } from '@/lib/hooks/useCars';
+import { useCategories, useCities } from '@/lib/hooks/usePublic';
+import { categoryIcon, categoryName } from '@/lib/categories';
 
 export default function Home() {
   const { t, i18n } = useTranslation();
-  const popular = cars.slice(0, 8);
-  const lang = i18n.language as 'tr' | 'en' | 'ru';
-  const popularCities = cities.slice(0, 6);
+  const lang = (i18n.language?.slice(0, 2) === 'ru' ? 'ru' : i18n.language?.slice(0, 2) === 'en' ? 'en' : 'tr') as 'tr' | 'en' | 'ru';
+
+  const popularQ = usePublicCars({ limit: 8, sort: 'rating_desc' });
+  const popular = popularQ.data?.data ?? [];
+
+  const categoriesQ = useCategories();
+  const categories = categoriesQ.data ?? [];
+
+  const citiesQ = useCities();
+  const popularCities = (citiesQ.data ?? []).slice(0, 6);
 
   const trust = [
     { icon: Shield, key: 'insurance' },
@@ -43,30 +52,31 @@ export default function Home() {
             <p className="text-lg md:text-xl text-white/80 max-w-2xl">{t('home.heroSubtitle')}</p>
           </div>
         </div>
-        {/* Search card overlaps the hero/page seam */}
         <div className="container relative pb-10 md:pb-12">
           <SearchWidget />
         </div>
       </section>
 
       {/* CATEGORIES */}
-      <section className="container py-10">
-        <h2 className="font-display text-2xl md:text-3xl font-bold mb-6">{t('home.categories')}</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {categories.map(cat => {
-            const Icon = (LucideIcons as any)[cat.icon] ?? LucideIcons.Car;
-            return (
-              <Link key={cat.id} to={`/cars?category=${cat.id}`}
-                className="group flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border bg-card hover:border-primary hover:shadow-card transition-all">
-                <span className="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                  <Icon className="h-5 w-5" strokeWidth={1.75} />
-                </span>
-                <span className="text-sm font-semibold">{cat[`name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as 'nameTr']}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
+      {categories.length > 0 && (
+        <section className="container py-10">
+          <h2 className="font-display text-2xl md:text-3xl font-bold mb-6">{t('home.categories')}</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {categories.map((cat) => {
+              const Icon = (LucideIcons as any)[categoryIcon(cat.id)] ?? LucideIcons.Car;
+              return (
+                <Link key={cat.id} to={`/cars?category=${cat.id}`}
+                  className="group flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border bg-card hover:border-primary hover:shadow-card transition-all">
+                  <span className="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <Icon className="h-5 w-5" strokeWidth={1.75} />
+                  </span>
+                  <span className="text-sm font-semibold">{categoryName(cat.id, lang, cat.name)}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* TRUST */}
       <section className="container py-10">
@@ -93,40 +103,55 @@ export default function Home() {
             <Link to="/cars">{t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4" /></Link>
           </Button>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {popular.map(c => <CarCard key={c.id} car={c} />)}
-        </div>
+        {popularQ.isLoading ? (
+          <Card className="p-12 text-center text-muted-foreground flex flex-col items-center gap-2">
+            <Loader2 className="h-5 w-5 animate-spin" /> Loading cars…
+          </Card>
+        ) : popular.length === 0 ? (
+          <Card className="p-12 text-center">
+            <h3 className="font-display font-semibold text-lg mb-2">No cars listed yet</h3>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-5">
+              Renarvo is brand new in your region. Companies are signing up — yours could be the first.
+            </p>
+            <Button asChild className="bg-gradient-brand text-white border-0">
+              <Link to="/register-company">List your fleet</Link>
+            </Button>
+          </Card>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {popular.map((c) => <CarCard key={c.id} car={c} />)}
+          </div>
+        )}
       </section>
 
       {/* POPULAR DESTINATIONS */}
-      <section className="bg-muted/40 py-14 mt-10">
-        <div className="container">
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <h2 className="font-display text-2xl md:text-3xl font-bold">Popular pickup locations</h2>
-              <p className="text-muted-foreground text-sm mt-1">Where most travellers collect their cars</p>
+      {popularCities.length > 0 && (
+        <section className="bg-muted/40 py-14 mt-10">
+          <div className="container">
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <h2 className="font-display text-2xl md:text-3xl font-bold">Popular pickup locations</h2>
+                <p className="text-muted-foreground text-sm mt-1">Where most travellers collect their cars</p>
+              </div>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/cars">{t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4" /></Link>
+              </Button>
             </div>
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/cars">{t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4" /></Link>
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            {popularCities.map(city => {
-              const count = cars.filter(c => c.city === city).length;
-              return (
-                <Link key={city} to={`/cars?city=${city}`}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              {popularCities.map((city) => (
+                <Link key={city} to={`/cars?city=${encodeURIComponent(city)}`}
                   className="group p-5 bg-card rounded-2xl border hover:shadow-card hover:border-primary transition-all">
                   <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div className="font-semibold text-sm">{city}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{count} cars available</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">Browse availability</div>
                 </Link>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* HOW IT WORKS */}
       <section className="container py-16">

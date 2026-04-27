@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Loader2, SlidersHorizontal, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,54 +10,90 @@ import { Slider } from '@/components/ui/slider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { CarCard } from '@/components/public/CarCard';
 import { SearchWidget } from '@/components/public/SearchWidget';
-import { cars as mockCars, brands, categories, type CarCategory, type Transmission, type Car } from '@/mock/data';
 import { usePublicCars } from '@/lib/hooks/useCars';
-import { apiCarToCar, unwrapCars } from '@/lib/adapters';
+import { useCategories } from '@/lib/hooks/usePublic';
+import { categoryName } from '@/lib/categories';
+import type { ApiCar } from '@/lib/api';
 
-function FilterPanel({ state, set }: { state: any; set: any }) {
+type Transmission = 'manual' | 'automatic';
+
+type FilterState = {
+  price: [number, number];
+  cats: string[];
+  brands: string[];
+  trans: Transmission[];
+  instant: boolean;
+};
+
+function FilterPanel({
+  state,
+  set,
+  brands,
+  categories,
+  lang,
+}: {
+  state: FilterState;
+  set: (s: FilterState) => void;
+  brands: string[];
+  categories: { id: string; name: string }[];
+  lang: 'tr' | 'en' | 'ru';
+}) {
   const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <div>
         <h4 className="font-semibold text-sm mb-3">{t('cars.price')} (₺/gün)</h4>
-        <Slider min={300} max={3500} step={100} value={state.price} onValueChange={(v) => set({ ...state, price: v })} />
+        <Slider min={300} max={3500} step={100} value={state.price} onValueChange={(v) => set({ ...state, price: [v[0], v[1]] as [number, number] })} />
         <div className="flex justify-between text-xs text-muted-foreground mt-2">
           <span>₺{state.price[0]}</span><span>₺{state.price[1]}</span>
         </div>
       </div>
-      <div>
-        <h4 className="font-semibold text-sm mb-3">{t('cars.category')}</h4>
-        <div className="space-y-2">
-          {categories.map(c => (
-            <label key={c.id} className="flex items-center gap-2 cursor-pointer text-sm">
-              <Checkbox checked={state.cats.includes(c.id)} onCheckedChange={(v) => {
-                set({ ...state, cats: v ? [...state.cats, c.id] : state.cats.filter((x: string) => x !== c.id) });
-              }} />
-              <span>{c.nameTr}</span>
-            </label>
-          ))}
+      {categories.length > 0 && (
+        <div>
+          <h4 className="font-semibold text-sm mb-3">{t('cars.category')}</h4>
+          <div className="space-y-2">
+            {categories.map((c) => (
+              <label key={c.id} className="flex items-center gap-2 cursor-pointer text-sm">
+                <Checkbox
+                  checked={state.cats.includes(c.id)}
+                  onCheckedChange={(v) =>
+                    set({ ...state, cats: v ? [...state.cats, c.id] : state.cats.filter((x) => x !== c.id) })
+                  }
+                />
+                <span>{categoryName(c.id, lang, c.name)}</span>
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
-      <div>
-        <h4 className="font-semibold text-sm mb-3">{t('cars.brand')}</h4>
-        <div className="space-y-2 max-h-48 overflow-auto">
-          {brands.map(b => (
-            <label key={b} className="flex items-center gap-2 cursor-pointer text-sm">
-              <Checkbox checked={state.brands.includes(b)} onCheckedChange={(v) => {
-                set({ ...state, brands: v ? [...state.brands, b] : state.brands.filter((x: string) => x !== b) });
-              }} />
-              <span>{b}</span>
-            </label>
-          ))}
+      )}
+      {brands.length > 0 && (
+        <div>
+          <h4 className="font-semibold text-sm mb-3">{t('cars.brand')}</h4>
+          <div className="space-y-2 max-h-48 overflow-auto">
+            {brands.map((b) => (
+              <label key={b} className="flex items-center gap-2 cursor-pointer text-sm">
+                <Checkbox
+                  checked={state.brands.includes(b)}
+                  onCheckedChange={(v) =>
+                    set({ ...state, brands: v ? [...state.brands, b] : state.brands.filter((x) => x !== b) })
+                  }
+                />
+                <span>{b}</span>
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
       <div>
         <h4 className="font-semibold text-sm mb-3">{t('cars.transmission')}</h4>
-        {(['automatic', 'manual'] as Transmission[]).map(tr => (
+        {(['automatic', 'manual'] as Transmission[]).map((tr) => (
           <label key={tr} className="flex items-center gap-2 cursor-pointer text-sm py-1">
-            <Checkbox checked={state.trans.includes(tr)} onCheckedChange={(v) => {
-              set({ ...state, trans: v ? [...state.trans, tr] : state.trans.filter((x: string) => x !== tr) });
-            }} />
+            <Checkbox
+              checked={state.trans.includes(tr)}
+              onCheckedChange={(v) =>
+                set({ ...state, trans: v ? [...state.trans, tr] : state.trans.filter((x) => x !== tr) })
+              }
+            />
             <span className="capitalize">{tr}</span>
           </label>
         ))}
@@ -74,12 +110,13 @@ function FilterPanel({ state, set }: { state: any; set: any }) {
 }
 
 export default function Cars() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [params] = useSearchParams();
   const cityFilter = params.get('city');
-  const catFilter = params.get('category') as CarCategory | null;
+  const catFilter = params.get('category');
+  const lang = (i18n.language?.slice(0, 2) === 'ru' ? 'ru' : i18n.language?.slice(0, 2) === 'en' ? 'en' : 'tr') as 'tr' | 'en' | 'ru';
 
-  const [state, setState] = useState({
+  const [state, setState] = useState<FilterState>({
     price: [300, 3500],
     cats: catFilter ? [catFilter] : [],
     brands: [] as string[],
@@ -89,24 +126,32 @@ export default function Cars() {
   const [sort, setSort] = useState<'price-asc' | 'price-desc' | 'rating' | 'newest'>('rating');
 
   const apiQuery = usePublicCars({ city: cityFilter ?? undefined, limit: 60 });
-  const cars: Car[] = useMemo(() => {
-    const apiList = unwrapCars(apiQuery.data).map(apiCarToCar);
-    return apiList.length > 0 ? apiList : mockCars;
-  }, [apiQuery.data]);
-  const usingDemo = !apiQuery.isLoading && unwrapCars(apiQuery.data).length === 0;
+  const cars: ApiCar[] = apiQuery.data?.data ?? [];
+  const total = apiQuery.data?.meta?.total ?? cars.length;
+
+  const categoriesQ = useCategories();
+  const categories = categoriesQ.data ?? [];
+
+  const brands = useMemo(() => {
+    const set = new Set<string>();
+    cars.forEach((c) => set.add(c.brand));
+    return Array.from(set).sort();
+  }, [cars]);
 
   const filtered = useMemo(() => {
-    let r = cars.filter(c =>
-      c.pricePerDay >= state.price[0] && c.pricePerDay <= state.price[1] &&
-      (state.cats.length === 0 || state.cats.includes(c.category)) &&
-      (state.brands.length === 0 || state.brands.includes(c.brand)) &&
-      (state.trans.length === 0 || state.trans.includes(c.transmission)) &&
-      (!state.instant || c.instantBook) &&
-      (!cityFilter || c.city === cityFilter)
+    let r = cars.filter(
+      (c) =>
+        c.price_per_day >= state.price[0] &&
+        c.price_per_day <= state.price[1] &&
+        (state.cats.length === 0 || state.cats.includes(c.category)) &&
+        (state.brands.length === 0 || state.brands.includes(c.brand)) &&
+        (state.trans.length === 0 || state.trans.includes(c.transmission)) &&
+        (!state.instant || c.instant_book) &&
+        (!cityFilter || c.city === cityFilter)
     );
-    if (sort === 'price-asc') r = [...r].sort((a, b) => a.pricePerDay - b.pricePerDay);
-    if (sort === 'price-desc') r = [...r].sort((a, b) => b.pricePerDay - a.pricePerDay);
-    if (sort === 'rating') r = [...r].sort((a, b) => b.rating - a.rating);
+    if (sort === 'price-asc') r = [...r].sort((a, b) => a.price_per_day - b.price_per_day);
+    if (sort === 'price-desc') r = [...r].sort((a, b) => b.price_per_day - a.price_per_day);
+    if (sort === 'rating') r = [...r].sort((a, b) => b.rating_avg - a.rating_avg);
     if (sort === 'newest') r = [...r].sort((a, b) => b.year - a.year);
     return r;
   }, [cars, state, sort, cityFilter]);
@@ -120,7 +165,9 @@ export default function Cars() {
       </div>
       <div className="container py-8 grid lg:grid-cols-[280px_1fr] gap-6">
         <aside className="hidden lg:block">
-          <Card className="p-5 sticky top-20"><FilterPanel state={state} set={setState} /></Card>
+          <Card className="p-5 sticky top-20">
+            <FilterPanel state={state} set={setState} brands={brands} categories={categories} lang={lang} />
+          </Card>
         </aside>
         <div>
           <div className="flex items-center justify-between mb-5">
@@ -136,10 +183,16 @@ export default function Cars() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-80 overflow-auto">
-                  <div className="mt-6"><FilterPanel state={state} set={setState} /></div>
+                  <div className="mt-6">
+                    <FilterPanel state={state} set={setState} brands={brands} categories={categories} lang={lang} />
+                  </div>
                 </SheetContent>
               </Sheet>
-              <select value={sort} onChange={(e) => setSort(e.target.value as any)} className="h-9 rounded-lg border bg-background px-3 text-sm">
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as typeof sort)}
+                className="h-9 rounded-lg border bg-background px-3 text-sm"
+              >
                 <option value="rating">Top rated</option>
                 <option value="price-asc">Price: low to high</option>
                 <option value="price-desc">Price: high to low</option>
@@ -152,17 +205,22 @@ export default function Cars() {
               <Loader2 className="h-5 w-5 animate-spin" />
               Loading cars…
             </Card>
+          ) : total === 0 ? (
+            <Card className="p-16 text-center">
+              <h2 className="font-display font-bold text-xl mb-2">No cars available yet</h2>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto mb-5">
+                Renarvo just opened in {cityFilter ?? 'North Cyprus'}. Companies are getting onboarded — be the first to offer a fleet.
+              </p>
+              <Button asChild className="bg-gradient-brand text-white border-0">
+                <Link to="/register-company">Register your company</Link>
+              </Button>
+            </Card>
           ) : filtered.length === 0 ? (
             <Card className="p-16 text-center text-muted-foreground">{t('cars.noResults')}</Card>
           ) : (
-            <>
-              {usingDemo && (
-                <p className="text-xs text-muted-foreground mb-3">Showing demo inventory while live cars sync.</p>
-              )}
-              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                {filtered.map(c => <CarCard key={c.id} car={c} />)}
-              </div>
-            </>
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              {filtered.map((c) => <CarCard key={c.id} car={c} />)}
+            </div>
           )}
         </div>
       </div>
