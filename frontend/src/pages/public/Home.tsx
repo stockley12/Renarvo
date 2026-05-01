@@ -31,12 +31,11 @@ export default function Home() {
     { icon: BadgeCheck, key: 'verified' },
   ];
 
-  const faqs = [
-    { q: 'Do I need an international driving license?', a: 'No. A valid licence from your home country is accepted in North Cyprus for stays under 90 days.' },
-    { q: 'Can I be picked up at Ercan Airport?', a: 'Yes. Most companies offer free pickup at Ercan. Larnaca pickup is usually available with a transfer fee.' },
-    { q: 'Can I cancel for free?', a: 'Most bookings can be cancelled free of charge up to 48 hours before pickup.' },
-    { q: 'What documents do I bring on pickup day?', a: 'Your passport, your driving licence, and a credit card in the driver\'s name for the deposit.' },
-    { q: 'Is insurance included in the price?', a: 'Basic third-party insurance is always included. Full coverage (CDW + theft, no excess) is available as an extra at checkout.' },
+  const faqKeys = ['license', 'ercan', 'cancel', 'documents', 'insurance'] as const;
+  const steps = [
+    { titleKey: 'home.step1Title', descKey: 'home.step1Desc' },
+    { titleKey: 'home.step2Title', descKey: 'home.step2Desc' },
+    { titleKey: 'home.step3Title', descKey: 'home.step3Desc' },
   ];
 
   return (
@@ -105,16 +104,16 @@ export default function Home() {
         </div>
         {popularQ.isLoading ? (
           <Card className="p-12 text-center text-muted-foreground flex flex-col items-center gap-2">
-            <Loader2 className="h-5 w-5 animate-spin" /> Loading cars…
+            <Loader2 className="h-5 w-5 animate-spin" /> {t('common.loadingCars')}
           </Card>
         ) : popular.length === 0 ? (
           <Card className="p-12 text-center">
-            <h3 className="font-display font-semibold text-lg mb-2">No cars listed yet</h3>
+            <h3 className="font-display font-semibold text-lg mb-2">{t('home.noCarsTitle')}</h3>
             <p className="text-sm text-muted-foreground max-w-md mx-auto mb-5">
-              Renarvo is brand new in your region. Companies are signing up — yours could be the first.
+              {t('home.noCarsDesc')}
             </p>
             <Button asChild className="bg-gradient-brand text-white border-0">
-              <Link to="/register-company">List your fleet</Link>
+              <Link to="/register-company">{t('home.listFleet')}</Link>
             </Button>
           </Card>
         ) : (
@@ -130,8 +129,8 @@ export default function Home() {
           <div className="container">
             <div className="flex items-end justify-between mb-6">
               <div>
-                <h2 className="font-display text-2xl md:text-3xl font-bold">Popular pickup locations</h2>
-                <p className="text-muted-foreground text-sm mt-1">Where most travellers collect their cars</p>
+                <h2 className="font-display text-2xl md:text-3xl font-bold">{t('home.popularPickupTitle')}</h2>
+                <p className="text-muted-foreground text-sm mt-1">{t('home.popularPickupSubtitle')}</p>
               </div>
               <Button asChild variant="ghost" size="sm">
                 <Link to="/cars">{t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4" /></Link>
@@ -145,7 +144,7 @@ export default function Home() {
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div className="font-semibold text-sm">{city}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">Browse availability</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{t('home.browseAvailability')}</div>
                 </Link>
               ))}
             </div>
@@ -157,17 +156,13 @@ export default function Home() {
       <section className="container py-16">
         <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-10">{t('home.howItWorksTitle')}</h2>
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {[
-            { step: 'Search', desc: 'Tell us where you land — Ercan, Larnaca or anywhere on the island — and your dates.' },
-            { step: 'Book', desc: 'Compare local companies side-by-side and book in under a minute. No hidden fees.' },
-            { step: 'Drive', desc: 'Meet the company at the agreed point, do a quick walk-around, and you\'re off.' },
-          ].map(({ step, desc }, i) => (
-            <div key={step} className="text-center p-6">
+          {steps.map((s, i) => (
+            <div key={s.titleKey} className="text-center p-6">
               <div className="h-14 w-14 rounded-2xl bg-gradient-brand text-white font-display font-bold text-2xl flex items-center justify-center mx-auto mb-4 shadow-elevated">
                 {i + 1}
               </div>
-              <h3 className="font-display font-bold text-xl mb-2">{step}</h3>
-              <p className="text-sm text-muted-foreground">{desc}</p>
+              <h3 className="font-display font-bold text-xl mb-2">{t(s.titleKey)}</h3>
+              <p className="text-sm text-muted-foreground">{t(s.descKey)}</p>
             </div>
           ))}
         </div>
@@ -178,10 +173,10 @@ export default function Home() {
         <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-8">{t('home.faq')}</h2>
         <div className="max-w-2xl mx-auto">
           <Accordion type="single" collapsible>
-            {faqs.map((f, i) => (
-              <AccordionItem key={i} value={`f${i}`}>
-                <AccordionTrigger className="text-left">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{f.a}</AccordionContent>
+            {faqKeys.map((k) => (
+              <AccordionItem key={k} value={k}>
+                <AccordionTrigger className="text-left">{t(`home.faqs.${k}.q`)}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">{t(`home.faqs.${k}.a`)}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>

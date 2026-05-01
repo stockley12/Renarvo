@@ -8,9 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import {
-  Plus, MapPin, Star, FileText, AlertCircle, Clock, Loader2, Trash2, Search,
+  Plus, MapPin, Star, FileText, AlertCircle, Loader2, Trash2, Search, Shield, Sparkles,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Switch } from '@/components/ui/switch';
 import { useApp } from '@/store/app';
 import { formatPrice, formatDate } from '@/lib/format';
 import {
@@ -29,6 +30,16 @@ import {
   uploadCompanyDocument,
   useCompanySettings,
   useUpdateCompanySettings,
+  useCompanyExtras,
+  useCreateCompanyExtra,
+  useUpdateCompanyExtra,
+  useDeleteCompanyExtra,
+  useInsurancePackages,
+  useCreateInsurancePackage,
+  useUpdateInsurancePackage,
+  useDeleteInsurancePackage,
+  type CompanyExtra,
+  type InsurancePackage,
 } from '@/lib/hooks/useCompany';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -694,15 +705,43 @@ export function DashSettings() {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [languages, setLanguages] = useState('');
+
+  // Rental policy
+  const [minRentalDays, setMinRentalDays] = useState(1);
+  const [kmPolicy, setKmPolicy] = useState<'unlimited' | 'per_day_limit' | 'total_limit'>('unlimited');
+  const [kmLimit, setKmLimit] = useState<number | ''>('');
+  const [minAge, setMinAge] = useState(21);
+  const [studentFriendly, setStudentFriendly] = useState(false);
+  const [roadside247, setRoadside247] = useState(false);
+
+  // Public contact / social
+  const [emailPublic, setEmailPublic] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [instagram, setInstagram] = useState('');
+  const [facebook, setFacebook] = useState('');
+  const [website, setWebsite] = useState('');
+
   const [primed, setPrimed] = useState(false);
 
   if (!primed && settings.data) {
-    setName(settings.data.name ?? '');
-    setDescription(settings.data.description ?? '');
-    setCity(settings.data.city ?? '');
-    setLanguages((settings.data as unknown as { languages_spoken?: string }).languages_spoken ?? '');
-    setPhone((settings.data as unknown as { phone?: string }).phone ?? '');
-    setAddress((settings.data as unknown as { address?: string }).address ?? '');
+    const s = settings.data;
+    setName(s.name ?? '');
+    setDescription(s.description ?? '');
+    setCity(s.city ?? '');
+    setLanguages(s.languages_spoken ?? '');
+    setPhone(s.phone ?? '');
+    setAddress(s.address ?? '');
+    setMinRentalDays(s.min_rental_days ?? 1);
+    setKmPolicy(s.kilometre_policy ?? 'unlimited');
+    setKmLimit(s.kilometre_limit_per_day_default ?? '');
+    setMinAge(s.min_driver_age_default ?? 21);
+    setStudentFriendly(!!s.student_friendly);
+    setRoadside247(!!s.roadside_24_7);
+    setEmailPublic(s.email_public ?? '');
+    setWhatsapp(s.whatsapp ?? '');
+    setInstagram(s.instagram ?? '');
+    setFacebook(s.facebook ?? '');
+    setWebsite(s.website ?? '');
     setPrimed(true);
   }
 
@@ -716,6 +755,17 @@ export function DashSettings() {
         address,
         city,
         languages_spoken: languages,
+        min_rental_days: Math.max(1, Math.min(30, Number(minRentalDays) || 1)),
+        kilometre_policy: kmPolicy,
+        kilometre_limit_per_day_default: kmPolicy === 'unlimited' ? null : (Number(kmLimit) || null),
+        min_driver_age_default: Math.max(18, Math.min(99, Number(minAge) || 21)),
+        student_friendly: studentFriendly,
+        roadside_24_7: roadside247,
+        email_public: emailPublic || undefined,
+        whatsapp: whatsapp || undefined,
+        instagram: instagram || undefined,
+        facebook: facebook || undefined,
+        website: website || undefined,
       });
       toast.success('Settings saved');
     } catch (err) {
@@ -734,7 +784,7 @@ export function DashSettings() {
   return (
     <div className="space-y-5 max-w-3xl">
       <h1 className="font-display text-3xl font-extrabold">Settings</h1>
-      <form onSubmit={onSave}>
+      <form onSubmit={onSave} className="space-y-5">
         <Card className="p-6 space-y-4">
           <h3 className="font-display font-bold">Company profile</h3>
           <div>
@@ -751,7 +801,7 @@ export function DashSettings() {
               <Input value={city} onChange={(e) => setCity(e.target.value)} />
             </div>
             <div>
-              <Label>Phone</Label>
+              <Label>Phone (internal)</Label>
               <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
           </div>
@@ -764,11 +814,407 @@ export function DashSettings() {
             <Input value={languages} onChange={(e) => setLanguages(e.target.value)} placeholder="Türkçe, English, Русский" />
           </div>
         </Card>
-        <Separator className="my-5" />
+
+        <Card className="p-6 space-y-4">
+          <h3 className="font-display font-bold">Rental policy</h3>
+          <div className="grid sm:grid-cols-3 gap-3">
+            <div>
+              <Label>Minimum rental days</Label>
+              <Input type="number" min={1} max={30} value={minRentalDays} onChange={(e) => setMinRentalDays(Number(e.target.value) || 1)} />
+            </div>
+            <div>
+              <Label>Minimum driver age</Label>
+              <Input type="number" min={18} max={99} value={minAge} onChange={(e) => setMinAge(Number(e.target.value) || 21)} />
+            </div>
+            <div>
+              <Label>Kilometre policy</Label>
+              <select
+                value={kmPolicy}
+                onChange={(e) => setKmPolicy(e.target.value as typeof kmPolicy)}
+                className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
+              >
+                <option value="unlimited">Unlimited</option>
+                <option value="per_day_limit">Per-day limit</option>
+                <option value="total_limit">Total limit</option>
+              </select>
+            </div>
+          </div>
+          {kmPolicy !== 'unlimited' && (
+            <div>
+              <Label>Kilometre limit per day (km)</Label>
+              <Input type="number" min={50} max={5000} value={kmLimit} onChange={(e) => setKmLimit(e.target.value === '' ? '' : Number(e.target.value))} placeholder="200" />
+            </div>
+          )}
+          <div className="flex items-center justify-between border-t pt-3">
+            <div>
+              <div className="font-semibold text-sm">Student-friendly</div>
+              <div className="text-xs text-muted-foreground">Allow drivers younger than the standard minimum if they're enrolled students.</div>
+            </div>
+            <Switch checked={studentFriendly} onCheckedChange={setStudentFriendly} />
+          </div>
+          <div className="flex items-center justify-between border-t pt-3">
+            <div>
+              <div className="font-semibold text-sm">24/7 roadside assistance</div>
+              <div className="text-xs text-muted-foreground">Show a 24/7 support badge on every car.</div>
+            </div>
+            <Switch checked={roadside247} onCheckedChange={setRoadside247} />
+          </div>
+        </Card>
+
+        <Card className="p-6 space-y-4">
+          <h3 className="font-display font-bold">Public contact & social</h3>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <Label>Public email</Label>
+              <Input type="email" value={emailPublic} onChange={(e) => setEmailPublic(e.target.value)} placeholder="info@yourcompany.com" />
+            </div>
+            <div>
+              <Label>WhatsApp</Label>
+              <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+90 533 ..." />
+            </div>
+            <div>
+              <Label>Instagram</Label>
+              <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@yourcompany" />
+            </div>
+            <div>
+              <Label>Facebook</Label>
+              <Input value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="facebook.com/yourcompany" />
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Website</Label>
+              <Input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://yourcompany.com" />
+            </div>
+          </div>
+        </Card>
+
+        <Separator className="my-2" />
         <Button type="submit" disabled={update.isPending} className="bg-gradient-brand text-white border-0">
           {update.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save changes
         </Button>
       </form>
+    </div>
+  );
+}
+
+/* ============== EXTRAS CATALOG ============== */
+const EXTRA_CODE_OPTIONS: { code: string; label: string }[] = [
+  { code: 'gps', label: 'GPS' },
+  { code: 'child_seat', label: 'Child seat' },
+  { code: 'baby_seat', label: 'Baby seat' },
+  { code: 'additional_driver', label: 'Additional driver' },
+  { code: 'wifi', label: 'Mobile WiFi' },
+  { code: 'border_crossing', label: 'Border crossing' },
+  { code: 'custom', label: 'Custom' },
+];
+
+export function DashExtras() {
+  const extras = useCompanyExtras();
+  const create = useCreateCompanyExtra();
+  const update = useUpdateCompanyExtra();
+  const remove = useDeleteCompanyExtra();
+
+  const items = extras.data ?? [];
+
+  function blank(): Partial<CompanyExtra> {
+    return {
+      code: 'gps',
+      name: 'GPS Navigation',
+      price_per_day: 0,
+      price_per_rental: 0,
+      charge_mode: 'per_day',
+      is_active: true,
+      sort_order: 0,
+    };
+  }
+
+  const [draft, setDraft] = useState<Partial<CompanyExtra> | null>(null);
+
+  async function save() {
+    if (!draft) return;
+    try {
+      if (draft.id) {
+        await update.mutateAsync({ id: draft.id, input: draft });
+        toast.success('Extra updated');
+      } else {
+        await create.mutateAsync(draft);
+        toast.success('Extra added');
+      }
+      setDraft(null);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not save');
+    }
+  }
+
+  async function onDelete(id: number) {
+    if (!window.confirm('Delete this extra?')) return;
+    try {
+      await remove.mutateAsync(id);
+      toast.success('Deleted');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not delete');
+    }
+  }
+
+  return (
+    <div className="space-y-5 max-w-5xl">
+      <div className="flex items-center justify-between">
+        <h1 className="font-display text-3xl font-extrabold">Extras catalog</h1>
+        <Button className="bg-gradient-brand text-white border-0" onClick={() => setDraft(blank())}>
+          <Plus className="h-4 w-4 mr-1.5" /> Add extra
+        </Button>
+      </div>
+
+      {draft && (
+        <Card className="p-5">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <Label>Code</Label>
+              <select
+                value={draft.code ?? 'custom'}
+                onChange={(e) => setDraft({ ...draft, code: e.target.value })}
+                className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
+              >
+                {EXTRA_CODE_OPTIONS.map((o) => (
+                  <option key={o.code} value={o.code}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label>Display name</Label>
+              <Input value={draft.name ?? ''} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+            </div>
+            <div>
+              <Label>Charge mode</Label>
+              <select
+                value={draft.charge_mode ?? 'per_day'}
+                onChange={(e) => setDraft({ ...draft, charge_mode: e.target.value as CompanyExtra['charge_mode'] })}
+                className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
+              >
+                <option value="per_day">Per day</option>
+                <option value="per_rental">Per rental</option>
+                <option value="free">Free</option>
+              </select>
+            </div>
+            <div>
+              <Label>Price per day (TRY)</Label>
+              <Input type="number" min={0} value={draft.price_per_day ?? 0} onChange={(e) => setDraft({ ...draft, price_per_day: Number(e.target.value) })} disabled={draft.charge_mode === 'free' || draft.charge_mode === 'per_rental'} />
+            </div>
+            <div>
+              <Label>Price per rental (TRY)</Label>
+              <Input type="number" min={0} value={draft.price_per_rental ?? 0} onChange={(e) => setDraft({ ...draft, price_per_rental: Number(e.target.value) })} disabled={draft.charge_mode !== 'per_rental'} />
+            </div>
+            <div className="sm:col-span-2 flex items-center gap-3">
+              <Switch checked={!!draft.is_active} onCheckedChange={(v) => setDraft({ ...draft, is_active: v })} id="extra-active" />
+              <Label htmlFor="extra-active">Active (shown to customers)</Label>
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Description (optional)</Label>
+              <Textarea rows={2} value={draft.description ?? ''} onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
+            </div>
+          </div>
+          <div className="flex gap-2 mt-4">
+            <Button onClick={save} disabled={create.isPending || update.isPending} className="bg-gradient-brand text-white border-0">
+              {(create.isPending || update.isPending) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save
+            </Button>
+            <Button variant="outline" onClick={() => setDraft(null)}>Cancel</Button>
+          </div>
+        </Card>
+      )}
+
+      {extras.isLoading && (
+        <div className="flex items-center justify-center py-12 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+        </div>
+      )}
+      {!extras.isLoading && items.length === 0 && (
+        <Card className="p-10 text-center text-muted-foreground">
+          <Sparkles className="h-10 w-10 mx-auto mb-2 opacity-50" />
+          No extras yet. Add at least GPS, Child seat and Additional driver so customers can pick them at booking.
+        </Card>
+      )}
+
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {items.map((e) => (
+          <Card key={e.id} className="p-5">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <h3 className="font-display font-bold">{e.name}</h3>
+                <div className="text-xs text-muted-foreground">{e.code}</div>
+              </div>
+              <Badge variant={e.is_active ? 'secondary' : 'outline'}>{e.is_active ? 'Active' : 'Hidden'}</Badge>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {e.charge_mode === 'free' && 'Free'}
+              {e.charge_mode === 'per_day' && `₺${e.price_per_day} / day`}
+              {e.charge_mode === 'per_rental' && `₺${e.price_per_rental} / rental`}
+            </div>
+            {e.description && <p className="text-xs text-muted-foreground mt-2">{e.description}</p>}
+            <div className="flex gap-2 mt-3">
+              <Button variant="outline" size="sm" onClick={() => setDraft(e)}>Edit</Button>
+              <Button variant="ghost" size="icon" onClick={() => onDelete(e.id)}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============== INSURANCE PACKAGES ============== */
+const TIER_LABELS: Record<InsurancePackage['tier'], string> = {
+  mini: 'Mini Güvence (Mini)',
+  mid: 'Orta Güvence (Mid)',
+  full: 'Full Güvence (Full)',
+};
+
+export function DashInsurance() {
+  const packages = useInsurancePackages();
+  const create = useCreateInsurancePackage();
+  const update = useUpdateInsurancePackage();
+  const remove = useDeleteInsurancePackage();
+
+  const items = packages.data ?? [];
+
+  const [draft, setDraft] = useState<Partial<InsurancePackage> | null>(null);
+
+  function newPackage(): Partial<InsurancePackage> {
+    return { tier: 'mini', name: 'Mini Güvence', price_per_day: 0, is_active: true, included_features: [] };
+  }
+
+  async function save() {
+    if (!draft) return;
+    try {
+      if (draft.id) {
+        await update.mutateAsync({ id: draft.id, input: draft });
+        toast.success('Package updated');
+      } else {
+        await create.mutateAsync(draft);
+        toast.success('Package added');
+      }
+      setDraft(null);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not save');
+    }
+  }
+
+  async function onDelete(id: number) {
+    if (!window.confirm('Delete this package?')) return;
+    try {
+      await remove.mutateAsync(id);
+      toast.success('Deleted');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not delete');
+    }
+  }
+
+  return (
+    <div className="space-y-5 max-w-5xl">
+      <div className="flex items-center justify-between">
+        <h1 className="font-display text-3xl font-extrabold">Insurance packages</h1>
+        <Button className="bg-gradient-brand text-white border-0" onClick={() => setDraft(newPackage())}>
+          <Plus className="h-4 w-4 mr-1.5" /> Add package
+        </Button>
+      </div>
+
+      {draft && (
+        <Card className="p-5">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <Label>Tier</Label>
+              <select
+                value={draft.tier ?? 'mini'}
+                onChange={(e) => setDraft({ ...draft, tier: e.target.value as InsurancePackage['tier'] })}
+                className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
+                disabled={!!draft.id}
+              >
+                <option value="mini">Mini Güvence</option>
+                <option value="mid">Orta Güvence</option>
+                <option value="full">Full Güvence</option>
+              </select>
+            </div>
+            <div>
+              <Label>Display name</Label>
+              <Input value={draft.name ?? ''} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+            </div>
+            <div>
+              <Label>Price per day (TRY)</Label>
+              <Input type="number" min={0} value={draft.price_per_day ?? 0} onChange={(e) => setDraft({ ...draft, price_per_day: Number(e.target.value) })} />
+            </div>
+            <div>
+              <Label>Deductible amount (TRY)</Label>
+              <Input type="number" min={0} value={draft.deductible_amount ?? ''} onChange={(e) => setDraft({ ...draft, deductible_amount: e.target.value === '' ? null : Number(e.target.value) })} placeholder="e.g. 5000" />
+            </div>
+            <div>
+              <Label>Coverage amount (TRY)</Label>
+              <Input type="number" min={0} value={draft.coverage_amount ?? ''} onChange={(e) => setDraft({ ...draft, coverage_amount: e.target.value === '' ? null : Number(e.target.value) })} placeholder="e.g. 200000" />
+            </div>
+            <div className="flex items-center gap-3">
+              <Switch checked={!!draft.is_active} onCheckedChange={(v) => setDraft({ ...draft, is_active: v })} id="ins-active" />
+              <Label htmlFor="ins-active">Active</Label>
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Description</Label>
+              <Textarea rows={3} value={draft.description ?? ''} onChange={(e) => setDraft({ ...draft, description: e.target.value })} placeholder="What is and isn't covered…" />
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Included features (one per line)</Label>
+              <Textarea rows={3} value={(draft.included_features ?? []).join('\n')} onChange={(e) => setDraft({ ...draft, included_features: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean) })} placeholder={'Theft\nThird party liability\nGlass damage'} />
+            </div>
+          </div>
+          <div className="flex gap-2 mt-4">
+            <Button onClick={save} disabled={create.isPending || update.isPending} className="bg-gradient-brand text-white border-0">
+              {(create.isPending || update.isPending) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save
+            </Button>
+            <Button variant="outline" onClick={() => setDraft(null)}>Cancel</Button>
+          </div>
+        </Card>
+      )}
+
+      {packages.isLoading && (
+        <div className="flex items-center justify-center py-12 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+        </div>
+      )}
+      {!packages.isLoading && items.length === 0 && (
+        <Card className="p-10 text-center text-muted-foreground">
+          <Shield className="h-10 w-10 mx-auto mb-2 opacity-50" />
+          No insurance packages yet. Add Mini, Orta and Full so customers can choose at booking.
+        </Card>
+      )}
+
+      <div className="grid sm:grid-cols-3 gap-4">
+        {items.map((p) => (
+          <Card key={p.id} className="p-5">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <h3 className="font-display font-bold">{p.name}</h3>
+                <div className="text-xs text-muted-foreground">{TIER_LABELS[p.tier]}</div>
+              </div>
+              <Badge variant={p.is_active ? 'secondary' : 'outline'}>{p.is_active ? 'Active' : 'Hidden'}</Badge>
+            </div>
+            <div className="text-sm text-muted-foreground">₺{p.price_per_day} / day</div>
+            {p.deductible_amount !== null && p.deductible_amount !== undefined && (
+              <div className="text-xs text-muted-foreground mt-1">Deductible: ₺{p.deductible_amount}</div>
+            )}
+            {p.coverage_amount !== null && p.coverage_amount !== undefined && (
+              <div className="text-xs text-muted-foreground">Coverage: ₺{p.coverage_amount}</div>
+            )}
+            {p.included_features.length > 0 && (
+              <ul className="text-xs text-muted-foreground mt-2 list-disc list-inside space-y-0.5">
+                {p.included_features.slice(0, 4).map((f) => <li key={f}>{f}</li>)}
+              </ul>
+            )}
+            <div className="flex gap-2 mt-3">
+              <Button variant="outline" size="sm" onClick={() => setDraft(p)}>Edit</Button>
+              <Button variant="ghost" size="icon" onClick={() => onDelete(p.id)}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

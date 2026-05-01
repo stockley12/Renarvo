@@ -24,7 +24,7 @@ class CompanyReservationController extends Controller
         $companyId = $request->attributes->get('company_id');
         TenantContext::set($companyId);
 
-        $query = Reservation::query()->with(['car', 'customer']);
+        $query = Reservation::query()->with(['car', 'customer', 'currentPayment']);
 
         if ($status = $request->query('status')) {
             $query->where('status', $status);
@@ -64,7 +64,7 @@ class CompanyReservationController extends Controller
         TenantContext::set($companyId);
 
         $reservation = Reservation::query()
-            ->with(['car', 'customer', 'extras'])
+            ->with(['car', 'customer', 'extras', 'currentPayment', 'insurancePackage'])
             ->findOrFail($id);
 
         return response()->json(['data' => (new ReservationResource($reservation))->resolve()]);

@@ -2,7 +2,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   Shield, LayoutDashboard, Building2, ClipboardCheck, Car, CalendarRange,
   Users, Star, FileText, BadgeDollarSign, Settings, Search, Bell,
-  ShieldAlert, Activity, FileSearch, Megaphone, Sparkles,
+  ShieldAlert, Activity, FileSearch, Megaphone, Sparkles, CreditCard,
 } from 'lucide-react';
 import { useSession } from '@/store/session';
 import { logout as apiLogout } from '@/lib/api';
@@ -43,6 +43,7 @@ const groups: NavGroup[] = [
       { to: '/admin/approvals', icon: ClipboardCheck, label: 'Approvals', badge: 3 },
       { to: '/admin/catalog', icon: Car, label: 'Catalog' },
       { to: '/admin/reservations', icon: CalendarRange, label: 'Reservations' },
+      { to: '/admin/payments', icon: CreditCard, label: 'Payments' },
     ],
   },
   {

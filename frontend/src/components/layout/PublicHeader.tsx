@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink as RRNavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LogIn, Menu, User as UserIcon } from 'lucide-react';
+import { ChevronDown, LogIn, Menu, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/brand/Logo';
@@ -20,9 +20,22 @@ import { cn } from '@/lib/utils';
 
 const navItems = [
   { to: '/', key: 'nav.home' },
-  { to: '/cars', key: 'nav.cars' },
   { to: '/how-it-works', key: 'nav.howItWorks' },
   { to: '/for-companies', key: 'nav.forCompanies' },
+];
+
+const carCategories: { id: string; key: string }[] = [
+  { id: '', key: 'nav.categories.all' },
+  { id: 'economy', key: 'nav.categories.economy' },
+  { id: 'compact', key: 'nav.categories.compact' },
+  { id: 'comfort', key: 'nav.categories.comfort' },
+  { id: 'prestige', key: 'nav.categories.prestige' },
+  { id: 'premium', key: 'nav.categories.premium' },
+  { id: 'luxury', key: 'nav.categories.luxury' },
+  { id: 'suv', key: 'nav.categories.suv' },
+  { id: 'minivan', key: 'nav.categories.minivan' },
+  { id: 'van', key: 'nav.categories.van' },
+  { id: 'electric', key: 'nav.categories.electric' },
 ];
 
 function initialsOf(name?: string | null) {
@@ -43,7 +56,7 @@ export function PublicHeader() {
   async function handleSignOut() {
     try { await apiLogout(); } catch { /* ignore */ }
     setUser(null);
-    toast.success('Signed out');
+    toast.success(t('auth.signedOut'));
     navigate('/');
   }
 
@@ -59,11 +72,46 @@ export function PublicHeader() {
         <div className="flex items-center gap-8">
           <Link to="/"><Logo /></Link>
           <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
+            <RRNavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                cn(
+                  'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                  isActive ? 'text-primary bg-primary/10' : 'text-foreground/70 hover:text-foreground hover:bg-muted'
+                )
+              }
+            >
+              {t('nav.home')}
+            </RRNavLink>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    'inline-flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    location.pathname === '/cars' || location.pathname.startsWith('/cars?')
+                      ? 'text-primary bg-primary/10'
+                      : 'text-foreground/70 hover:text-foreground hover:bg-muted'
+                  )}
+                >
+                  {t('nav.cars')} <ChevronDown className="h-3.5 w-3.5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {carCategories.map((c) => (
+                  <DropdownMenuItem key={c.key} asChild>
+                    <Link to={c.id ? `/cars?category=${c.id}` : '/cars'}>{t(c.key)}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {navItems.slice(1).map((item) => (
               <RRNavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === '/'}
                 className={({ isActive }) =>
                   cn(
                     'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
@@ -105,13 +153,16 @@ export function PublicHeader() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {dashHref ? (
-                  <DropdownMenuItem asChild><Link to={dashHref}>{role === 'superadmin' ? 'Admin panel' : 'Dashboard'}</Link></DropdownMenuItem>
+                  <DropdownMenuItem asChild><Link to={dashHref}>{role === 'superadmin' ? t('nav.adminPanel') : t('nav.dashboard')}</Link></DropdownMenuItem>
                 ) : (
-                  <DropdownMenuItem asChild><Link to="/cars">Browse cars</Link></DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem asChild><Link to="/me/reservations">{t('nav.myReservations')}</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/cars">{t('nav.browseCars')}</Link></DropdownMenuItem>
+                  </>
                 )}
-                <DropdownMenuItem asChild><Link to="/help">Help</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/help">{t('nav.help')}</Link></DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive" onSelect={handleSignOut}>Sign out</DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive" onSelect={handleSignOut}>{t('nav.signOut')}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
@@ -119,8 +170,8 @@ export function PublicHeader() {
               <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
                 <Link to="/login"><LogIn className="h-4 w-4 mr-1.5" />{t('nav.login')}</Link>
               </Button>
-              <Button asChild size="sm" className="hidden md:inline-flex bg-gradient-brand text-white border-0 hover:opacity-90">
-                <Link to="/register"><UserIcon className="h-4 w-4 mr-1.5" />{t('nav.register', { defaultValue: 'Sign up' })}</Link>
+                <Button asChild size="sm" className="hidden md:inline-flex bg-gradient-brand text-white border-0 hover:opacity-90">
+                <Link to="/register"><UserIcon className="h-4 w-4 mr-1.5" />{t('nav.signUp')}</Link>
               </Button>
             </>
           )}
@@ -129,13 +180,38 @@ export function PublicHeader() {
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Menu"><Menu className="h-5 w-5" /></Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[85vw] max-w-sm">
+            <SheetContent side="right" className="w-[85vw] max-w-sm overflow-y-auto">
               <div className="flex flex-col gap-1 mt-8">
-                {navItems.map((item) => (
+                <RRNavLink
+                  to="/"
+                  end
+                  className={({ isActive }) =>
+                    cn('px-3 py-3 rounded-lg text-sm font-medium', isActive ? 'bg-primary/10 text-primary' : 'hover:bg-muted')
+                  }
+                >
+                  {t('nav.home')}
+                </RRNavLink>
+                <details className="group">
+                  <summary className="cursor-pointer list-none px-3 py-3 rounded-lg text-sm font-medium hover:bg-muted flex items-center justify-between">
+                    <span>{t('nav.cars')}</span>
+                    <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <div className="ml-3 mt-1 mb-2 border-l border-border/60 pl-3 flex flex-col gap-0.5">
+                    {carCategories.map((c) => (
+                      <Link
+                        key={c.key}
+                        to={c.id ? `/cars?category=${c.id}` : '/cars'}
+                        className="px-3 py-2 rounded-lg text-sm text-foreground/80 hover:bg-muted"
+                      >
+                        {t(c.key)}
+                      </Link>
+                    ))}
+                  </div>
+                </details>
+                {navItems.slice(1).map((item) => (
                   <RRNavLink
                     key={item.to}
                     to={item.to}
-                    end={item.to === '/'}
                     className={({ isActive }) =>
                       cn('px-3 py-3 rounded-lg text-sm font-medium', isActive ? 'bg-primary/10 text-primary' : 'hover:bg-muted')
                     }
@@ -158,21 +234,21 @@ export function PublicHeader() {
                     </div>
                     {dashHref && (
                       <Button asChild variant="outline" className="mt-2">
-                        <Link to={dashHref}>{role === 'superadmin' ? 'Admin panel' : 'Dashboard'}</Link>
+                        <Link to={dashHref}>{role === 'superadmin' ? t('nav.adminPanel') : t('nav.dashboard')}</Link>
                       </Button>
                     )}
-                    <Button variant="outline" className="mt-2" onClick={handleSignOut}>Sign out</Button>
+                    <Button variant="outline" className="mt-2" onClick={handleSignOut}>{t('nav.signOut')}</Button>
                   </>
                 ) : (
                   <>
                     <Button asChild className="mt-3 bg-gradient-brand text-white border-0">
-                      <Link to="/register">{t('nav.register', { defaultValue: 'Sign up' })}</Link>
+                      <Link to="/register">{t('nav.signUp')}</Link>
                     </Button>
                     <Button asChild variant="outline" className="mt-2">
                       <Link to="/login">{t('nav.login')}</Link>
                     </Button>
                     <Button asChild variant="ghost" className="mt-2 text-xs">
-                      <Link to="/register-company">List your fleet</Link>
+                      <Link to="/register-company">{t('home.listFleet')}</Link>
                     </Button>
                   </>
                 )}

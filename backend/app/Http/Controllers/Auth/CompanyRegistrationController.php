@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class CompanyRegistrationController extends Controller
@@ -29,6 +30,8 @@ class CompanyRegistrationController extends Controller
             'phone' => ['required', 'string', 'max:32'],
             'tax_number' => ['nullable', 'string', 'max:32'],
             'address' => ['nullable', 'string', 'max:191'],
+            'email_public' => ['nullable', 'email', 'max:191'],
+            'description' => ['nullable', 'string', 'max:1000'],
 
             'owner_name' => ['required', 'string', 'max:191'],
             'owner_email' => ['required', 'email', 'max:191', 'unique:users,email'],
@@ -46,7 +49,7 @@ class CompanyRegistrationController extends Controller
 
             $slug = $this->uniqueSlug($data['company_name']);
 
-            $company = Company::query()->create([
+            $companyAttrs = [
                 'owner_user_id' => $user->id,
                 'slug' => $slug,
                 'name' => $data['company_name'],
@@ -54,9 +57,14 @@ class CompanyRegistrationController extends Controller
                 'phone' => $data['phone'],
                 'tax_number' => $data['tax_number'] ?? null,
                 'address' => $data['address'] ?? null,
+                'description' => $data['description'] ?? null,
                 'status' => Company::STATUS_PENDING,
                 'commission_rate_bps' => (int) config('services.platform.commission_bps'),
-            ]);
+            ];
+            if (! empty($data['email_public']) && Schema::hasColumn('companies', 'email_public')) {
+                $companyAttrs['email_public'] = $data['email_public'];
+            }
+            $company = Company::query()->create($companyAttrs);
 
             return [$user, $company];
         });

@@ -7,9 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 import { CarImage } from '@/components/brand/CarImage';
 import { useApp } from '@/store/app';
-import { formatPrice } from '@/lib/format';
+import { formatPrice, storageUrl } from '@/lib/format';
 import { toast } from 'sonner';
 import {
   useCompanyCars,
@@ -17,6 +18,7 @@ import {
   useUpdateCar,
   useDeleteCar,
   uploadCarImage,
+  useDeleteCarImage,
   type CarPayload,
 } from '@/lib/hooks/useCompany';
 import type { ApiCar } from '@/lib/api';
@@ -48,20 +50,28 @@ const initialPayload: CarPayload = {
   vin: '',
   description: '',
   min_driver_age: 21,
+  min_driver_age_override: null,
+  engine_power_hp: null,
+  engine_cc: null,
+  has_ac: true,
+  kilometre_limit_per_day: null,
   features: [],
 };
 
 interface CarFormProps {
   initial?: Partial<CarPayload>;
   carId?: number;
+  existingImages?: ApiCar['images'];
   onClose: () => void;
 }
 
-function CarForm({ initial, carId, onClose }: CarFormProps) {
+function CarForm({ initial, carId, existingImages, onClose }: CarFormProps) {
   const [payload, setPayload] = useState<CarPayload>({ ...initialPayload, ...initial });
-  const [pendingImage, setPendingImage] = useState<File | null>(null);
+  const [pendingImages, setPendingImages] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
   const create = useCreateCar();
   const update = useUpdateCar();
+  const deleteImage = useDeleteCarImage();
 
   function set<K extends keyof CarPayload>(key: K, value: CarPayload[K]) {
     setPayload((p) => ({ ...p, [key]: value }));
@@ -79,11 +89,19 @@ function CarForm({ initial, carId, onClose }: CarFormProps) {
         ? await update.mutateAsync({ id: carId, input: payload })
         : await create.mutateAsync(payload);
 
-      if (pendingImage) {
-        try {
-          await uploadCarImage(car.id, pendingImage);
-        } catch (err) {
-          toast.error('Car saved, but image upload failed: ' + (err instanceof Error ? err.message : 'unknown error'));
+      if (pendingImages.length > 0) {
+        setUploading(true);
+        let failures = 0;
+        for (const file of pendingImages) {
+          try {
+            await uploadCarImage(car.id, file);
+          } catch {
+            failures++;
+          }
+        }
+        setUploading(false);
+        if (failures > 0) {
+          toast.error(`Car saved, but ${failures} image(s) failed to upload`);
         }
       }
 
@@ -95,7 +113,18 @@ function CarForm({ initial, carId, onClose }: CarFormProps) {
     }
   }
 
-  const submitting = create.isPending || update.isPending;
+  async function onDeleteExistingImage(imageId: number) {
+    if (!carId) return;
+    if (!window.confirm('Remove this image?')) return;
+    try {
+      await deleteImage.mutateAsync({ carId, imageId });
+      toast.success('Image removed');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not remove image');
+    }
+  }
+
+  const submitting = create.isPending || update.isPending || uploading;
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 mt-6">
@@ -129,8 +158,12 @@ function CarForm({ initial, carId, onClose }: CarFormProps) {
           >
             <option value="economy">Economy</option>
             <option value="compact">Compact</option>
-            <option value="suv">SUV</option>
+            <option value="comfort">Comfort</option>
+            <option value="prestige">Prestige</option>
+            <option value="premium">Premium</option>
             <option value="luxury">Luxury</option>
+            <option value="suv">SUV</option>
+            <option value="minivan">Minivan</option>
             <option value="van">Van</option>
             <option value="electric">Electric</option>
           </select>
@@ -197,12 +230,60 @@ function CarForm({ initial, carId, onClose }: CarFormProps) {
           />
         </div>
         <div>
-          <Label>Min driver age</Label>
+          <Label>Min driver age (default)</Label>
           <Input
             type="number"
             value={payload.min_driver_age ?? ''}
             onChange={(e) => set('min_driver_age', e.target.value ? parseInt(e.target.value) : null)}
           />
+        </div>
+        <div>
+          <Label>Min driver age (override)</Label>
+          <Input
+            type="number"
+            value={payload.min_driver_age_override ?? ''}
+            placeholder="Use company default"
+            onChange={(e) => set('min_driver_age_override', e.target.value ? parseInt(e.target.value) : null)}
+          />
+        </div>
+        <div>
+          <Label>Engine power (HP)</Label>
+          <Input
+            type="number"
+            value={payload.engine_power_hp ?? ''}
+            placeholder="e.g. 130"
+            onChange={(e) => set('engine_power_hp', e.target.value ? parseInt(e.target.value) : null)}
+          />
+        </div>
+        <div>
+          <Label>Engine size (cc)</Label>
+          <Input
+            type="number"
+            value={payload.engine_cc ?? ''}
+            placeholder="e.g. 1600"
+            onChange={(e) => set('engine_cc', e.target.value ? parseInt(e.target.value) : null)}
+          />
+        </div>
+        <div>
+          <Label>Daily km limit (this car)</Label>
+          <Input
+            type="number"
+            value={payload.kilometre_limit_per_day ?? ''}
+            placeholder="Use company default"
+            onChange={(e) => set('kilometre_limit_per_day', e.target.value ? parseInt(e.target.value) : null)}
+          />
+        </div>
+        <div className="flex items-end gap-3 pb-1">
+          <div className="flex flex-col">
+            <Label className="mb-2">Air conditioning</Label>
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={payload.has_ac ?? true}
+                onCheckedChange={(v) => set('has_ac', v)}
+              />
+              <span className="text-sm text-muted-foreground">{payload.has_ac ? 'A/C included' : 'No A/C'}</span>
+            </div>
+          </div>
         </div>
         <div className="col-span-2">
           <Label>Status</Label>
@@ -235,23 +316,57 @@ function CarForm({ initial, carId, onClose }: CarFormProps) {
         />
       </div>
       <div>
-        <Label>Image</Label>
-        <label className="border-2 border-dashed rounded-xl p-8 text-center text-sm text-muted-foreground flex flex-col items-center gap-2 cursor-pointer hover:border-primary transition-colors">
+        <Label>Photo gallery (interior + exterior)</Label>
+        {existingImages && existingImages.length > 0 && (
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2 mb-3">
+            {existingImages.map((img) => (
+              <div key={img.id} className="relative group rounded-lg overflow-hidden border bg-muted/30 aspect-[4/3]">
+                <img
+                  src={storageUrl(img.path) ?? ''}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+                <button
+                  type="button"
+                  onClick={() => onDeleteExistingImage(img.id)}
+                  className="absolute top-1 right-1 h-6 w-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label="Delete image"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {pendingImages.length > 0 && (
+          <div className="text-xs text-muted-foreground mb-2">
+            {pendingImages.length} new image(s) ready to upload:&nbsp;
+            <span className="text-foreground">{pendingImages.map((f) => f.name).join(', ')}</span>
+          </div>
+        )}
+        <label className="border-2 border-dashed rounded-xl p-6 text-center text-sm text-muted-foreground flex flex-col items-center gap-2 cursor-pointer hover:border-primary transition-colors">
           <ImagePlus className="h-6 w-6 opacity-60" />
-          {pendingImage ? `${pendingImage.name} ready to upload` : 'Click or drop a JPG / PNG / WEBP (max 5 MB)'}
+          Click or drop multiple JPG / PNG / WEBP (max 5 MB each)
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
+            multiple
             className="hidden"
             onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) {
+              const files = Array.from(e.target.files ?? []);
+              const valid: File[] = [];
+              for (const f of files) {
                 if (f.size > 5 * 1024 * 1024) {
-                  toast.error('Image is too large (max 5 MB)');
-                  return;
+                  toast.error(`${f.name} is too large (max 5 MB)`);
+                  continue;
                 }
-                setPendingImage(f);
+                valid.push(f);
               }
+              if (valid.length > 0) {
+                setPendingImages((p) => [...p, ...valid]);
+              }
+              e.target.value = '';
             }}
           />
         </label>
@@ -414,6 +529,7 @@ export default function DashFleet() {
           {editing && (
             <CarForm
               carId={editing.id}
+              existingImages={editing.images}
               initial={{
                 brand: editing.brand,
                 model: editing.model,
@@ -431,6 +547,12 @@ export default function DashFleet() {
                 description: editing.description ?? '',
                 status: editing.status as CarPayload['status'],
                 features: editing.features ?? [],
+                min_driver_age: editing.min_driver_age ?? null,
+                min_driver_age_override: editing.min_driver_age_override ?? null,
+                engine_power_hp: editing.engine_power_hp ?? null,
+                engine_cc: editing.engine_cc ?? null,
+                has_ac: editing.has_ac ?? true,
+                kilometre_limit_per_day: editing.kilometre_limit_per_day ?? null,
               }}
               onClose={() => setEditing(null)}
             />

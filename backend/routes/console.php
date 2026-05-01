@@ -11,3 +11,4 @@ Schedule::command('renarvo:purge-audit-log')->dailyAt('04:00')->timezone('Europe
 Schedule::command('renarvo:send-pickup-reminders')->dailyAt('08:00')->timezone('Europe/Istanbul');
 Schedule::command('renarvo:check-document-expiry')->dailyAt('09:00')->timezone('Europe/Istanbul');
 Schedule::command('renarvo:generate-payouts')->weeklyOn(0, '02:00')->timezone('Europe/Istanbul');
+Schedule::command('tiko:reconcile --minutes=15')->everyFiveMinutes()->withoutOverlapping();

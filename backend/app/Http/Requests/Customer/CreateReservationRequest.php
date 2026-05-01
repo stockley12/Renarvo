@@ -24,8 +24,14 @@ class CreateReservationRequest extends FormRequest
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'notes' => ['nullable', 'string', 'max:2000'],
             'promo_code' => ['nullable', 'string', 'max:32'],
+            // Insurance package selected from the company catalog
+            'insurance_package_id' => ['nullable', 'integer', 'exists:insurance_packages,id'],
+            // Extras: array of company_extra ids the customer picked
+            'extra_ids' => ['nullable', 'array'],
+            'extra_ids.*' => ['integer', 'exists:company_extras,id'],
+            // Backwards-compatible legacy extras format
             'extras' => ['nullable', 'array'],
-            'extras.*.type' => ['required_with:extras', 'in:gps,child_seat,additional_driver,full_insurance,other'],
+            'extras.*.type' => ['required_with:extras', 'string', 'max:32'],
             'extras.*.price_per_day' => ['required_with:extras', 'integer', 'min:0'],
             'extras.*.label' => ['nullable', 'string', 'max:100'],
         ];

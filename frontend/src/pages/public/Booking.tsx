@@ -1,29 +1,29 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Check, ChevronRight, CreditCard, Calendar, User, ShieldCheck, PartyPopper, Loader2 } from 'lucide-react';
+import { Check, ChevronRight, CreditCard, Calendar, User, ShieldCheck, PartyPopper, Loader2, AlertTriangle, Shield } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+} from '@/components/ui/dialog';
+import {
+  Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { useApp } from '@/store/app';
 import { useSession } from '@/store/session';
 import { formatPrice } from '@/lib/format';
-import { usePublicCar } from '@/lib/hooks/useCars';
+import { usePublicCar, usePublicCompanyExtras, usePublicCompanyInsurance } from '@/lib/hooks/useCars';
 import { useCreateReservation } from '@/lib/hooks/useReservations';
+import { useTikoConfig, useTikoCheckout } from '@/lib/hooks/useTiko';
 import { ApiClientError } from '@/lib/api';
 
 const steps = ['step1', 'step2', 'step3', 'step4'];
-
-const EXTRA_DEFS = [
-  { key: 'gps' as const,        type: 'gps',                 label: 'booking.gps',                price: 60 },
-  { key: 'child' as const,      type: 'child_seat',          label: 'booking.childSeat',          price: 80 },
-  { key: 'addDriver' as const,  type: 'additional_driver',   label: 'booking.additionalDriver',   price: 150 },
-  { key: 'fullIns' as const,    type: 'full_insurance',      label: 'booking.fullInsurance',      price: 200 },
-];
 
 function isoLocalNow(offsetDays = 0): string {
   const d = new Date(Date.now() + offsetDays * 86400000);
@@ -41,9 +41,13 @@ export default function Booking() {
 
   const carQ = usePublicCar(id);
   const car = carQ.data;
+  const companyId = car?.company?.id;
+  const extrasQ = usePublicCompanyExtras(companyId);
+  const insuranceQ = usePublicCompanyInsurance(companyId);
 
   const [step, setStep] = useState(0);
-  const [extras, setExtras] = useState<Record<string, boolean>>({ gps: false, child: false, addDriver: false, fullIns: true });
+  const [selectedExtras, setSelectedExtras] = useState<Record<number, boolean>>({});
+  const [insurancePackageId, setInsurancePackageId] = useState<number | null>(null);
   const [pickupAt, setPickupAt] = useState(() => isoLocalNow(1));
   const [returnAt, setReturnAt] = useState(() => isoLocalNow(4));
   const [pickupLocation, setPickupLocation] = useState('');
@@ -55,7 +59,13 @@ export default function Booking() {
   const [dob, setDob] = useState('');
   const [flight, setFlight] = useState('');
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
+  const [confirmedReservationId, setConfirmedReservationId] = useState<number | null>(null);
+  const [tikoIframeUrl, setTikoIframeUrl] = useState<string | null>(null);
+  const [tikoOrderId, setTikoOrderId] = useState<string | null>(null);
   const create = useCreateReservation();
+  const tikoConfig = useTikoConfig();
+  const tikoCheckout = useTikoCheckout();
+  const tikoEnabled = tikoConfig.data?.enabled === true;
 
   useEffect(() => {
     if (car && !pickupLocation) setPickupLocation(`${car.city} Havalimanı`);
@@ -111,10 +121,33 @@ export default function Booking() {
   const pickupDate = new Date(pickupAt);
   const returnDate = new Date(returnAt);
   const days = Math.max(1, Math.ceil((returnDate.getTime() - pickupDate.getTime()) / 86400000));
-  const extrasPrice = EXTRA_DEFS.reduce((sum, e) => sum + (extras[e.key] ? e.price : 0), 0);
-  const subtotal = car.price_per_day * days + extrasPrice * days;
+
+  const extrasCatalog = extrasQ.data ?? [];
+  const insurancePackages = insuranceQ.data ?? [];
+  const selectedInsurance = useMemo(
+    () => insurancePackages.find((p) => p.id === insurancePackageId) ?? null,
+    [insurancePackages, insurancePackageId]
+  );
+
+  const extrasPrice = useMemo(() => {
+    let sum = 0;
+    for (const ex of extrasCatalog) {
+      if (!selectedExtras[ex.id]) continue;
+      if (ex.charge_mode === 'per_day') sum += Number(ex.price_per_day) * days;
+      else if (ex.charge_mode === 'per_rental') sum += Number(ex.price_per_rental);
+    }
+    return sum;
+  }, [extrasCatalog, selectedExtras, days]);
+
+  const insurancePrice = selectedInsurance ? Number(selectedInsurance.price_per_day) * days : 0;
+  const baseSubtotal = car.price_per_day * days;
+  const subtotal = baseSubtotal + extrasPrice + insurancePrice;
   const tax = subtotal * 0.18;
-  const total = subtotal + tax + 120;
+  const serviceFee = 120;
+  const total = subtotal + tax + serviceFee;
+
+  const minDays = car.company?.min_rental_days ?? 1;
+  const minDaysViolated = days < minDays;
 
   function validateCustomerStep(): string | null {
     if (!first.trim() || !last.trim()) return 'Enter your first and last name';
@@ -123,39 +156,72 @@ export default function Booking() {
     return null;
   }
 
-  async function confirmBooking() {
+  async function ensureReservation(): Promise<{ id: number; code: string } | null> {
+    if (!car) return null;
+    if (confirmedReservationId) {
+      return { id: confirmedReservationId, code: confirmCode ?? '' };
+    }
+    const extraIds = extrasCatalog
+      .filter((ex) => selectedExtras[ex.id])
+      .map((ex) => ex.id);
+    const payload = {
+      car_id: car.id,
+      pickup_at: new Date(pickupAt).toISOString(),
+      return_at: new Date(returnAt).toISOString(),
+      pickup_location: pickupLocation,
+      flight_number: flight || undefined,
+      driving_license_number: licenseNumber || undefined,
+      date_of_birth: dob || undefined,
+      insurance_package_id: insurancePackageId,
+      extra_ids: extraIds.length > 0 ? extraIds : undefined,
+    };
+    const res = await create.mutateAsync(payload);
+    setConfirmCode(res.code);
+    setConfirmedReservationId(res.id);
+    return { id: res.id, code: res.code };
+  }
+
+  async function confirmAndPay() {
     if (!car) return;
+    if (minDaysViolated) {
+      toast.error(t('booking.minDaysWarning', { days: minDays }));
+      return;
+    }
     try {
-      const payload = {
-        car_id: car.id,
-        pickup_at: new Date(pickupAt).toISOString(),
-        return_at: new Date(returnAt).toISOString(),
-        pickup_location: pickupLocation,
-        flight_number: flight || undefined,
-        driving_license_number: licenseNumber || undefined,
-        date_of_birth: dob || undefined,
-        extras: EXTRA_DEFS.filter((e) => extras[e.key]).map((e) => ({
-          type: e.type, price_per_day: e.price, label: t(e.label),
-        })),
-      };
-      const res = await create.mutateAsync(payload);
-      setConfirmCode(res.code);
-      setStep(3);
-      toast.success(t('booking.success'), { description: `Reservation ${res.code} confirmed.` });
+      const reservation = await ensureReservation();
+      if (!reservation) return;
+
+      if (!tikoEnabled) {
+        // Pay-on-pickup fallback (existing flow)
+        setStep(3);
+        toast.success(t('booking.success'), { description: `Reservation ${reservation.code} confirmed.` });
+        return;
+      }
+
+      // TIKO 3DS iframe checkout
+      const result = await tikoCheckout.mutateAsync({ reservationId: reservation.id });
+      setTikoOrderId(result.order_id);
+      setTikoIframeUrl(result.iframe_url);
     } catch (err) {
-      const msg = err instanceof ApiClientError ? err.message : 'Could not create reservation';
+      const msg = err instanceof ApiClientError ? err.message : err instanceof Error ? err.message : 'Could not create reservation';
       toast.error(msg);
     }
   }
 
   function next() {
-    if (step === 0) { setStep(1); return; }
+    if (step === 0) {
+      if (minDaysViolated) {
+        toast.error(t('booking.minDaysWarning', { days: minDays }));
+        return;
+      }
+      setStep(1); return;
+    }
     if (step === 1) {
       const err = validateCustomerStep();
       if (err) { toast.error(err); return; }
       setStep(2); return;
     }
-    if (step === 2) { void confirmBooking(); return; }
+    if (step === 2) { void confirmAndPay(); return; }
   }
 
   return (
@@ -184,19 +250,95 @@ export default function Booking() {
                 <div><Label>{t('search.returnDate')}</Label><Input type="datetime-local" value={returnAt} onChange={(e) => setReturnAt(e.target.value)} /></div>
                 <div className="sm:col-span-2"><Label>{t('search.pickup')}</Label><Input value={pickupLocation} onChange={(e) => setPickupLocation(e.target.value)} /></div>
               </div>
+
+              {minDaysViolated && (
+                <div className="flex items-start gap-3 p-3 rounded-lg border border-warning/40 bg-warning/10 text-sm">
+                  <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+                  <span>{t('booking.minDaysWarning', { days: minDays })}</span>
+                </div>
+              )}
+
+              <div>
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" /> {t('booking.insurancePackage')}
+                </h3>
+                {insuranceQ.isLoading ? (
+                  <div className="text-sm text-muted-foreground">…</div>
+                ) : insurancePackages.length === 0 ? (
+                  <div className="text-sm text-muted-foreground p-3 rounded-lg border border-dashed">
+                    {t('booking.noInsurance')}
+                  </div>
+                ) : (
+                  <div className="grid sm:grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setInsurancePackageId(null)}
+                      className={`text-left p-3 rounded-lg border-2 transition-colors ${
+                        insurancePackageId === null ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
+                      }`}
+                    >
+                      <div className="text-sm font-semibold">{t('booking.insuranceNone')}</div>
+                      <div className="text-xs text-muted-foreground mt-1">—</div>
+                    </button>
+                    {insurancePackages.map((p) => {
+                      const tierLabel = p.tier === 'mini' ? t('booking.insuranceMini') : p.tier === 'mid' ? t('booking.insuranceMid') : t('booking.insuranceFull');
+                      return (
+                        <button
+                          type="button"
+                          key={p.id}
+                          onClick={() => setInsurancePackageId(p.id)}
+                          className={`text-left p-3 rounded-lg border-2 transition-colors ${
+                            insurancePackageId === p.id ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
+                          }`}
+                        >
+                          <div className="text-sm font-semibold capitalize">{p.name || tierLabel}</div>
+                          <div className="text-xs text-muted-foreground mt-1">{tierLabel}</div>
+                          <div className="text-sm font-bold text-primary mt-2">
+                            +{formatPrice(Number(p.price_per_day), currency, locale)}/day
+                          </div>
+                          {p.description && <div className="text-[11px] text-muted-foreground mt-1 line-clamp-2">{p.description}</div>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               <div>
                 <h3 className="font-semibold mb-3">{t('booking.extras')}</h3>
-                <div className="space-y-2">
-                  {EXTRA_DEFS.map((e) => (
-                    <label key={e.key} className="flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-muted/50 active:bg-muted">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <Checkbox checked={!!extras[e.key]} onCheckedChange={(v) => setExtras({ ...extras, [e.key]: !!v })} />
-                        <span className="text-sm truncate">{t(e.label)}</span>
-                      </div>
-                      <span className="text-xs sm:text-sm font-semibold shrink-0">+{formatPrice(e.price, currency, locale)}/day</span>
-                    </label>
-                  ))}
-                </div>
+                {extrasQ.isLoading ? (
+                  <div className="text-sm text-muted-foreground">…</div>
+                ) : extrasCatalog.length === 0 ? (
+                  <div className="text-sm text-muted-foreground p-3 rounded-lg border border-dashed">
+                    {t('booking.noExtras')}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {extrasCatalog.map((ex) => {
+                      const priceLabel =
+                        ex.charge_mode === 'free'
+                          ? t('common.free')
+                          : ex.charge_mode === 'per_rental'
+                          ? `+${formatPrice(Number(ex.price_per_rental), currency, locale)}`
+                          : `+${formatPrice(Number(ex.price_per_day), currency, locale)}/day`;
+                      return (
+                        <label key={ex.id} className="flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-muted/50 active:bg-muted">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <Checkbox
+                              checked={!!selectedExtras[ex.id]}
+                              onCheckedChange={(v) => setSelectedExtras({ ...selectedExtras, [ex.id]: !!v })}
+                            />
+                            <div className="min-w-0">
+                              <div className="text-sm truncate">{ex.name}</div>
+                              {ex.description && <div className="text-[11px] text-muted-foreground truncate">{ex.description}</div>}
+                            </div>
+                          </div>
+                          <span className="text-xs sm:text-sm font-semibold shrink-0">{priceLabel}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -222,11 +364,21 @@ export default function Booking() {
                 <CreditCard className="h-5 w-5 text-primary" /> {t('booking.step3')}
               </h2>
               <div className="space-y-4">
-                <div className="flex items-center gap-2 text-sm bg-muted/50 p-4 rounded-lg">
-                  <ShieldCheck className="h-4 w-4 text-success shrink-0" />
-                  <span>
-                    Pay-on-pickup. The company collects payment when you pick up the car. Bring a credit card for the deposit.
-                  </span>
+                {tikoEnabled ? (
+                  <div className="flex items-center gap-2 text-sm bg-primary/5 border border-primary/30 p-4 rounded-lg">
+                    <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
+                    <span>
+                      {t('booking.payWithCard')} — TIKO 3D Secure ({tikoConfig.data?.mode === 'sandbox' ? 'sandbox' : 'live'}).
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-sm bg-muted/50 p-4 rounded-lg">
+                    <ShieldCheck className="h-4 w-4 text-success shrink-0" />
+                    <span>{t('booking.paymentDisabled')}</span>
+                  </div>
+                )}
+                <div className="text-sm text-muted-foreground">
+                  {t('carDetail.total')}: <span className="font-bold text-foreground">{formatPrice(total, currency, locale)}</span>
                 </div>
               </div>
             </div>
@@ -249,10 +401,34 @@ export default function Booking() {
           {step < 3 && (
             <div className="flex items-center justify-between pt-6 mt-6 border-t gap-3">
               <Button variant="outline" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}>{t('booking.back')}</Button>
-              <Button onClick={next} disabled={create.isPending} className="bg-gradient-brand text-white border-0">
-                {create.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                {step === 2 ? t('booking.confirm') : t('booking.next')}
-              </Button>
+              {step === 2 ? (
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Button
+                          onClick={next}
+                          disabled={create.isPending || tikoCheckout.isPending}
+                          className="bg-gradient-brand text-white border-0"
+                        >
+                          {(create.isPending || tikoCheckout.isPending) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                          {tikoEnabled ? t('booking.continueToPayment') : t('booking.confirm')}
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    {!tikoEnabled && (
+                      <TooltipContent>
+                        <span className="text-xs">{t('booking.paymentDisabled')}</span>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <Button onClick={next} disabled={create.isPending} className="bg-gradient-brand text-white border-0">
+                  {create.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  {t('booking.next')}
+                </Button>
+              )}
             </div>
           )}
         </Card>
@@ -262,15 +438,56 @@ export default function Booking() {
           <div className="text-xs text-muted-foreground mb-4">{car.year} • {car.city}</div>
           <Separator className="mb-3" />
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">{days} day{days > 1 ? 's' : ''} × {formatPrice(car.price_per_day, currency, locale)}</span><span>{formatPrice(car.price_per_day * days, currency, locale)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Extras</span><span>{formatPrice(extrasPrice * days, currency, locale)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span>{formatPrice(120, currency, locale)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">KDV (18%)</span><span>{formatPrice(tax, currency, locale)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">{days} day{days > 1 ? 's' : ''} × {formatPrice(car.price_per_day, currency, locale)}</span><span>{formatPrice(baseSubtotal, currency, locale)}</span></div>
+            {extrasPrice > 0 && (
+              <div className="flex justify-between"><span className="text-muted-foreground">{t('booking.extras')}</span><span>{formatPrice(extrasPrice, currency, locale)}</span></div>
+            )}
+            {insurancePrice > 0 && (
+              <div className="flex justify-between"><span className="text-muted-foreground">{t('booking.insurancePackage')}</span><span>{formatPrice(insurancePrice, currency, locale)}</span></div>
+            )}
+            <div className="flex justify-between"><span className="text-muted-foreground">{t('carDetail.serviceFee')}</span><span>{formatPrice(serviceFee, currency, locale)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">{t('carDetail.taxKdv')}</span><span>{formatPrice(tax, currency, locale)}</span></div>
             <Separator />
-            <div className="flex justify-between font-bold text-base"><span>Total</span><span>{formatPrice(total, currency, locale)}</span></div>
+            <div className="flex justify-between font-bold text-base"><span>{t('carDetail.total')}</span><span>{formatPrice(total, currency, locale)}</span></div>
+            {Number(car.deposit) > 0 && (
+              <div className="text-xs text-muted-foreground pt-2">
+                {t('carDetail.deposit', { amount: Number(car.deposit).toLocaleString() })}
+              </div>
+            )}
           </div>
         </Card>
       </div>
+
+      <Dialog
+        open={tikoIframeUrl !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setTikoIframeUrl(null);
+            if (confirmedReservationId) {
+              navigate(`/payment/result?reservation=${confirmedReservationId}${tikoOrderId ? `&order=${encodeURIComponent(tikoOrderId)}` : ''}`);
+            }
+          }
+        }}
+      >
+        <DialogContent className="max-w-3xl w-[95vw] sm:w-full p-0 overflow-hidden">
+          <DialogHeader className="px-4 py-3 border-b">
+            <DialogTitle className="text-base">{t('booking.payWithCard')}</DialogTitle>
+            <DialogDescription className="text-xs">
+              {t('carDetail.total')}: <span className="font-semibold">{formatPrice(total, currency, locale)}</span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-muted/30">
+            {tikoIframeUrl && (
+              <iframe
+                src={tikoIframeUrl}
+                title="TIKO 3D Secure"
+                className="w-full h-[70vh] border-0 bg-white"
+                allow="payment *"
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

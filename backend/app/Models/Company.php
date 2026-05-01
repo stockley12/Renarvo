@@ -22,6 +22,9 @@ class Company extends Model
         'owner_user_id', 'slug', 'name', 'city', 'description', 'logo_path', 'logo_color',
         'phone', 'tax_number', 'address', 'status', 'founded_year', 'commission_rate_bps',
         'languages_spoken', 'rating_avg', 'review_count', 'fleet_size',
+        'min_rental_days', 'kilometre_policy', 'kilometre_limit_per_day_default',
+        'min_driver_age_default', 'student_friendly', 'roadside_24_7',
+        'email_public', 'whatsapp', 'instagram', 'facebook', 'website',
     ];
 
     protected $casts = [
@@ -30,6 +33,11 @@ class Company extends Model
         'fleet_size' => 'integer',
         'commission_rate_bps' => 'integer',
         'founded_year' => 'integer',
+        'min_rental_days' => 'integer',
+        'kilometre_limit_per_day_default' => 'integer',
+        'min_driver_age_default' => 'integer',
+        'student_friendly' => 'boolean',
+        'roadside_24_7' => 'boolean',
     ];
 
     public function owner(): BelongsTo
@@ -75,5 +83,15 @@ class Company extends Model
     public function payouts(): HasMany
     {
         return $this->hasMany(Payout::class);
+    }
+
+    public function extras(): HasMany
+    {
+        return $this->hasMany(CompanyExtra::class);
+    }
+
+    public function insurancePackages(): HasMany
+    {
+        return $this->hasMany(InsurancePackage::class);
     }
 }

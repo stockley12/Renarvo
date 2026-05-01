@@ -1,5 +1,7 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeft } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +17,7 @@ export default function Register() {
   const [params] = useSearchParams();
   const setUser = useSession((s) => s.setUser);
   const { locale } = useApp();
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -26,15 +29,15 @@ export default function Register() {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (password.length < 8) {
-      toast.error('Password must be at least 8 characters');
+      toast.error(t('auth.register.passwordTooShort'));
       return;
     }
     if (password !== confirm) {
-      toast.error('Passwords do not match');
+      toast.error(t('auth.register.passwordMismatch'));
       return;
     }
     if (!accept) {
-      toast.error('Please accept the terms to continue');
+      toast.error(t('auth.register.mustAcceptTerms'));
       return;
     }
     setSubmitting(true);
@@ -47,12 +50,12 @@ export default function Register() {
         locale,
       });
       setUser(data.user);
-      toast.success('Welcome to Renarvo');
+      toast.success(t('auth.register.welcome'));
       const next = params.get('next');
       navigate(next && next.startsWith('/') ? next : '/');
     } catch (err) {
       if (err instanceof ApiClientError) toast.error(err.message);
-      else toast.error('Registration failed');
+      else toast.error(t('auth.register.failed'));
     } finally {
       setSubmitting(false);
     }
@@ -60,15 +63,18 @@ export default function Register() {
 
   return (
     <div className="container py-10 md:py-16 max-w-md">
+      <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-3 -ml-2">
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t('auth.register.back')}
+      </Button>
       <Card className="p-6 md:p-8">
         <Logo className="mb-6" />
-        <h1 className="font-display text-2xl font-bold mb-2">Create your account</h1>
+        <h1 className="font-display text-2xl font-bold mb-2">{t('auth.register.title')}</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Book cars across North Cyprus in a few clicks.
+          {t('auth.register.subtitle')}
         </p>
         <form className="space-y-4" onSubmit={onSubmit}>
           <div>
-            <Label htmlFor="name">Full name</Label>
+            <Label htmlFor="name">{t('auth.register.name')}</Label>
             <Input
               id="name"
               autoComplete="name"
@@ -76,11 +82,11 @@ export default function Register() {
               minLength={2}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Jane Doe"
+              placeholder={t('auth.register.namePh')}
             />
           </div>
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('auth.register.email')}</Label>
             <Input
               id="email"
               type="email"
@@ -88,22 +94,25 @@ export default function Register() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder={t('auth.register.emailPh')}
             />
           </div>
           <div>
-            <Label htmlFor="phone">Phone <span className="text-muted-foreground font-normal">(optional)</span></Label>
+            <Label htmlFor="phone">
+              {t('auth.register.phone')}{' '}
+              <span className="text-muted-foreground font-normal">{t('auth.register.phoneOptional')}</span>
+            </Label>
             <Input
               id="phone"
               type="tel"
               autoComplete="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="+90 533 123 45 67"
+              placeholder={t('auth.register.phonePh')}
             />
           </div>
           <div>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('auth.register.password')}</Label>
             <Input
               id="password"
               type="password"
@@ -112,11 +121,11 @@ export default function Register() {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
+              placeholder={t('auth.register.passwordPh')}
             />
           </div>
           <div>
-            <Label htmlFor="confirm">Confirm password</Label>
+            <Label htmlFor="confirm">{t('auth.register.confirmPassword')}</Label>
             <Input
               id="confirm"
               type="password"
@@ -135,18 +144,21 @@ export default function Register() {
               onChange={(e) => setAccept(e.target.checked)}
             />
             <span>
-              I agree to the <Link to="/terms" className="text-primary hover:underline">Terms</Link> and{' '}
-              <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+              {t('auth.register.agreeTo')}{' '}
+              <Link to="/terms" className="text-primary hover:underline">{t('auth.register.termsLink')}</Link>{' / '}
+              <Link to="/privacy" className="text-primary hover:underline">{t('auth.register.privacyLink')}</Link>.
             </span>
           </label>
           <Button type="submit" disabled={submitting} className="w-full bg-gradient-brand text-white border-0">
-            {submitting ? 'Creating account…' : 'Create account'}
+            {submitting ? t('auth.register.submitting') : t('auth.register.submit')}
           </Button>
           <div className="text-center text-sm">
-            Already have an account? <Link to="/login" className="text-primary font-semibold">Log in</Link>
+            {t('auth.register.alreadyHaveAccount')}{' '}
+            <Link to="/login" className="text-primary font-semibold">{t('auth.register.logIn')}</Link>
           </div>
           <div className="text-center text-xs text-muted-foreground">
-            Are you a rental company? <Link to="/register-company" className="text-primary font-semibold">Register your fleet</Link>
+            {t('auth.register.areYouCompany')}{' '}
+            <Link to="/register-company" className="text-primary font-semibold">{t('auth.register.registerYourFleet')}</Link>
           </div>
         </form>
       </Card>

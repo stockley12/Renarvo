@@ -21,6 +21,7 @@ import Home from "@/pages/public/Home";
 import Cars from "@/pages/public/Cars";
 import CarDetail from "@/pages/public/CarDetail";
 import Booking from "@/pages/public/Booking";
+import PaymentResult from "@/pages/public/PaymentResult";
 import Companies from "@/pages/public/Companies";
 import CompanyDetail from "@/pages/public/CompanyDetail";
 import { About, HowItWorks, ForCompanies, Help, Contact, Terms, Privacy } from "@/pages/public/Static";
@@ -33,10 +34,10 @@ import DashOverview from "@/pages/dashboard/Overview";
 import DashFleet from "@/pages/dashboard/Fleet";
 import DashReservations from "@/pages/dashboard/Reservations";
 import DashStats from "@/pages/dashboard/Statistics";
-import { DashCustomers, DashBranches, DashStaff, DashReviews, DashPayouts, DashDocuments, DashSettings } from "@/pages/dashboard/Sections";
+import { DashCustomers, DashBranches, DashStaff, DashReviews, DashPayouts, DashDocuments, DashSettings, DashExtras, DashInsurance } from "@/pages/dashboard/Sections";
 import { DashCalendar, DashPricing, DashMessages, DashIntegrations } from "@/pages/dashboard/Extra";
 
-import { AdminOverview, AdminCompanies, AdminApprovals, AdminCatalog, AdminReservations, AdminUsers, AdminReviews, AdminContent, AdminFinance, AdminSettings } from "@/pages/admin/Sections";
+import { AdminOverview, AdminCompanies, AdminApprovals, AdminCatalog, AdminReservations, AdminPayments, AdminUsers, AdminReviews, AdminContent, AdminFinance, AdminSettings } from "@/pages/admin/Sections";
 import { AdminAuditLog, AdminRisk, AdminNotifications, AdminSystem } from "@/pages/admin/Extra";
 
 const queryClient = new QueryClient();
@@ -96,6 +97,7 @@ const App = () => (
             <Route path="/cars" element={<Cars />} />
             <Route path="/cars/:id" element={<CarDetail />} />
             <Route path="/book/:id" element={<Booking />} />
+            <Route path="/payment/result" element={<PaymentResult />} />
             <Route path="/companies" element={<Companies />} />
             <Route path="/companies/:slug" element={<CompanyDetail />} />
             <Route path="/about" element={<About />} />
@@ -118,6 +120,8 @@ const App = () => (
               <Route index element={<DashOverview />} />
               <Route path="calendar" element={<DashCalendar />} />
               <Route path="cars" element={<DashFleet />} />
+              <Route path="extras" element={<DashExtras />} />
+              <Route path="insurance" element={<DashInsurance />} />
               <Route path="reservations" element={<DashReservations />} />
               <Route path="messages" element={<DashMessages />} />
               <Route path="customers" element={<DashCustomers />} />
@@ -141,6 +145,7 @@ const App = () => (
               <Route path="approvals" element={<AdminApprovals />} />
               <Route path="catalog" element={<AdminCatalog />} />
               <Route path="reservations" element={<AdminReservations />} />
+              <Route path="payments" element={<AdminPayments />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="reviews" element={<AdminReviews />} />
               <Route path="risk" element={<AdminRisk />} />

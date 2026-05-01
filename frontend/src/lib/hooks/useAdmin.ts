@@ -160,10 +160,54 @@ export function useCatalogAction() {
 }
 
 /* -------------------- Admin reservations -------------------- */
-export function useAdminReservations(query?: { status?: string; search?: string; page?: number; limit?: number }) {
+export function useAdminReservations(query?: { status?: string; payment_status?: string; search?: string; page?: number; limit?: number }) {
   return useQuery({
     queryKey: ['admin', 'reservations', query],
     queryFn: () => api.get<Paginated<ApiReservation>>('/admin/reservations', query),
+  });
+}
+
+/* -------------------- Admin payments -------------------- */
+export type AdminPayment = {
+  id: number;
+  provider: string;
+  method: string | null;
+  status: string;
+  amount: number;
+  amount_try: number;
+  currency: string;
+  order_id: string | null;
+  trans_id: string | null;
+  installment: number;
+  hash_inbound_ok: boolean | null;
+  error_msg: string | null;
+  captured_at: string | null;
+  refunded_at: string | null;
+  created_at: string;
+  reservation: {
+    id: number;
+    code: string;
+    total_price: number;
+    payment_status: string;
+    status: string;
+    car: { id: number; brand: string; model: string } | null;
+    customer: { id: number; name: string; email: string } | null;
+  } | null;
+  company: { id: number; name: string; slug: string } | null;
+};
+
+export function useAdminPayments(query?: {
+  provider?: string;
+  status?: string;
+  search?: string;
+  from?: string;
+  to?: string;
+  page?: number;
+  limit?: number;
+}) {
+  return useQuery({
+    queryKey: ['admin', 'payments', query],
+    queryFn: () => api.get<Paginated<AdminPayment>>('/admin/payments', query),
   });
 }
 

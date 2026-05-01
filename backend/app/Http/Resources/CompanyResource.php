@@ -27,6 +27,19 @@ class CompanyResource extends JsonResource
             'rating_avg' => (float) $this->rating_avg,
             'review_count' => $this->review_count,
             'fleet_size' => $this->fleet_size,
+            // Rental policy
+            'min_rental_days' => (int) ($this->min_rental_days ?? 1),
+            'kilometre_policy' => $this->kilometre_policy ?? 'unlimited',
+            'kilometre_limit_per_day_default' => $this->kilometre_limit_per_day_default,
+            'min_driver_age_default' => (int) ($this->min_driver_age_default ?? 21),
+            'student_friendly' => (bool) ($this->student_friendly ?? false),
+            'roadside_24_7' => (bool) ($this->roadside_24_7 ?? false),
+            // Public contact / social
+            'email_public' => $this->email_public,
+            'whatsapp' => $this->whatsapp,
+            'instagram' => $this->instagram,
+            'facebook' => $this->facebook,
+            'website' => $this->website,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

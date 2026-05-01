@@ -166,6 +166,7 @@ export default function DashReservations() {
                     <th className="px-4 py-3 font-medium">Car</th>
                     <th className="px-4 py-3 font-medium">Dates</th>
                     <th className="px-4 py-3 font-medium">Status</th>
+                    <th className="px-4 py-3 font-medium">Payment</th>
                     <th className="px-4 py-3 font-medium text-right">Total</th>
                     <th></th>
                   </tr>
@@ -173,24 +174,40 @@ export default function DashReservations() {
                 <tbody>
                   {reservations.isLoading && (
                     <tr>
-                      <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
+                      <td colSpan={8} className="px-4 py-12 text-center text-muted-foreground">
                         <Loader2 className="h-5 w-5 mx-auto animate-spin" />
                       </td>
                     </tr>
                   )}
                   {!reservations.isLoading && items.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
+                      <td colSpan={8} className="px-4 py-12 text-center text-muted-foreground">
                         No {tab} reservations
                       </td>
                     </tr>
                   )}
                   {items.map((r) => {
                     const carLabel = r.car ? `${r.car.brand} ${r.car.model}` : `Car #${r.car_id}`;
+                    const ps = r.payment_status ?? 'unpaid';
+                    const psColor =
+                      ps === 'paid' ? 'bg-success/15 text-success border-success/30'
+                      : ps === 'pending' ? 'bg-warning/15 text-warning border-warning/30'
+                      : ps === 'failed' ? 'bg-destructive/15 text-destructive border-destructive/30'
+                      : 'bg-muted text-muted-foreground';
                     return (
                       <tr key={r.id} className="border-t hover:bg-muted/30">
-                        <td className="px-4 py-3 font-mono text-xs font-semibold">{r.code}</td>
-                        <td className="px-4 py-3">{r.customer?.name ?? '—'}</td>
+                        <td className="px-4 py-3 font-mono text-xs font-semibold">
+                          {r.code}
+                          {r.current_payment?.order_id && (
+                            <div className="text-[10px] text-muted-foreground font-normal mt-0.5 truncate max-w-[120px]">
+                              {r.current_payment.order_id}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div>{r.customer?.name ?? '—'}</div>
+                          <div className="text-[11px] text-muted-foreground">{r.customer?.email ?? ''}</div>
+                        </td>
                         <td className="px-4 py-3">{carLabel}</td>
                         <td className="px-4 py-3 text-xs text-muted-foreground">
                           {formatDate(r.pickup_at, locale)} → {formatDate(r.return_at, locale)}
@@ -200,8 +217,16 @@ export default function DashReservations() {
                             {r.status}
                           </Badge>
                         </td>
+                        <td className="px-4 py-3">
+                          <Badge variant="outline" className={`capitalize ${psColor}`}>{ps}</Badge>
+                        </td>
                         <td className="px-4 py-3 text-right font-semibold">
                           {formatPrice(r.price.total, currency, locale)}
+                          {r.current_payment?.amount_try ? (
+                            <div className="text-[11px] text-muted-foreground font-normal">
+                              ₺{r.current_payment.amount_try.toLocaleString()} via TIKO
+                            </div>
+                          ) : null}
                         </td>
                         <td className="px-4 py-3">
                           <Sheet open={openId === r.id} onOpenChange={(o) => setOpenId(o ? r.id : null)}>

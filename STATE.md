@@ -183,6 +183,68 @@ cd ~/renarvo/backend && php artisan migrate:fresh --force --seed
 2. **(blocking real customers)** Configure SMTP — currently `MAIL_MAILER=log`.
 3. Rotate SSH password (leaked-in-history risk on the public repo).
 4. Rotate the bootstrap superadmin password from the admin panel.
-5. Real payments (Stripe / İyzico) — still pay-on-pickup.
+5. Real payments — TIKO Sanal POS scaffolding is shipped (Phase 10/11). Awaiting the user-supplied `TIKO_MERCHANT_ID`, `TIKO_SECRET`, `TIKO_PASSWORD` to flip `TIKO_MODE=sandbox` on the server and run the new `qa_payment.ps1`.
 6. 2FA for company owners and superadmins.
-7. Cloudflare in front of Hostinger.
+7. Cloudflare in front of Hostinger (see runbook below).
+8. Hostinger mailbox `info@renarvo.com` (see runbook below).
+
+## TIKO Sanal POS runbook
+- **Spec implemented**: v1.1.3 `onus3D` 3DS iframe flow + status query + cancel.
+- **Backend service**: `app/Services/TikoService.php` (HMAC-SHA256(secret, hashStr.password), base64).
+- **Backend controller**: `app/Http/Controllers/Payment/TikoController.php` exposes:
+  - `POST  /api/v1/me/reservations/{id}/checkout/tiko` — authenticated customer mints a fresh Payment row + iframe URL.
+  - `POST  /api/v1/payments/tiko/callback` — public, hash-verified, IP-allowlist if `TIKO_CALLBACK_IPS` set.
+  - `GET|POST /api/v1/payments/tiko/return-ok` and `/return-fail` — browser bounce; triggers an immediate status-query then redirects to the SPA `/payment/result`.
+  - `GET   /api/v1/payments/tiko/config` — public, advertises `mode` so the SPA hides the pay button when disabled.
+- **Reconcile**: `php artisan tiko:reconcile --minutes=15` runs every 5 min via `routes/console.php`.
+- **Audit**: every TIKO interaction is logged via `AuditService` (`tiko.checkout.initiated`, `.callback.processed`, `.callback.rejected_hash`, `.callback.rejected_ip`, `.status.queried`, `.cancel.requested`).
+- **Schema**: `payments` extended with `order_id`, `trans_id`, `amount_try`, `installment`, `hash_inbound_ok`, `error_msg`, `raw_request`, `raw_response`, `raw_callback`, `raw_status_query`. `reservations` extended with `payment_status`, `current_payment_id`, `insurance_package_id`, `insurance_price`, `deposit_amount_snapshot`.
+- **Env vars to fill on server before activation**:
+  ```
+  TIKO_MODE=sandbox            # disabled | sandbox | live
+  TIKO_MERCHANT_ID=<from TIKO>
+  TIKO_SECRET=<from TIKO>
+  TIKO_PASSWORD=<from TIKO>
+  TIKO_RETURN_OK=https://renarvo.com/api/v1/payments/tiko/return-ok
+  TIKO_RETURN_FAIL=https://renarvo.com/api/v1/payments/tiko/return-fail
+  TIKO_CALLBACK=https://renarvo.com/api/v1/payments/tiko/callback
+  TIKO_CALLBACK_IPS=                # optional comma-separated allowlist
+  ```
+- **Frontend**: `useTikoConfig`/`useTikoCheckout` (`frontend/src/lib/hooks/useTiko.ts`). Booking step "Payment" opens a Radix `Dialog` with the TIKO iframe; closing it sends the customer to `/payment/result?reservation=…&order=…` which polls `GET /me/reservations/{id}` until `payment_status` is `paid`/`failed`/`cancelled`.
+
+## Cloudflare onboarding (USER ACTION)
+Must be done manually in the Cloudflare dashboard once we're ready to flip DNS — code change isn't required, but the steps must be followed in order to avoid downtime.
+
+1. **Add site**: Cloudflare → Add site → `renarvo.com` → Free plan → Continue.
+2. **Import DNS**: accept the auto-import. Verify `A renarvo.com → <hostinger-ip>` and `CNAME www → renarvo.com` exist.
+3. **Update nameservers at the registrar** (Hostinger or wherever the domain is held) to the two NS records Cloudflare assigns. Wait for propagation (status flips to "Active" in Cloudflare). Hostinger continues to serve traffic during this window.
+4. **Proxy status**: in DNS tab, set the orange cloud (proxied) on `renarvo.com` and `www`. Set DNS-only (grey cloud) on any mail records (`MX`, `mail.`) so mail still works.
+5. **SSL/TLS** → set mode to **Full (strict)** (Hostinger already serves a valid Let's Encrypt cert).
+6. **Edge Certificates** → enable **Always Use HTTPS** + **Automatic HTTPS Rewrites** + minimum TLS 1.2.
+7. **Speed → Optimization**: enable Brotli, Auto Minify (HTML/CSS/JS), Rocket Loader OFF (breaks our SPA rehydration in some cases).
+8. **Caching → Configuration**: Browser TTL = "Respect existing headers", set a Page Rule (or Cache Rule) `*renarvo.com/api/*` → cache level **Bypass**.
+9. **Security → Bots → Bot Fight Mode**: ON.
+10. **Security → WAF → Custom rules**:
+    - Rule "Allow TIKO callback": URI Path `eq` `/api/v1/payments/tiko/callback` → Action **Skip** (skip Bot Fight + managed challenges + rate-limit). When TIKO confirms its callback IPs, also tighten by `(ip.src in {…})`.
+    - Rule "Always-allow `/api/*`": URI Path `wildcard` `/api/*` → Action **Skip** Bot Fight Mode. (Bot Fight throws JS challenges that break server-to-server callbacks.)
+11. **Security → DDoS** + **Rate Limiting**: leave defaults; we already do per-IP throttling at the Laravel layer (`RateLimiterService`).
+12. **Verify** end-to-end: `curl -fsS https://renarvo.com/api/v1/health` and `curl -fsS https://renarvo.com/api/v1/payments/tiko/config` from outside the network — both must return 200 with `cf-ray:` headers present.
+
+## Hostinger mailbox `info@renarvo.com` (USER ACTION)
+1. hPanel → Emails → Email Accounts → **Create Email Account**.
+2. Mailbox: `info@renarvo.com`. Set a strong password and store in `.tools/server.local` (gitignored).
+3. **Quota**: 1 GB is plenty for go-live; can be raised later.
+4. Once created, hPanel → Email Accounts → Settings → **Configure SMTP** to copy the SMTP host/port/credentials.
+5. On the server, edit `backend/.env`:
+   ```
+   MAIL_MAILER=smtp
+   MAIL_HOST=<from hPanel, usually smtp.hostinger.com>
+   MAIL_PORT=465
+   MAIL_USERNAME=info@renarvo.com
+   MAIL_PASSWORD=<set above>
+   MAIL_ENCRYPTION=ssl
+   MAIL_FROM_ADDRESS="info@renarvo.com"
+   MAIL_FROM_NAME="Renarvo"
+   ```
+6. `php artisan config:cache && php artisan tinker --execute="Mail::raw('hi','admin@renarvo.com');"` to confirm the first send.
+7. Update Cloudflare DNS only if needed: keep the existing `MX` records pointing at Hostinger (do NOT proxy them through Cloudflare).

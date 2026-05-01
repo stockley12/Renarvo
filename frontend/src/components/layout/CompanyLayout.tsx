@@ -2,7 +2,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Car, CalendarCheck, Users, BarChart3, MapPin,
   UserCog, Star, Wallet, FileText, Settings, Search, Bell,
-  CalendarDays, Tag, MessageSquare, Plug, LifeBuoy, Sparkles,
+  CalendarDays, Tag, MessageSquare, Plug, LifeBuoy, Sparkles, Shield, Boxes,
 } from 'lucide-react';
 import { useSession } from '@/store/session';
 import { logout as apiLogout } from '@/lib/api';
@@ -42,6 +42,8 @@ const groups: NavGroup[] = [
     label: 'Inventory',
     items: [
       { to: '/dashboard/cars', icon: Car, label: 'Fleet' },
+      { to: '/dashboard/extras', icon: Boxes, label: 'Extras' },
+      { to: '/dashboard/insurance', icon: Shield, label: 'Insurance' },
       { to: '/dashboard/pricing', icon: Tag, label: 'Pricing & promos' },
       { to: '/dashboard/branches', icon: MapPin, label: 'Branches' },
     ],

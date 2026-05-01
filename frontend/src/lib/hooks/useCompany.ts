@@ -68,11 +68,15 @@ export function useCompanyCars(query?: { status?: string; search?: string; page?
   });
 }
 
+export type CarCategory =
+  | 'economy' | 'compact' | 'comfort' | 'prestige' | 'premium'
+  | 'luxury' | 'suv' | 'minivan' | 'van' | 'electric';
+
 export type CarPayload = {
   brand: string;
   model: string;
   year: number;
-  category: 'economy' | 'compact' | 'suv' | 'luxury' | 'van' | 'electric';
+  category: CarCategory;
   transmission: 'manual' | 'automatic';
   fuel: 'petrol' | 'diesel' | 'hybrid' | 'electric';
   seats: number;
@@ -88,6 +92,11 @@ export type CarPayload = {
   vin?: string | null;
   description?: string | null;
   min_driver_age?: number | null;
+  min_driver_age_override?: number | null;
+  engine_power_hp?: number | null;
+  engine_cc?: number | null;
+  has_ac?: boolean;
+  kilometre_limit_per_day?: number | null;
   features?: string[];
   image_seed?: string | null;
 };
@@ -470,22 +479,136 @@ export function useCompanySettings() {
   });
 }
 
+export type CompanySettingsPayload = Partial<{
+  name: string;
+  description: string;
+  phone: string;
+  address: string;
+  city: string;
+  languages_spoken: string;
+  logo_color: string;
+  // Rental policy
+  min_rental_days: number;
+  kilometre_policy: 'unlimited' | 'per_day_limit' | 'total_limit';
+  kilometre_limit_per_day_default: number | null;
+  min_driver_age_default: number;
+  student_friendly: boolean;
+  roadside_24_7: boolean;
+  // Public contact / social
+  email_public: string;
+  whatsapp: string;
+  instagram: string;
+  facebook: string;
+  website: string;
+}>;
+
 export function useUpdateCompanySettings() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: Partial<{
-      name: string;
-      description: string;
-      phone: string;
-      address: string;
-      city: string;
-      languages_spoken: string;
-      logo_color: string;
-    }>) => api.put<ApiCompany>('/company/settings', input),
+    mutationFn: (input: CompanySettingsPayload) => api.put<ApiCompany>('/company/settings', input),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['company', 'settings'] });
       qc.invalidateQueries({ queryKey: ['company', 'overview'] });
     },
+  });
+}
+
+/* -------------------- Extras catalog -------------------- */
+
+export type CompanyExtra = {
+  id: number;
+  company_id: number;
+  code: string;
+  name: string;
+  price_per_day: number;
+  price_per_rental: number;
+  charge_mode: 'per_day' | 'per_rental' | 'free';
+  is_active: boolean;
+  sort_order: number;
+  description: string | null;
+};
+
+export type CompanyExtraPayload = Partial<Omit<CompanyExtra, 'id' | 'company_id'>>;
+
+export function useCompanyExtras() {
+  return useQuery({
+    queryKey: ['company', 'extras'],
+    queryFn: () => api.get<CompanyExtra[]>('/company/extras'),
+  });
+}
+
+export function useCreateCompanyExtra() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CompanyExtraPayload) => api.post<CompanyExtra>('/company/extras', input),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['company', 'extras'] }),
+  });
+}
+
+export function useUpdateCompanyExtra() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, input }: { id: number; input: CompanyExtraPayload }) =>
+      api.patch<CompanyExtra>(`/company/extras/${id}`, input),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['company', 'extras'] }),
+  });
+}
+
+export function useDeleteCompanyExtra() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => api.delete(`/company/extras/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['company', 'extras'] }),
+  });
+}
+
+/* -------------------- Insurance packages -------------------- */
+
+export type InsurancePackage = {
+  id: number;
+  company_id: number;
+  tier: 'mini' | 'mid' | 'full';
+  name: string;
+  price_per_day: number;
+  deductible_amount: number | null;
+  coverage_amount: number | null;
+  is_active: boolean;
+  description: string | null;
+  included_features: string[];
+};
+
+export type InsurancePackagePayload = Partial<Omit<InsurancePackage, 'id' | 'company_id'>>;
+
+export function useInsurancePackages() {
+  return useQuery({
+    queryKey: ['company', 'insurance-packages'],
+    queryFn: () => api.get<InsurancePackage[]>('/company/insurance-packages'),
+  });
+}
+
+export function useCreateInsurancePackage() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: InsurancePackagePayload) =>
+      api.post<InsurancePackage>('/company/insurance-packages', input),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['company', 'insurance-packages'] }),
+  });
+}
+
+export function useUpdateInsurancePackage() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, input }: { id: number; input: InsurancePackagePayload }) =>
+      api.patch<InsurancePackage>(`/company/insurance-packages/${id}`, input),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['company', 'insurance-packages'] }),
+  });
+}
+
+export function useDeleteInsurancePackage() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => api.delete(`/company/insurance-packages/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['company', 'insurance-packages'] }),
   });
 }
 

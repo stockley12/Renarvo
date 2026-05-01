@@ -1,5 +1,6 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,8 +41,11 @@ export function Login() {
   }
 
   return (
-    <div className="container py-16 max-w-md">
-      <Card className="p-8">
+    <div className="container py-10 md:py-16 max-w-md">
+      <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-3 -ml-2">
+        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+      </Button>
+      <Card className="p-6 md:p-8">
         <Logo className="mb-6" />
         <h1 className="font-display text-2xl font-bold mb-2">Log in</h1>
         <p className="text-sm text-muted-foreground mb-6">Welcome back to Renarvo</p>

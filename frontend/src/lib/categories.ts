@@ -14,13 +14,19 @@ export type CategoryMeta = {
 };
 
 export const CATEGORY_META: Record<string, CategoryMeta> = {
-  economy:  { icon: 'Car',      nameTr: 'Ekonomik',   nameEn: 'Economy',  nameRu: 'Эконом' },
-  compact:  { icon: 'CarFront', nameTr: 'Kompakt',    nameEn: 'Compact',  nameRu: 'Компакт' },
-  suv:      { icon: 'Truck',    nameTr: 'SUV',        nameEn: 'SUV',      nameRu: 'Внедорожник' },
-  luxury:   { icon: 'Gem',      nameTr: 'Lüks',       nameEn: 'Luxury',   nameRu: 'Премиум' },
-  van:      { icon: 'Bus',      nameTr: 'Minivan',    nameEn: 'Van',      nameRu: 'Минивэн' },
-  electric: { icon: 'Zap',      nameTr: 'Elektrikli', nameEn: 'Electric', nameRu: 'Электро' },
+  economy:  { icon: 'Car',         nameTr: 'Ekonomik',   nameEn: 'Economy',  nameRu: 'Эконом' },
+  compact:  { icon: 'CarFront',    nameTr: 'Kompakt',    nameEn: 'Compact',  nameRu: 'Компакт' },
+  comfort:  { icon: 'Armchair',    nameTr: 'Konfor',     nameEn: 'Comfort',  nameRu: 'Комфорт' },
+  prestige: { icon: 'Crown',       nameTr: 'Prestij',    nameEn: 'Prestige', nameRu: 'Престиж' },
+  premium:  { icon: 'Award',       nameTr: 'Premium',    nameEn: 'Premium',  nameRu: 'Премиум' },
+  luxury:   { icon: 'Sparkles',    nameTr: 'Lüks',       nameEn: 'Luxury',   nameRu: 'Люкс' },
+  suv:      { icon: 'Truck',       nameTr: 'SUV',        nameEn: 'SUV',      nameRu: 'Внедорожник' },
+  minivan:  { icon: 'Bus',         nameTr: 'Minivan',    nameEn: 'Minivan',  nameRu: 'Минивэн' },
+  van:      { icon: 'Caravan',     nameTr: 'Van',        nameEn: 'Van',      nameRu: 'Фургон' },
+  electric: { icon: 'Zap',         nameTr: 'Elektrikli', nameEn: 'Electric', nameRu: 'Электро' },
 };
+
+export const ALLOWED_CATEGORIES = Object.keys(CATEGORY_META);
 
 export function categoryName(id: string, lang: 'tr' | 'en' | 'ru', fallback?: string) {
   const meta = CATEGORY_META[id];

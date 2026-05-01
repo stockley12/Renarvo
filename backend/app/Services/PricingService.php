@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Car;
+use App\Models\InsurancePackage;
 use App\Models\LengthDiscount;
 use App\Models\PromoCode;
 use App\Models\SeasonalPricing;
@@ -22,6 +23,7 @@ class PricingService
         CarbonImmutable $returnAt,
         array $extras = [],
         ?string $promoCode = null,
+        ?InsurancePackage $insurance = null,
     ): array {
         $days = max(1, (int) ceil($pickupAt->diffInHours($returnAt) / 24));
 
@@ -53,10 +55,22 @@ class PricingService
 
         $extrasTotal = 0;
         foreach ($extras as $extra) {
-            $extrasTotal += (int) ($extra['price_per_day'] ?? 0) * $days;
+            $mode = $extra['charge_mode'] ?? 'per_day';
+            if ($mode === 'per_rental') {
+                $extrasTotal += (int) ($extra['price_per_rental'] ?? $extra['price_per_day'] ?? 0);
+            } elseif ($mode === 'free') {
+                // free extras add nothing
+            } else {
+                $extrasTotal += (int) ($extra['price_per_day'] ?? 0) * $days;
+            }
         }
 
-        $subtotal = $base + $extrasTotal;
+        $insurancePrice = 0;
+        if ($insurance) {
+            $insurancePrice = (int) $insurance->price_per_day * $days;
+        }
+
+        $subtotal = $base + $extrasTotal + $insurancePrice;
 
         $discountAmount = 0;
         if ($lengthDiscountPct > 0) {
@@ -99,6 +113,8 @@ class PricingService
             'days' => $days,
             'base_price' => $base,
             'extras_price' => $extrasTotal,
+            'insurance_price' => $insurancePrice,
+            'deposit_amount_snapshot' => (int) ($car->deposit ?? 0),
             'discount_amount' => $discountAmount,
             'service_fee' => $serviceFee,
             'tax_amount' => $taxAmount,

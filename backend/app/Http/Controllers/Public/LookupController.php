@@ -17,8 +17,12 @@ class LookupController extends Controller
     private const CATEGORIES = [
         ['id' => 'economy', 'name' => 'Economy'],
         ['id' => 'compact', 'name' => 'Compact'],
-        ['id' => 'suv', 'name' => 'SUV'],
+        ['id' => 'comfort', 'name' => 'Comfort'],
+        ['id' => 'prestige', 'name' => 'Prestige'],
+        ['id' => 'premium', 'name' => 'Premium'],
         ['id' => 'luxury', 'name' => 'Luxury'],
+        ['id' => 'suv', 'name' => 'SUV'],
+        ['id' => 'minivan', 'name' => 'Minivan'],
         ['id' => 'van', 'name' => 'Van'],
         ['id' => 'electric', 'name' => 'Electric'],
     ];

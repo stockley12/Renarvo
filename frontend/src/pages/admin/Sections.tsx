@@ -23,6 +23,7 @@ import {
   useAdminCatalog,
   useCatalogAction,
   useAdminReservations,
+  useAdminPayments,
   useAdminUsers,
   useUserBan,
   useAdminReviews,
@@ -400,65 +401,228 @@ export function AdminCatalog() {
 }
 
 /* ============== RESERVATIONS ============== */
+const PAYMENT_STATUS_COLORS: Record<string, string> = {
+  paid: 'bg-success/15 text-success border-success/30',
+  pending: 'bg-warning/15 text-warning border-warning/30',
+  unpaid: 'bg-muted text-muted-foreground',
+  failed: 'bg-destructive/15 text-destructive border-destructive/30',
+  cancelled: 'bg-muted text-muted-foreground',
+  refunded: 'bg-primary/15 text-primary border-primary/30',
+  authorized: 'bg-primary/10 text-primary border-primary/30',
+};
+
 export function AdminReservations() {
   const { currency, locale } = useApp();
   const [q, setQ] = useState('');
-  const reservations = useAdminReservations({ search: q || undefined, limit: 100 });
+  const [paymentStatus, setPaymentStatus] = useState<string>('');
+  const reservations = useAdminReservations({
+    search: q || undefined,
+    payment_status: paymentStatus || undefined,
+    limit: 100,
+  });
   const items = reservations.data?.data ?? [];
 
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="font-display text-3xl font-extrabold">All reservations</h1>
-        <div className="relative w-full max-w-xs">
-          <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by code or email..." className="pl-9" />
+        <div className="flex items-center gap-3 flex-wrap">
+          <select
+            value={paymentStatus}
+            onChange={(e) => setPaymentStatus(e.target.value)}
+            className="h-9 rounded-lg border bg-background px-3 text-sm"
+          >
+            <option value="">Any payment</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+            <option value="unpaid">Unpaid</option>
+            <option value="failed">Failed</option>
+            <option value="refunded">Refunded</option>
+          </select>
+          <div className="relative w-full max-w-xs">
+            <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Code, email, company, TIKO ref..." className="pl-9" />
+          </div>
         </div>
       </div>
 
       <Card className="overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
-            <tr>
-              <th className="px-4 py-3">Code</th>
-              <th className="px-4 py-3">Customer</th>
-              <th className="px-4 py-3">Company</th>
-              <th className="px-4 py-3">Pickup</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservations.isLoading && (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
               <tr>
-                <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
-                  <Loader2 className="h-5 w-5 mx-auto animate-spin" />
-                </td>
+                <th className="px-4 py-3">Code</th>
+                <th className="px-4 py-3">Customer</th>
+                <th className="px-4 py-3">Company</th>
+                <th className="px-4 py-3">Pickup</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Payment</th>
+                <th className="px-4 py-3">TIKO refs</th>
+                <th className="px-4 py-3 text-right">Total</th>
+                <th className="px-4 py-3 text-right">Paid (TRY)</th>
               </tr>
-            )}
-            {!reservations.isLoading && items.length === 0 && (
+            </thead>
+            <tbody>
+              {reservations.isLoading && (
+                <tr>
+                  <td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">
+                    <Loader2 className="h-5 w-5 mx-auto animate-spin" />
+                  </td>
+                </tr>
+              )}
+              {!reservations.isLoading && items.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">
+                    No reservations
+                  </td>
+                </tr>
+              )}
+              {items.map((r) => {
+                const cp = r.current_payment;
+                const ps = r.payment_status ?? 'unpaid';
+                return (
+                  <tr key={r.id} className="border-t hover:bg-muted/30 align-top">
+                    <td className="px-4 py-3 font-mono text-xs font-semibold">{r.code}</td>
+                    <td className="px-4 py-3">
+                      <div className="font-medium">{r.customer?.name ?? '—'}</div>
+                      <div className="text-xs text-muted-foreground">{r.customer?.email ?? ''}</div>
+                    </td>
+                    <td className="px-4 py-3">{r.company?.name ?? '—'}</td>
+                    <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(r.pickup_at, locale)}</td>
+                    <td className="px-4 py-3">
+                      <Badge variant="outline" className="capitalize">
+                        {r.status}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge variant="outline" className={`capitalize ${PAYMENT_STATUS_COLORS[ps] ?? ''}`}>
+                        {ps}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-xs">
+                      {cp ? (
+                        <div className="space-y-0.5">
+                          {cp.order_id && <div className="font-mono">o:{cp.order_id}</div>}
+                          {cp.trans_id && <div className="font-mono">t:{cp.trans_id}</div>}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right font-semibold">{formatPrice(r.price.total, currency, locale)}</td>
+                    <td className="px-4 py-3 text-right text-xs">
+                      {cp?.amount_try ? `₺${cp.amount_try.toLocaleString()}` : <span className="text-muted-foreground">—</span>}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+/* ============== PAYMENTS ============== */
+export function AdminPayments() {
+  const { currency, locale } = useApp();
+  const [q, setQ] = useState('');
+  const [status, setStatus] = useState('');
+  const [provider, setProvider] = useState('');
+  const payments = useAdminPayments({
+    search: q || undefined,
+    status: status || undefined,
+    provider: provider || undefined,
+    limit: 100,
+  });
+  const items = payments.data?.data ?? [];
+
+  return (
+    <div className="space-y-5 max-w-7xl">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h1 className="font-display text-3xl font-extrabold">Payments</h1>
+        <div className="flex items-center gap-3 flex-wrap">
+          <select value={provider} onChange={(e) => setProvider(e.target.value)} className="h-9 rounded-lg border bg-background px-3 text-sm">
+            <option value="">Any provider</option>
+            <option value="tiko">TIKO</option>
+            <option value="stripe">Stripe</option>
+            <option value="iyzico">iyzico</option>
+          </select>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="h-9 rounded-lg border bg-background px-3 text-sm">
+            <option value="">Any status</option>
+            <option value="pending">Pending</option>
+            <option value="authorized">Authorized</option>
+            <option value="captured">Captured</option>
+            <option value="failed">Failed</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="refunded">Refunded</option>
+          </select>
+          <div className="relative w-full max-w-xs">
+            <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Order, trans, code, email..." className="pl-9" />
+          </div>
+        </div>
+      </div>
+
+      <Card className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
               <tr>
-                <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
-                  No reservations
-                </td>
+                <th className="px-4 py-3">Reservation</th>
+                <th className="px-4 py-3">Customer</th>
+                <th className="px-4 py-3">Company</th>
+                <th className="px-4 py-3">Provider</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Order ID</th>
+                <th className="px-4 py-3">Trans ID</th>
+                <th className="px-4 py-3 text-right">Amount (TRY)</th>
+                <th className="px-4 py-3">Captured</th>
               </tr>
-            )}
-            {items.map((r) => (
-              <tr key={r.id} className="border-t hover:bg-muted/30">
-                <td className="px-4 py-3 font-mono text-xs font-semibold">{r.code}</td>
-                <td className="px-4 py-3">{r.customer?.name ?? '—'}</td>
-                <td className="px-4 py-3">{r.company?.name ?? '—'}</td>
-                <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(r.pickup_at, locale)}</td>
-                <td className="px-4 py-3">
-                  <Badge variant="outline" className="capitalize">
-                    {r.status}
-                  </Badge>
-                </td>
-                <td className="px-4 py-3 text-right font-semibold">{formatPrice(r.price.total, currency, locale)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {payments.isLoading && (
+                <tr>
+                  <td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">
+                    <Loader2 className="h-5 w-5 mx-auto animate-spin" />
+                  </td>
+                </tr>
+              )}
+              {!payments.isLoading && items.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">
+                    No payments
+                  </td>
+                </tr>
+              )}
+              {items.map((p) => (
+                <tr key={p.id} className="border-t hover:bg-muted/30 align-top">
+                  <td className="px-4 py-3 font-mono text-xs font-semibold">{p.reservation?.code ?? '—'}</td>
+                  <td className="px-4 py-3">
+                    <div className="font-medium">{p.reservation?.customer?.name ?? '—'}</div>
+                    <div className="text-xs text-muted-foreground">{p.reservation?.customer?.email ?? ''}</div>
+                  </td>
+                  <td className="px-4 py-3">{p.company?.name ?? '—'}</td>
+                  <td className="px-4 py-3 capitalize">{p.provider}</td>
+                  <td className="px-4 py-3">
+                    <Badge variant="outline" className={`capitalize ${PAYMENT_STATUS_COLORS[p.status] ?? ''}`}>
+                      {p.status}
+                    </Badge>
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs">{p.order_id ?? '—'}</td>
+                  <td className="px-4 py-3 font-mono text-xs">{p.trans_id ?? '—'}</td>
+                  <td className="px-4 py-3 text-right font-semibold">
+                    {p.amount_try ? `₺${p.amount_try.toLocaleString()}` : formatPrice(p.amount, currency, locale)}
+                  </td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                    {p.captured_at ? formatDate(p.captured_at, locale) : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   );

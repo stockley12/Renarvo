@@ -24,6 +24,8 @@ class ReservationResource extends JsonResource
             'price' => [
                 'base' => $this->base_price,
                 'extras' => $this->extras_price,
+                'insurance' => (int) ($this->insurance_price ?? 0),
+                'deposit' => (int) ($this->deposit_amount_snapshot ?? 0),
                 'discount' => $this->discount_amount,
                 'service_fee' => $this->service_fee,
                 'tax' => $this->tax_amount,
@@ -31,6 +33,9 @@ class ReservationResource extends JsonResource
                 'currency' => $this->currency_snapshot,
             ],
             'status' => $this->status,
+            'payment_status' => $this->payment_status ?? 'unpaid',
+            'insurance_package_id' => $this->insurance_package_id,
+            'current_payment_id' => $this->current_payment_id,
             'promo_code' => $this->promo_code,
             'flight_number' => $this->flight_number,
             'notes' => $this->notes,
@@ -58,6 +63,22 @@ class ReservationResource extends JsonResource
                 'email' => $this->customer->email,
                 'phone' => $this->customer->phone,
             ]),
+            'insurance_package' => $this->whenLoaded('insurancePackage', fn () => $this->insurancePackage ? [
+                'id' => $this->insurancePackage->id,
+                'tier' => $this->insurancePackage->tier,
+                'name' => $this->insurancePackage->name,
+                'price_per_day' => (int) $this->insurancePackage->price_per_day,
+            ] : null),
+            'current_payment' => $this->whenLoaded('currentPayment', fn () => $this->currentPayment ? [
+                'id' => $this->currentPayment->id,
+                'provider' => $this->currentPayment->provider,
+                'status' => $this->currentPayment->status,
+                'order_id' => $this->currentPayment->order_id,
+                'trans_id' => $this->currentPayment->trans_id,
+                'amount_try' => (int) ($this->currentPayment->amount_try ?? 0),
+                'currency' => $this->currentPayment->currency,
+                'captured_at' => $this->currentPayment->captured_at?->toIso8601String(),
+            ] : null),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

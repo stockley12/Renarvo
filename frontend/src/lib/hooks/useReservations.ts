@@ -12,7 +12,13 @@ type CreateReservationInput = {
   date_of_birth?: string;
   notes?: string;
   promo_code?: string;
-  extras?: Array<{ type: string; price_per_day: number; label?: string }>;
+  insurance_package_id?: number | null;
+  extra_ids?: number[];
+  extras?: Array<{
+    type: string;
+    price_per_day: number;
+    label?: string;
+  }>;
 };
 
 export function useMyReservations(params: { status?: string } = {}) {

@@ -177,6 +177,8 @@ export async function registerCompany(input: {
   phone: string;
   tax_number?: string;
   address?: string;
+  email_public?: string;
+  description?: string;
   owner_name: string;
   owner_email: string;
   owner_password: string;
@@ -246,7 +248,31 @@ export type ApiCar = {
   review_count: number;
   features?: string[];
   image_seed?: string | null;
-  company?: { id: number; slug: string; name: string; rating_avg: number };
+  // Phase 5 extensions
+  engine_power_hp?: number | null;
+  engine_cc?: number | null;
+  has_ac?: boolean;
+  kilometre_limit_per_day?: number | null;
+  min_driver_age?: number | null;
+  min_driver_age_override?: number | null;
+  images?: Array<{ id: number; path: string; position: number }>;
+  company?: {
+    id: number;
+    slug: string;
+    name: string;
+    rating_avg: number;
+    roadside_24_7?: boolean;
+    student_friendly?: boolean;
+    min_rental_days?: number;
+    kilometre_policy?: 'unlimited' | 'per_day_limit' | 'total_limit';
+    kilometre_limit_per_day_default?: number | null;
+    min_driver_age_default?: number;
+    whatsapp?: string | null;
+    instagram?: string | null;
+    facebook?: string | null;
+    website?: string | null;
+    email_public?: string | null;
+  };
 };
 
 export type ApiCompany = {
@@ -256,11 +282,27 @@ export type ApiCompany = {
   city: string;
   description?: string | null;
   logo_color?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  languages_spoken?: string | null;
   status: string;
   founded_year?: number | null;
   rating_avg: number;
   review_count: number;
   fleet_size: number;
+  // Rental policy
+  min_rental_days?: number;
+  kilometre_policy?: 'unlimited' | 'per_day_limit' | 'total_limit';
+  kilometre_limit_per_day_default?: number | null;
+  min_driver_age_default?: number;
+  student_friendly?: boolean;
+  roadside_24_7?: boolean;
+  // Public contact / social
+  email_public?: string | null;
+  whatsapp?: string | null;
+  instagram?: string | null;
+  facebook?: string | null;
+  website?: string | null;
 };
 
 export type ApiReservation = {
@@ -274,9 +316,14 @@ export type ApiReservation = {
   pickup_location: string;
   days: number;
   status: string;
+  payment_status?: 'unpaid' | 'pending' | 'authorized' | 'paid' | 'refunded' | 'failed' | 'cancelled';
+  insurance_package_id?: number | null;
+  current_payment_id?: number | null;
   price: {
     base: number;
     extras: number;
+    insurance?: number;
+    deposit?: number;
     discount: number;
     service_fee: number;
     tax: number;
@@ -286,6 +333,17 @@ export type ApiReservation = {
   car?: { id: number; brand: string; model: string; image_seed?: string | null };
   company?: { id: number; name: string; slug: string; phone?: string };
   customer?: { id: number; name: string; email: string; phone?: string | null };
+  insurance_package?: { id: number; tier: 'mini' | 'mid' | 'full'; name: string; price_per_day: number } | null;
+  current_payment?: {
+    id: number;
+    provider: string;
+    status: string;
+    order_id: string | null;
+    trans_id: string | null;
+    amount_try: number;
+    currency: string;
+    captured_at: string | null;
+  } | null;
   promo_code?: string | null;
   flight_number?: string | null;
   notes?: string | null;

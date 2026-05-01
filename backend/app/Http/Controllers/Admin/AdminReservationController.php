@@ -15,15 +15,25 @@ class AdminReservationController extends Controller
     {
         TenantContext::clear();
 
-        $query = Reservation::query()->with(['car', 'company:id,name', 'customer:id,name,email']);
+        $query = Reservation::query()->with([
+            'car',
+            'company:id,name,slug',
+            'customer:id,name,email,phone',
+            'currentPayment',
+        ]);
 
         if ($status = $request->query('status')) {
             $query->where('status', $status);
         }
+        if ($paymentStatus = $request->query('payment_status')) {
+            $query->where('payment_status', $paymentStatus);
+        }
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('code', 'like', "%{$search}%")
-                    ->orWhereHas('customer', fn ($qq) => $qq->where('email', 'like', "%{$search}%"));
+                    ->orWhereHas('customer', fn ($qq) => $qq->where('email', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%"))
+                    ->orWhereHas('company', fn ($qq) => $qq->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('currentPayment', fn ($qq) => $qq->where('order_id', 'like', "%{$search}%")->orWhere('trans_id', 'like', "%{$search}%"));
             });
         }
         if ($from = $request->query('from')) {

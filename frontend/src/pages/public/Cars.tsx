@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Loader2, SlidersHorizontal, Zap } from 'lucide-react';
+import { Loader2, SlidersHorizontal, Zap, List, Map as MapIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,6 +14,8 @@ import { usePublicCars } from '@/lib/hooks/useCars';
 import { useCategories } from '@/lib/hooks/usePublic';
 import { categoryName } from '@/lib/categories';
 import type { ApiCar } from '@/lib/api';
+
+const CarsMap = lazy(() => import('@/components/public/CarsMap').then((m) => ({ default: m.CarsMap })));
 
 type Transmission = 'manual' | 'automatic';
 
@@ -42,7 +44,7 @@ function FilterPanel({
   return (
     <div className="space-y-6">
       <div>
-        <h4 className="font-semibold text-sm mb-3">{t('cars.price')} (₺/gün)</h4>
+        <h4 className="font-semibold text-sm mb-3">{t('cars.priceUnit')}</h4>
         <Slider min={300} max={3500} step={100} value={state.price} onValueChange={(v) => set({ ...state, price: [v[0], v[1]] as [number, number] })} />
         <div className="flex justify-between text-xs text-muted-foreground mt-2">
           <span>₺{state.price[0]}</span><span>₺{state.price[1]}</span>
@@ -102,7 +104,7 @@ function FilterPanel({
         <label className="flex items-center gap-2 cursor-pointer text-sm">
           <Checkbox checked={state.instant} onCheckedChange={(v) => set({ ...state, instant: !!v })} />
           <Zap className="h-3.5 w-3.5 text-success" />
-          <span>Instant book only</span>
+          <span>{t('cars.instantOnly')}</span>
         </label>
       </div>
     </div>
@@ -124,6 +126,7 @@ export default function Cars() {
     instant: false,
   });
   const [sort, setSort] = useState<'price-asc' | 'price-desc' | 'rating' | 'newest'>('rating');
+  const [view, setView] = useState<'list' | 'map'>('list');
 
   const apiQuery = usePublicCars({ city: cityFilter ?? undefined, limit: 60 });
   const cars: ApiCar[] = apiQuery.data?.data ?? [];
@@ -172,10 +175,30 @@ export default function Cars() {
         <div>
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h1 className="font-display text-2xl font-bold">{filtered.length} {t('nav.cars').toLowerCase()}</h1>
-              {cityFilter && <p className="text-sm text-muted-foreground">in {cityFilter}</p>}
+              <h1 className="font-display text-2xl font-bold">{t('cars.totalCount', { count: filtered.length })}</h1>
+              {cityFilter && <p className="text-sm text-muted-foreground">{t('cars.inCity', { city: cityFilter })}</p>}
             </div>
             <div className="flex items-center gap-2">
+              <div className="inline-flex rounded-lg border bg-background p-0.5">
+                <Button
+                  size="sm"
+                  variant={view === 'list' ? 'default' : 'ghost'}
+                  className={view === 'list' ? 'bg-gradient-brand text-white border-0 h-8' : 'h-8'}
+                  onClick={() => setView('list')}
+                >
+                  <List className="h-4 w-4 sm:mr-1.5" />
+                  <span className="hidden sm:inline">{t('cars.view.list')}</span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant={view === 'map' ? 'default' : 'ghost'}
+                  className={view === 'map' ? 'bg-gradient-brand text-white border-0 h-8' : 'h-8'}
+                  onClick={() => setView('map')}
+                >
+                  <MapIcon className="h-4 w-4 sm:mr-1.5" />
+                  <span className="hidden sm:inline">{t('cars.view.map')}</span>
+                </Button>
+              </div>
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="sm" className="lg:hidden">
@@ -193,30 +216,40 @@ export default function Cars() {
                 onChange={(e) => setSort(e.target.value as typeof sort)}
                 className="h-9 rounded-lg border bg-background px-3 text-sm"
               >
-                <option value="rating">Top rated</option>
-                <option value="price-asc">Price: low to high</option>
-                <option value="price-desc">Price: high to low</option>
-                <option value="newest">Newest</option>
+                <option value="rating">{t('cars.sort.topRated')}</option>
+                <option value="price-asc">{t('cars.sort.priceAsc')}</option>
+                <option value="price-desc">{t('cars.sort.priceDesc')}</option>
+                <option value="newest">{t('cars.sort.newest')}</option>
               </select>
             </div>
           </div>
           {apiQuery.isLoading ? (
             <Card className="p-16 text-center text-muted-foreground flex flex-col items-center gap-2">
               <Loader2 className="h-5 w-5 animate-spin" />
-              Loading cars…
+              {t('common.loadingCars')}
             </Card>
           ) : total === 0 ? (
             <Card className="p-16 text-center">
-              <h2 className="font-display font-bold text-xl mb-2">No cars available yet</h2>
+              <h2 className="font-display font-bold text-xl mb-2">{t('cars.noCarsTitle')}</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto mb-5">
-                Renarvo just opened in {cityFilter ?? 'North Cyprus'}. Companies are getting onboarded — be the first to offer a fleet.
+                {cityFilter
+                  ? t('cars.noCarsDesc', { city: cityFilter })
+                  : t('cars.noCarsDescGeneric')}
               </p>
               <Button asChild className="bg-gradient-brand text-white border-0">
-                <Link to="/register-company">Register your company</Link>
+                <Link to="/register-company">{t('cars.registerYourCompany')}</Link>
               </Button>
             </Card>
           ) : filtered.length === 0 ? (
             <Card className="p-16 text-center text-muted-foreground">{t('cars.noResults')}</Card>
+          ) : view === 'map' ? (
+            <Suspense fallback={
+              <Card className="p-16 text-center text-muted-foreground flex flex-col items-center gap-2">
+                <Loader2 className="h-5 w-5 animate-spin" /> {t('common.loadingCars')}
+              </Card>
+            }>
+              <CarsMap cars={filtered} />
+            </Suspense>
           ) : (
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
               {filtered.map((c) => <CarCard key={c.id} car={c} />)}

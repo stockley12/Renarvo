@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminCompanyController;
 use App\Http\Controllers\Admin\AdminFinanceController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminOverviewController;
+use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\AdminReservationController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminRiskController;
@@ -19,6 +20,8 @@ use App\Http\Controllers\Company\CompanyBranchController;
 use App\Http\Controllers\Company\CompanyCarController;
 use App\Http\Controllers\Company\CompanyCustomerController;
 use App\Http\Controllers\Company\CompanyDocumentController;
+use App\Http\Controllers\Company\CompanyExtraController;
+use App\Http\Controllers\Company\CompanyInsuranceController;
 use App\Http\Controllers\Company\CompanyMessageController;
 use App\Http\Controllers\Company\CompanyOverviewController;
 use App\Http\Controllers\Company\CompanyPaymentController;
@@ -41,6 +44,7 @@ use App\Http\Controllers\Public\CompanyPublicController;
 use App\Http\Controllers\Public\HealthController;
 use App\Http\Controllers\Public\LookupController;
 use App\Http\Controllers\Public\PaymentWebhookController;
+use App\Http\Controllers\Payment\TikoController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -57,11 +61,19 @@ Route::prefix('v1')->group(function () {
     Route::get('/cars', [CarPublicController::class, 'index']);
     Route::get('/cars/{id}', [CarPublicController::class, 'show']);
     Route::get('/companies', [CompanyPublicController::class, 'index']);
+    Route::get('/companies/{id}/extras', [CompanyPublicController::class, 'extras'])->whereNumber('id');
+    Route::get('/companies/{id}/insurance-packages', [CompanyPublicController::class, 'insurancePackages'])->whereNumber('id');
     Route::get('/companies/{slug}', [CompanyPublicController::class, 'show']);
     Route::get('/reviews', [CustomerReviewController::class, 'publicIndex']);
 
     // ---------- Payment webhooks (no auth) ----------
     Route::post('/webhooks/payments/{provider}', [PaymentWebhookController::class, 'handle']);
+
+    // TIKO Sanal POS — public surfaces (no auth, hash-verified server-side)
+    Route::get('/payments/tiko/config', [TikoController::class, 'config']);
+    Route::post('/payments/tiko/callback', [TikoController::class, 'callback']);
+    Route::match(['get', 'post'], '/payments/tiko/return-ok', [TikoController::class, 'returnOk']);
+    Route::match(['get', 'post'], '/payments/tiko/return-fail', [TikoController::class, 'returnFail']);
 
     // ---------- Privacy / consent (anonymous + authenticated) ----------
     Route::post('/privacy/consent', [CustomerPrivacyController::class, 'recordConsent']);
@@ -89,6 +101,9 @@ Route::prefix('v1')->group(function () {
         Route::post('/me/reservations', [CustomerReservationController::class, 'store']);
         Route::get('/me/reservations/{id}', [CustomerReservationController::class, 'show']);
         Route::patch('/me/reservations/{id}/cancel', [CustomerReservationController::class, 'cancel']);
+
+        // TIKO checkout — opens a fresh 3DS attempt for this reservation
+        Route::post('/me/reservations/{id}/checkout/tiko', [TikoController::class, 'checkout']);
 
         Route::post('/me/reviews', [CustomerReviewController::class, 'store']);
 
@@ -162,6 +177,18 @@ Route::prefix('v1')->group(function () {
 
             Route::get('/settings', [CompanySettingsController::class, 'show']);
             Route::put('/settings', [CompanySettingsController::class, 'update']);
+
+            // Catalog of selectable extras
+            Route::get('/extras', [CompanyExtraController::class, 'index']);
+            Route::post('/extras', [CompanyExtraController::class, 'store']);
+            Route::patch('/extras/{id}', [CompanyExtraController::class, 'update']);
+            Route::delete('/extras/{id}', [CompanyExtraController::class, 'destroy']);
+
+            // Insurance packages (Mini / Mid / Full)
+            Route::get('/insurance-packages', [CompanyInsuranceController::class, 'index']);
+            Route::post('/insurance-packages', [CompanyInsuranceController::class, 'store']);
+            Route::patch('/insurance-packages/{id}', [CompanyInsuranceController::class, 'update']);
+            Route::delete('/insurance-packages/{id}', [CompanyInsuranceController::class, 'destroy']);
         });
 
     // ---------- Superadmin ----------
@@ -181,6 +208,7 @@ Route::prefix('v1')->group(function () {
             Route::patch('/catalog/{id}/flag', [AdminCatalogController::class, 'flag']);
 
             Route::get('/reservations', [AdminReservationController::class, 'index']);
+            Route::get('/payments', [AdminPaymentController::class, 'index']);
 
             Route::get('/users', [AdminUserController::class, 'index']);
             Route::patch('/users/{id}/ban', [AdminUserController::class, 'ban']);

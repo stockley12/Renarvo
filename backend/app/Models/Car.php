@@ -23,6 +23,8 @@ class Car extends Model
         'seats', 'doors', 'price_per_day', 'weekly_price', 'city', 'deposit',
         'mileage_policy', 'instant_book', 'status', 'plate', 'vin', 'description',
         'min_driver_age', 'rating_avg', 'review_count', 'image_seed',
+        'engine_power_hp', 'engine_cc', 'has_ac', 'kilometre_limit_per_day',
+        'min_driver_age_override',
     ];
 
     protected $casts = [
@@ -32,6 +34,11 @@ class Car extends Model
         'deposit' => 'integer',
         'rating_avg' => 'decimal:2',
         'review_count' => 'integer',
+        'engine_power_hp' => 'integer',
+        'engine_cc' => 'integer',
+        'has_ac' => 'boolean',
+        'kilometre_limit_per_day' => 'integer',
+        'min_driver_age_override' => 'integer',
     ];
 
     public function company(): BelongsTo

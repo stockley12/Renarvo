@@ -44,3 +44,9 @@ export function formatDate(d: Date | string, locale: Locale = 'tr'): string {
     day: '2-digit', month: 'short', year: 'numeric',
   }).format(date);
 }
+
+export function storageUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  if (/^https?:\/\//i.test(path)) return path;
+  return `/storage/${path.replace(/^\/+/, '')}`;
+}
