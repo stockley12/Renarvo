@@ -178,12 +178,22 @@ cd ~/renarvo/backend && php artisan migrate:fresh --force --seed
 - `qa_live.ps1`: **17/17 PASS** end-to-end (anonymous → company register → admin approve → fleet → public listing → customer register → booking → confirm/pickup/return → review → admin audit + reservations).
 - Bug fixed during the run: `User::token_version` defaulted to `null` in memory after `Model::create`, so JWTs issued at registration carried `tv:null` and were rejected on the next request (401 UNAUTHENTICATED). Fix: declared `protected $attributes = ['token_version' => 0, 'status' => 'active']` plus an integer cast on the `User` model, and made `JwtService::validateAccessToken` coerce nullish `tv` on either side to `0` for back-compat. Commit `5796656`.
 
+### Rent / Pay / TIKO regression (2026-05-01, commit `6d5562c`)
+- Deploy: `git pull origin main && bash deploy/deploy.sh` ran clean. Six new migrations applied (`extend_companies_table`, `extend_cars_table`, `create_company_extras_table`, `create_insurance_packages_table`, `extend_reservations_for_payment`, `extend_payments_for_tiko`). `npm run build` produced a separate `CarsMap` chunk (lazy). Smoke `/api/v1/health` and `/api/v1/cities` → 200.
+- `qa_auth.ps1`: **29 PASS / 0 FAIL** (same 1 cosmetic WARN as before — cleanup-after-logout).
+- `qa_live.ps1`: **17/17 PASS**.
+- `qa_payment.ps1` (new, see `.tools/qa_payment.ps1`): **10/10 PASS** in `mode=disabled` branch:
+  - `/payments/tiko/config` returns `mode=disabled enabled=false currency=TRY`.
+  - End-to-end company → admin approve → fleet → customer → reservation → checkout returns the expected `503 TIKO_DISABLED`, reservation stays `payment_status=unpaid`, `/admin/reservations` shows it. Once `TIKO_MERCHANT_ID/SECRET/PASSWORD` are filled in `.env` and `TIKO_MODE=sandbox`, the same script branches into the iframe-issued / `pending` / `/admin/payments` checks automatically.
+- Production DB after the run: `purge-qa.sh` removed all `qa-*@renarvo-test.local` users (10), `QA *` companies (7), and orphaned cars/reservations. `users` table now contains only `admin@renarvo.com`; `companies` is empty. Rate-limiter buckets cleared.
+- Note on rate-limiter during back-to-back runs: `RateLimiterService` writes to the `rate_limit_buckets` SQLite table (NOT the cache), so `php artisan cache:clear` does not reset login throttles. To unblock a stuck QA loop on the same IP, run `sqlite3 ~/renarvo/backend/database/renarvo.sqlite 'DELETE FROM rate_limit_buckets;'`.
+
 ## Open follow-ups summary (post-launch, in order)
 1. **(blocking real customers)** Provide MySQL credentials → flip `backend/.env` → `php artisan migrate:fresh --force --seed` (todo `a-server-flip` is still pending until creds are available).
 2. **(blocking real customers)** Configure SMTP — currently `MAIL_MAILER=log`.
 3. Rotate SSH password (leaked-in-history risk on the public repo).
 4. Rotate the bootstrap superadmin password from the admin panel.
-5. Real payments — TIKO Sanal POS scaffolding is shipped (Phase 10/11). Awaiting the user-supplied `TIKO_MERCHANT_ID`, `TIKO_SECRET`, `TIKO_PASSWORD` to flip `TIKO_MODE=sandbox` on the server and run the new `qa_payment.ps1`.
+5. Real payments — TIKO Sanal POS scaffolding is shipped, deployed and regression-tested in `mode=disabled` (Phase 10/11/15, see `qa_payment.ps1`). Awaiting the user-supplied `TIKO_MERCHANT_ID`, `TIKO_SECRET`, `TIKO_PASSWORD` to flip `TIKO_MODE=sandbox` on the server and re-run `qa_payment.ps1` to assert iframe-issued / pending → paid via the bank-driven 3DS leg.
 6. 2FA for company owners and superadmins.
 7. Cloudflare in front of Hostinger (see runbook below).
 8. Hostinger mailbox `info@renarvo.com` (see runbook below).
