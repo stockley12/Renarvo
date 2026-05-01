@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -126,6 +127,7 @@ export function AdminAuditLog() {
 
 /* ============== NOTIFICATIONS / BROADCAST ============== */
 export function AdminNotifications() {
+  const { t } = useTranslation();
   const broadcast = useAdminBroadcast();
   const history = useAdminBroadcastHistory();
   const [audience, setAudience] = useState('all');
@@ -136,55 +138,55 @@ export function AdminNotifications() {
   async function send(e: React.FormEvent) {
     e.preventDefault();
     if (!subject.trim() || !body.trim()) {
-      toast.error('Subject and message are required');
+      toast.error(t('panel.admin.notifications.validationSubjectBody'));
       return;
     }
     if (channels.length === 0) {
-      toast.error('Pick at least one channel');
+      toast.error(t('panel.admin.notifications.validationChannel'));
       return;
     }
     try {
       await broadcast.mutateAsync({ audience, channels, subject, body });
-      toast.success('Broadcast queued for delivery');
+      toast.success(t('panel.admin.notifications.queued'));
       setSubject('');
       setBody('');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to send broadcast');
+      toast.error(err instanceof Error ? err.message : t('panel.admin.notifications.sendFailed'));
     }
   }
 
   return (
     <div className="space-y-5 max-w-6xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">Notifications</h1>
-        <p className="text-muted-foreground mt-1">Send announcements to companies or customers</p>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.notifications.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('panel.admin.notifications.subtitle')}</p>
       </div>
 
       <Tabs defaultValue="compose">
         <TabsList>
-          <TabsTrigger value="compose">Compose</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="compose">{t('panel.admin.notifications.compose')}</TabsTrigger>
+          <TabsTrigger value="history">{t('panel.admin.notifications.history')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="compose" className="mt-4">
           <form onSubmit={send}>
             <Card className="p-6 space-y-4">
               <div>
-                <Label>Audience</Label>
+                <Label>{t('panel.admin.notifications.audience')}</Label>
                 <select
                   value={audience}
                   onChange={(e) => setAudience(e.target.value)}
                   className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
                 >
-                  <option value="all">Everyone</option>
-                  <option value="customers">Customers only</option>
-                  <option value="companies">Company owners</option>
-                  <option value="company_owners">Company owners (alias)</option>
-                  <option value="company_staff">Company staff</option>
+                  <option value="all">{t('panel.admin.notifications.audienceEveryone')}</option>
+                  <option value="customers">{t('panel.admin.notifications.audienceCustomers')}</option>
+                  <option value="companies">{t('panel.admin.notifications.audienceCompanyOwners')}</option>
+                  <option value="company_owners">{t('panel.admin.notifications.audienceCompanyOwnersAlias')}</option>
+                  <option value="company_staff">{t('panel.admin.notifications.audienceCompanyStaff')}</option>
                 </select>
               </div>
               <div>
-                <Label>Channels</Label>
+                <Label>{t('panel.admin.notifications.channels')}</Label>
                 <div className="flex gap-3 mt-2">
                   {(['in_app', 'email'] as const).map((c) => (
                     <label key={c} className="flex items-center gap-2 text-sm cursor-pointer">
@@ -197,34 +199,34 @@ export function AdminNotifications() {
                         }}
                         className="h-4 w-4"
                       />
-                      {c === 'in_app' ? 'In-app' : 'Email'}
+                      {c === 'in_app' ? t('panel.admin.notifications.channelInApp') : t('panel.admin.notifications.channelEmail')}
                     </label>
                   ))}
                 </div>
               </div>
               <div>
-                <Label>Subject</Label>
+                <Label>{t('panel.admin.notifications.subject')}</Label>
                 <Input
                   required
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  placeholder="Important update about your booking"
+                  placeholder={t('panel.admin.notifications.subjectPlaceholder')}
                 />
               </div>
               <div>
-                <Label>Message</Label>
+                <Label>{t('panel.admin.notifications.message')}</Label>
                 <Textarea
                   rows={6}
                   required
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  placeholder="Write your announcement..."
+                  placeholder={t('panel.admin.notifications.messagePlaceholder')}
                 />
               </div>
               <div className="flex gap-2 pt-2">
                 <Button type="submit" disabled={broadcast.isPending} className="bg-gradient-brand text-white border-0">
                   {broadcast.isPending && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}
-                  <Send className="h-4 w-4 mr-1.5" /> Send now
+                  <Send className="h-4 w-4 mr-1.5" /> {t('panel.admin.notifications.sendNow')}
                 </Button>
               </div>
             </Card>
@@ -236,11 +238,11 @@ export function AdminNotifications() {
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3">Sent</th>
-                  <th className="px-4 py-3">Subject</th>
-                  <th className="px-4 py-3">Audience</th>
-                  <th className="px-4 py-3">Channels</th>
-                  <th className="px-4 py-3 text-right">Reach</th>
+                  <th className="px-4 py-3">{t('panel.admin.notifications.sent')}</th>
+                  <th className="px-4 py-3">{t('panel.admin.notifications.subject')}</th>
+                  <th className="px-4 py-3">{t('panel.admin.notifications.audience')}</th>
+                  <th className="px-4 py-3">{t('panel.admin.notifications.channels')}</th>
+                  <th className="px-4 py-3 text-right">{t('panel.admin.notifications.reach')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -254,7 +256,7 @@ export function AdminNotifications() {
                 {!history.isLoading && (history.data?.length ?? 0) === 0 && (
                   <tr>
                     <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
-                      No broadcasts sent yet
+                      {t('panel.admin.notifications.noneYet')}
                     </td>
                   </tr>
                 )}

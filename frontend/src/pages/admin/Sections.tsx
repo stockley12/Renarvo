@@ -72,17 +72,17 @@ export function AdminOverview() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="GMV (this month)" value={formatPrice(o.gmv_this_month, currency, locale)} icon={BadgeDollarSign} accent="success" />
-        <StatCard label="Active companies" value={o.companies_approved} icon={Building2} accent="navy" />
-        <StatCard label="Pending companies" value={o.companies_pending} icon={Building2} accent="warning" />
-        <StatCard label="Total users" value={o.users_total} icon={Car} accent="brand" />
+        <StatCard label={t('panel.admin.overview.gmvThisMonth')} value={formatPrice(o.gmv_this_month, currency, locale)} icon={BadgeDollarSign} accent="success" />
+        <StatCard label={t('panel.admin.overview.activeCompanies')} value={o.companies_approved} icon={Building2} accent="navy" />
+        <StatCard label={t('panel.admin.overview.pendingCompanies')} value={o.companies_pending} icon={Building2} accent="warning" />
+        <StatCard label={t('panel.admin.overview.totalUsers')} value={o.users_total} icon={Car} accent="brand" />
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Customers" value={o.customers_total} icon={Building2} accent="brand" />
-        <StatCard label="Reservations total" value={o.reservations_total} icon={Car} accent="navy" />
-        <StatCard label="Reservations this month" value={o.reservations_this_month} icon={Car} accent="success" />
-        <StatCard label="Open approvals" value={o.companies_pending} icon={Building2} accent="warning" />
+        <StatCard label={t('panel.admin.overview.customers')} value={o.customers_total} icon={Building2} accent="brand" />
+        <StatCard label={t('panel.admin.overview.reservationsTotal')} value={o.reservations_total} icon={Car} accent="navy" />
+        <StatCard label={t('panel.admin.overview.reservationsThisMonth')} value={o.reservations_this_month} icon={Car} accent="success" />
+        <StatCard label={t('panel.admin.overview.openApprovals')} value={o.companies_pending} icon={Building2} accent="warning" />
       </div>
     </div>
   );
@@ -650,6 +650,18 @@ export function AdminUsers() {
   }
 
   const items = users.data?.data ?? [];
+  const roleLabel = (roleValue: string) => {
+    if (roleValue === 'customer') return t('panel.admin.users.roleCustomer');
+    if (roleValue === 'company_owner') return t('panel.admin.users.roleCompanyOwner');
+    if (roleValue === 'company_staff') return t('panel.admin.users.roleCompanyStaff');
+    if (roleValue === 'superadmin') return t('panel.admin.users.roleSuperadmin');
+    return roleValue.replace('_', ' ');
+  };
+  const statusLabel = (statusValue: string) => {
+    if (statusValue === 'active') return t('panel.admin.users.statusActive');
+    if (statusValue === 'banned') return t('panel.admin.users.statusBanned');
+    return statusValue;
+  };
 
   return (
     <div className="space-y-5 max-w-7xl">
@@ -729,11 +741,11 @@ export function AdminUsers() {
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant="outline" className="capitalize">
-                    {u.role.replace('_', ' ')}
+                    {roleLabel(u.role)}
                   </Badge>
                 </td>
                 <td className="px-4 py-3">
-                  <Badge variant={u.status === 'active' ? 'secondary' : 'destructive'}>{u.status}</Badge>
+                  <Badge variant={u.status === 'active' ? 'secondary' : 'destructive'}>{statusLabel(u.status)}</Badge>
                 </td>
                 <td className="px-4 py-3">
                   <Button
