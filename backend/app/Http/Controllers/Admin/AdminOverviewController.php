@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Reservation;
-use App\Models\RiskFlag;
 use App\Models\User;
 use App\Support\TenantContext;
 use Illuminate\Http\JsonResponse;
@@ -31,7 +30,6 @@ class AdminOverviewController extends Controller
                     ->whereIn('status', ['completed', 'active', 'confirmed'])
                     ->where('created_at', '>=', $monthStart)
                     ->sum('total_price'),
-                'open_risk_flags' => RiskFlag::query()->where('status', 'open')->count(),
             ],
         ]);
     }

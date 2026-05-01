@@ -18,11 +18,6 @@ return [
         'service_fee_kurus' => (int) env('PLATFORM_SERVICE_FEE_KURUS', 12000),
     ],
     'payments' => [
-        'stripe' => [
-            'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
-            'publishable_key' => env('STRIPE_PUBLISHABLE_KEY'),
-            'secret_key' => env('STRIPE_SECRET_KEY'),
-        ],
         'iyzico' => [
             'webhook_secret' => env('IYZICO_WEBHOOK_SECRET'),
             'api_key' => env('IYZICO_API_KEY'),

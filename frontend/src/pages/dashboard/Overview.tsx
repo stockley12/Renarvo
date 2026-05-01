@@ -1,4 +1,5 @@
 import { TrendingUp, Car, CalendarCheck, Wallet, AlertCircle, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { useCompanyOverview, useCompanyStatistics, useCompanySettings } from '@/lib/hooks/useCompany';
 
 export default function DashOverview() {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const overview = useCompanyOverview();
   const stats = useCompanyStatistics();
@@ -19,6 +21,7 @@ export default function DashOverview() {
     return (
       <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
         <Loader2 className="h-6 w-6 mr-2 animate-spin" /> Loading overview...
+        
       </div>
     );
   }
@@ -26,8 +29,8 @@ export default function DashOverview() {
   if (overview.isError || !overview.data) {
     return (
       <div className="space-y-4">
-        <h1 className="font-display text-3xl font-extrabold">Overview unavailable</h1>
-        <p className="text-muted-foreground">{(overview.error as Error)?.message ?? 'Could not load overview.'}</p>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.overview.unavailable')}</h1>
+        <p className="text-muted-foreground">{(overview.error as Error)?.message ?? t('panel.company.overview.loadFailed')}</p>
       </div>
     );
   }
@@ -41,30 +44,30 @@ export default function DashOverview() {
         <h1 className="font-display text-3xl font-extrabold">
           Welcome back{settings.data?.name ? `, ${settings.data.name}` : ''}
         </h1>
-        <p className="text-muted-foreground mt-1">Here's how your business looks today</p>
+        <p className="text-muted-foreground mt-1">{t('panel.company.overview.subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          label="Revenue this month"
+          label={t('panel.company.overview.revenueThisMonth')}
           value={formatPrice(o.revenue_this_month, currency, locale)}
           icon={Wallet}
           accent="success"
         />
-        <StatCard label="Active rentals" value={o.reservations_active} icon={CalendarCheck} accent="brand" />
-        <StatCard label="Pickups today" value={o.reservations_today} icon={TrendingUp} accent="navy" />
-        <StatCard label="Cars in fleet" value={o.fleet_size} icon={Car} accent="warning" />
+        <StatCard label={t('panel.company.overview.activeRentals')} value={o.reservations_active} icon={CalendarCheck} accent="brand" />
+        <StatCard label={t('panel.company.overview.pickupsToday')} value={o.reservations_today} icon={TrendingUp} accent="navy" />
+        <StatCard label={t('panel.company.overview.carsInFleet')} value={o.fleet_size} icon={Car} accent="warning" />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-5">
         <Card className="p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display font-bold text-lg">Revenue trend</h3>
-            <Badge variant="outline">Last 12 months</Badge>
+            <h3 className="font-display font-bold text-lg">{t('panel.company.overview.revenueTrend')}</h3>
+            <Badge variant="outline">{t('panel.company.overview.last12Months')}</Badge>
           </div>
           {monthly.length === 0 ? (
             <div className="h-[260px] flex items-center justify-center text-muted-foreground text-sm">
-              No revenue data yet — your trend will appear here once reservations start coming in.
+              {t('panel.company.overview.noRevenueData')}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
@@ -86,13 +89,13 @@ export default function DashOverview() {
         </Card>
 
         <Card className="p-5">
-          <h3 className="font-display font-bold text-lg mb-4">Alerts</h3>
+          <h3 className="font-display font-bold text-lg mb-4">{t('panel.company.overview.alerts')}</h3>
           <div className="space-y-3">
             {o.reservations_pending > 0 && (
               <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/40">
                 <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-warning" />
                 <span className="text-sm">
-                  {o.reservations_pending} reservation{o.reservations_pending === 1 ? '' : 's'} awaiting confirmation
+                  {t('panel.company.overview.pendingReservations', { count: o.reservations_pending })}
                 </span>
               </div>
             )}
@@ -100,15 +103,15 @@ export default function DashOverview() {
               <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/40">
                 <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-warning" />
                 <span className="text-sm">
-                  Your fleet is empty —{' '}
+                  {t('panel.company.overview.emptyFleet')}{' '}
                   <Link to="/dashboard/fleet" className="text-primary underline">
-                    add your first car
+                    {t('panel.company.overview.addFirstCar')}
                   </Link>
                 </span>
               </div>
             )}
             {o.reservations_pending === 0 && o.fleet_size > 0 && (
-              <p className="text-sm text-muted-foreground">All clear. No pending tasks.</p>
+              <p className="text-sm text-muted-foreground">{t('panel.company.overview.allClear')}</p>
             )}
           </div>
         </Card>
@@ -116,24 +119,24 @@ export default function DashOverview() {
 
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-display font-bold text-lg">Recent reservations</h3>
+          <h3 className="font-display font-bold text-lg">{t('panel.company.overview.recentReservations')}</h3>
           <Button asChild variant="ghost" size="sm">
-            <Link to="/dashboard/reservations">View all</Link>
+            <Link to="/dashboard/reservations">{t('common.viewAll')}</Link>
           </Button>
         </div>
         {recent_reservations.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No reservations yet.</p>
+          <p className="text-sm text-muted-foreground">{t('panel.company.overview.noReservations')}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs text-muted-foreground border-b">
-                  <th className="pb-2 font-medium">Code</th>
-                  <th className="pb-2 font-medium">Customer</th>
-                  <th className="pb-2 font-medium">Car</th>
-                  <th className="pb-2 font-medium">Pickup</th>
-                  <th className="pb-2 font-medium">Status</th>
-                  <th className="pb-2 font-medium text-right">Total</th>
+                  <th className="pb-2 font-medium">{t('panel.common.code')}</th>
+                  <th className="pb-2 font-medium">{t('panel.common.customer')}</th>
+                  <th className="pb-2 font-medium">{t('panel.common.car')}</th>
+                  <th className="pb-2 font-medium">{t('panel.common.pickup')}</th>
+                  <th className="pb-2 font-medium">{t('panel.common.status')}</th>
+                  <th className="pb-2 font-medium text-right">{t('common.total')}</th>
                 </tr>
               </thead>
               <tbody>

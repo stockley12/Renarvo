@@ -317,5 +317,136 @@
     "email": "Email",
     "instagram": "Instagram",
     "facebook": "Facebook"
+  },
+  "panel": {
+    "common": {
+      "publicSite": "Public site",
+      "code": "Code",
+      "customer": "Customer",
+      "car": "Car",
+      "pickup": "Pickup",
+      "status": "Status"
+    },
+    "company": {
+      "groups": {
+        "workspace": "Workspace",
+        "inventory": "Inventory",
+        "people": "People",
+        "insights": "Insights",
+        "account": "Account"
+      },
+      "nav": {
+        "overview": "Overview",
+        "calendar": "Calendar",
+        "reservations": "Reservations",
+        "messages": "Messages",
+        "fleet": "Fleet",
+        "extras": "Extras",
+        "insurance": "Insurance",
+        "pricingPromos": "Pricing & promos",
+        "branches": "Branches",
+        "customers": "Customers",
+        "staff": "Staff",
+        "reviews": "Reviews",
+        "statistics": "Statistics",
+        "payouts": "Payouts",
+        "documents": "Documents",
+        "integrations": "Integrations",
+        "settings": "Settings"
+      },
+      "searchPlaceholder": "Search reservations, cars, customers…",
+      "overview": {
+        "unavailable": "Overview unavailable",
+        "loadFailed": "Could not load overview.",
+        "subtitle": "Here's how your business looks today",
+        "revenueThisMonth": "Revenue this month",
+        "activeRentals": "Active rentals",
+        "pickupsToday": "Pickups today",
+        "carsInFleet": "Cars in fleet",
+        "revenueTrend": "Revenue trend",
+        "last12Months": "Last 12 months",
+        "noRevenueData": "No revenue data yet — your trend will appear here once reservations start coming in.",
+        "alerts": "Alerts",
+        "pendingReservations_one": "{{count}} reservation awaiting confirmation",
+        "pendingReservations_other": "{{count}} reservations awaiting confirmation",
+        "emptyFleet": "Your fleet is empty —",
+        "addFirstCar": "add your first car",
+        "allClear": "All clear. No pending tasks.",
+        "recentReservations": "Recent reservations",
+        "noReservations": "No reservations yet."
+      },
+      "pro": {
+        "title": "Upgrade to Pro",
+        "desc": "Get lower commission, priority placement and AI insights.",
+        "cta": "Learn more"
+      }
+    },
+    "admin": {
+      "badge": "ADMIN",
+      "superAdmin": "Super admin",
+      "platformOwner": "Platform owner",
+      "groups": {
+        "overview": "Overview",
+        "marketplace": "Marketplace",
+        "people": "People",
+        "operations": "Operations"
+      },
+      "nav": {
+        "dashboard": "Dashboard",
+        "systemHealth": "System health",
+        "companies": "Companies",
+        "approvals": "Approvals",
+        "catalog": "Catalog",
+        "reservations": "Reservations",
+        "payments": "Payments",
+        "users": "Users",
+        "reviews": "Reviews",
+        "auditLog": "Audit log",
+        "finance": "Finance",
+        "broadcast": "Broadcast",
+        "content": "Content",
+        "settings": "Settings"
+      },
+      "searchPlaceholder": "Search platform — companies, users, reservations…",
+      "overview": {
+        "title": "Platform overview",
+        "subtitle": "Renarvo at a glance"
+      },
+      "approvals": {
+        "title": "Approvals queue",
+        "pendingCount_one": "{{count}} company pending review",
+        "pendingCount_other": "{{count}} companies pending review",
+        "allCaughtUp": "All caught up — no pending approvals",
+        "ownerLine": "Owner: {{name}} ({{email}})",
+        "documentsPending": "Documents pending review",
+        "approve": "Approve",
+        "reject": "Reject",
+        "approvedToast": "Company approved — they can now list cars",
+        "rejectedToast": "Company rejected"
+      },
+      "users": {
+        "title": "Users",
+        "kindAll": "All user types",
+        "kindNormal": "Normal users (customers)",
+        "kindCompany": "Company users (owners + staff)",
+        "rolesAll": "All roles",
+        "roleCustomer": "Customers",
+        "roleCompanyOwner": "Company owners",
+        "roleCompanyStaff": "Company staff",
+        "roleSuperadmin": "Superadmins",
+        "searchPlaceholder": "Search by email or name...",
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "noUsers": "No users found",
+        "ban": "Ban",
+        "unban": "Unban"
+      },
+      "ai": {
+        "title": "AI insights",
+        "desc": "Platform anomalies are surfaced here.",
+        "cta": "Review"
+      }
+    }
   }
 }

@@ -38,7 +38,7 @@ import { DashCustomers, DashBranches, DashStaff, DashReviews, DashPayouts, DashD
 import { DashCalendar, DashPricing, DashMessages, DashIntegrations } from "@/pages/dashboard/Extra";
 
 import { AdminOverview, AdminCompanies, AdminApprovals, AdminCatalog, AdminReservations, AdminPayments, AdminUsers, AdminReviews, AdminContent, AdminFinance, AdminSettings } from "@/pages/admin/Sections";
-import { AdminAuditLog, AdminRisk, AdminNotifications, AdminSystem } from "@/pages/admin/Extra";
+import { AdminAuditLog, AdminNotifications, AdminSystem } from "@/pages/admin/Extra";
 
 const queryClient = new QueryClient();
 
@@ -148,7 +148,6 @@ const App = () => (
               <Route path="payments" element={<AdminPayments />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="reviews" element={<AdminReviews />} />
-              <Route path="risk" element={<AdminRisk />} />
               <Route path="notifications" element={<AdminNotifications />} />
               <Route path="content" element={<AdminContent />} />
               <Route path="finance" element={<AdminFinance />} />

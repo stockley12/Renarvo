@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { StatCard } from '@/components/dashboard/StatCard';
 import {
-  Building2, Car, BadgeDollarSign, Star, Shield, Check, X, Flag, FileText,
+  Building2, Car, BadgeDollarSign, Star, Check, X, Flag, FileText,
   CheckCircle2, Loader2, Search, Eye, EyeOff, Ban,
 } from 'lucide-react';
 import { useApp } from '@/store/app';
@@ -46,6 +47,7 @@ const statusBadge: Record<CompanyStatus, string> = {
 
 /* ============== OVERVIEW ============== */
 export function AdminOverview() {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const overview = useAdminOverview();
   const o = overview.data;
@@ -65,8 +67,8 @@ export function AdminOverview() {
   return (
     <div className="space-y-6 max-w-7xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">Platform overview</h1>
-        <p className="text-muted-foreground mt-1">Renarvo at a glance</p>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.overview.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('panel.admin.overview.subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -80,7 +82,7 @@ export function AdminOverview() {
         <StatCard label="Customers" value={o.customers_total} icon={Building2} accent="brand" />
         <StatCard label="Reservations total" value={o.reservations_total} icon={Car} accent="navy" />
         <StatCard label="Reservations this month" value={o.reservations_this_month} icon={Car} accent="success" />
-        <StatCard label="Open risk flags" value={o.open_risk_flags} icon={Shield} accent="warning" />
+        <StatCard label="Open approvals" value={o.companies_pending} icon={Building2} accent="warning" />
       </div>
     </div>
   );
@@ -213,13 +215,14 @@ export function AdminCompanies() {
 
 /* ============== APPROVALS ============== */
 export function AdminApprovals() {
+  const { t } = useTranslation();
   const companies = useAdminCompanies({ status: 'pending', limit: 100 });
   const action = useCompanyAction();
 
   async function approve(id: number) {
     try {
       await action.mutateAsync({ id, action: 'approve' });
-      toast.success('Company approved — they can now list cars');
+      toast.success(t('panel.admin.approvals.approvedToast'));
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Action failed');
     }
@@ -230,7 +233,7 @@ export function AdminApprovals() {
     if (!reason.trim()) return;
     try {
       await action.mutateAsync({ id, action: 'reject', reason });
-      toast.success('Company rejected');
+      toast.success(t('panel.admin.approvals.rejectedToast'));
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Action failed');
     }
@@ -240,8 +243,8 @@ export function AdminApprovals() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">Approvals queue</h1>
-      <p className="text-muted-foreground">{companies.data?.meta.total ?? 0} companies pending review</p>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.approvals.title')}</h1>
+      <p className="text-muted-foreground">{t('panel.admin.approvals.pendingCount', { count: companies.data?.meta.total ?? 0 })}</p>
 
       {companies.isLoading && (
         <div className="flex items-center justify-center py-12 text-muted-foreground">
@@ -253,7 +256,7 @@ export function AdminApprovals() {
         {!companies.isLoading && items.length === 0 && (
           <Card className="p-12 text-center text-muted-foreground">
             <CheckCircle2 className="h-10 w-10 mx-auto mb-3 text-success" />
-            All caught up — no pending approvals
+            {t('panel.admin.approvals.allCaughtUp')}
           </Card>
         )}
         {items.map((co) => {
@@ -269,19 +272,19 @@ export function AdminApprovals() {
                 <div className="flex-1 min-w-[200px]">
                   <h3 className="font-display font-bold">{co.name}</h3>
                   <p className="text-sm text-muted-foreground">{co.city}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Owner: {owner?.name ?? '—'} ({owner?.email ?? '—'})</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('panel.admin.approvals.ownerLine', { name: owner?.name ?? '—', email: owner?.email ?? '—' })}</p>
                   <div className="flex gap-2 mt-3 flex-wrap">
                     <Badge variant="outline" className="gap-1">
-                      <FileText className="h-3 w-3" /> Documents pending review
+                      <FileText className="h-3 w-3" /> {t('panel.admin.approvals.documentsPending')}
                     </Badge>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" className="bg-success text-success-foreground" disabled={action.isPending} onClick={() => approve(co.id)}>
-                    <Check className="h-4 w-4 mr-1" /> Approve
+                    <Button size="sm" className="bg-success text-success-foreground" disabled={action.isPending} onClick={() => approve(co.id)}>
+                      <Check className="h-4 w-4 mr-1" /> {t('panel.admin.approvals.approve')}
                   </Button>
-                  <Button size="sm" variant="destructive" disabled={action.isPending} onClick={() => reject(co.id)}>
-                    <X className="h-4 w-4 mr-1" /> Reject
+                    <Button size="sm" variant="destructive" disabled={action.isPending} onClick={() => reject(co.id)}>
+                      <X className="h-4 w-4 mr-1" /> {t('panel.admin.approvals.reject')}
                   </Button>
                 </div>
               </div>
@@ -546,8 +549,6 @@ export function AdminPayments() {
           <select value={provider} onChange={(e) => setProvider(e.target.value)} className="h-9 rounded-lg border bg-background px-3 text-sm">
             <option value="">Any provider</option>
             <option value="tiko">TIKO</option>
-            <option value="stripe">Stripe</option>
-            <option value="iyzico">iyzico</option>
           </select>
           <select value={status} onChange={(e) => setStatus(e.target.value)} className="h-9 rounded-lg border bg-background px-3 text-sm">
             <option value="">Any status</option>
@@ -630,9 +631,11 @@ export function AdminPayments() {
 
 /* ============== USERS ============== */
 export function AdminUsers() {
+  const { t } = useTranslation();
   const [q, setQ] = useState('');
+  const [kind, setKind] = useState<'all' | 'company_users' | 'normal_users'>('all');
   const [role, setRole] = useState<string>('');
-  const users = useAdminUsers({ search: q || undefined, role: role || undefined, limit: 100 });
+  const users = useAdminUsers({ search: q || undefined, role: role || undefined, kind, limit: 100 });
   const ban = useUserBan();
 
   async function toggle(id: number, banned: boolean) {
@@ -651,22 +654,35 @@ export function AdminUsers() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-display text-3xl font-extrabold">Users</h1>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.users.title')}</h1>
         <div className="flex gap-3 items-center">
+          <select
+            value={kind}
+            onChange={(e) => {
+              const next = e.target.value as 'all' | 'company_users' | 'normal_users';
+              setKind(next);
+              setRole('');
+            }}
+            className="h-10 rounded-lg border bg-background px-3 text-sm"
+          >
+            <option value="all">{t('panel.admin.users.kindAll')}</option>
+            <option value="normal_users">{t('panel.admin.users.kindNormal')}</option>
+            <option value="company_users">{t('panel.admin.users.kindCompany')}</option>
+          </select>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
             className="h-10 rounded-lg border bg-background px-3 text-sm"
           >
-            <option value="">All roles</option>
-            <option value="customer">Customers</option>
-            <option value="company_owner">Company owners</option>
-            <option value="company_staff">Company staff</option>
-            <option value="superadmin">Superadmins</option>
+            <option value="">{t('panel.admin.users.rolesAll')}</option>
+            <option value="customer">{t('panel.admin.users.roleCustomer')}</option>
+            <option value="company_owner">{t('panel.admin.users.roleCompanyOwner')}</option>
+            <option value="company_staff">{t('panel.admin.users.roleCompanyStaff')}</option>
+            <option value="superadmin">{t('panel.admin.users.roleSuperadmin')}</option>
           </select>
           <div className="relative w-full max-w-xs">
             <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by email or name..." className="pl-9" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('panel.admin.users.searchPlaceholder')} className="pl-9" />
           </div>
         </div>
       </div>
@@ -675,9 +691,9 @@ export function AdminUsers() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
-              <th className="px-4 py-3">User</th>
-              <th className="px-4 py-3">Role</th>
-              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">{t('panel.admin.users.user')}</th>
+              <th className="px-4 py-3">{t('panel.admin.users.role')}</th>
+              <th className="px-4 py-3">{t('panel.admin.users.status')}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -692,7 +708,7 @@ export function AdminUsers() {
             {!users.isLoading && items.length === 0 && (
               <tr>
                 <td colSpan={4} className="px-4 py-12 text-center text-muted-foreground">
-                  No users found
+                  {t('panel.admin.users.noUsers')}
                 </td>
               </tr>
             )}
@@ -727,7 +743,7 @@ export function AdminUsers() {
                     disabled={ban.isPending}
                   >
                     <Ban className="h-3.5 w-3.5 mr-1" />
-                    {u.status === 'active' ? 'Ban' : 'Unban'}
+                    {u.status === 'active' ? t('panel.admin.users.ban') : t('panel.admin.users.unban')}
                   </Button>
                 </td>
               </tr>

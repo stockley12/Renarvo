@@ -321,5 +321,140 @@
     "email": "Email",
     "instagram": "Instagram",
     "facebook": "Facebook"
+  },
+  "panel": {
+    "common": {
+      "publicSite": "Публичный сайт",
+      "code": "Код",
+      "customer": "Клиент",
+      "car": "Авто",
+      "pickup": "Получение",
+      "status": "Статус"
+    },
+    "company": {
+      "groups": {
+        "workspace": "Рабочая зона",
+        "inventory": "Инвентарь",
+        "people": "Люди",
+        "insights": "Аналитика",
+        "account": "Аккаунт"
+      },
+      "nav": {
+        "overview": "Обзор",
+        "calendar": "Календарь",
+        "reservations": "Бронирования",
+        "messages": "Сообщения",
+        "fleet": "Автопарк",
+        "extras": "Доп. услуги",
+        "insurance": "Страховка",
+        "pricingPromos": "Цены и акции",
+        "branches": "Филиалы",
+        "customers": "Клиенты",
+        "staff": "Сотрудники",
+        "reviews": "Отзывы",
+        "statistics": "Статистика",
+        "payouts": "Выплаты",
+        "documents": "Документы",
+        "integrations": "Интеграции",
+        "settings": "Настройки"
+      },
+      "searchPlaceholder": "Поиск по броням, авто и клиентам…",
+      "overview": {
+        "unavailable": "Обзор недоступен",
+        "loadFailed": "Не удалось загрузить обзор.",
+        "subtitle": "Состояние вашего бизнеса на сегодня",
+        "revenueThisMonth": "Выручка за месяц",
+        "activeRentals": "Активные аренды",
+        "pickupsToday": "Выдачи сегодня",
+        "carsInFleet": "Авто в автопарке",
+        "revenueTrend": "Динамика выручки",
+        "last12Months": "Последние 12 месяцев",
+        "noRevenueData": "Пока нет данных по выручке — график появится после первых бронирований.",
+        "alerts": "Оповещения",
+        "pendingReservations_one": "{{count}} бронь ждёт подтверждения",
+        "pendingReservations_few": "{{count}} брони ждут подтверждения",
+        "pendingReservations_many": "{{count}} броней ждут подтверждения",
+        "pendingReservations_other": "{{count}} брони ждут подтверждения",
+        "emptyFleet": "Ваш автопарк пуст —",
+        "addFirstCar": "добавьте первый автомобиль",
+        "allClear": "Всё в порядке. Нет задач в ожидании.",
+        "recentReservations": "Последние брони",
+        "noReservations": "Пока нет бронирований."
+      },
+      "pro": {
+        "title": "Перейти на Pro",
+        "desc": "Ниже комиссия, приоритет в выдаче и AI-аналитика.",
+        "cta": "Подробнее"
+      }
+    },
+    "admin": {
+      "badge": "АДМИН",
+      "superAdmin": "Суперадмин",
+      "platformOwner": "Владелец платформы",
+      "groups": {
+        "overview": "Обзор",
+        "marketplace": "Маркетплейс",
+        "people": "Люди",
+        "operations": "Операции"
+      },
+      "nav": {
+        "dashboard": "Панель",
+        "systemHealth": "Состояние системы",
+        "companies": "Компании",
+        "approvals": "Одобрения",
+        "catalog": "Каталог",
+        "reservations": "Бронирования",
+        "payments": "Платежи",
+        "users": "Пользователи",
+        "reviews": "Отзывы",
+        "auditLog": "Журнал аудита",
+        "finance": "Финансы",
+        "broadcast": "Рассылка",
+        "content": "Контент",
+        "settings": "Настройки"
+      },
+      "searchPlaceholder": "Поиск по платформе — компании, пользователи, брони…",
+      "overview": {
+        "title": "Обзор платформы",
+        "subtitle": "Ключевые метрики Renarvo"
+      },
+      "approvals": {
+        "title": "Очередь одобрений",
+        "pendingCount_one": "{{count}} компания ждёт проверки",
+        "pendingCount_few": "{{count}} компании ждут проверки",
+        "pendingCount_many": "{{count}} компаний ждут проверки",
+        "pendingCount_other": "{{count}} компании ждут проверки",
+        "allCaughtUp": "Всё обработано — ожидающих одобрений нет",
+        "ownerLine": "Владелец: {{name}} ({{email}})",
+        "documentsPending": "Документы ждут проверки",
+        "approve": "Одобрить",
+        "reject": "Отклонить",
+        "approvedToast": "Компания одобрена — теперь можно публиковать авто",
+        "rejectedToast": "Компания отклонена"
+      },
+      "users": {
+        "title": "Пользователи",
+        "kindAll": "Все типы пользователей",
+        "kindNormal": "Обычные пользователи (клиенты)",
+        "kindCompany": "Пользователи компаний (владельцы + сотрудники)",
+        "rolesAll": "Все роли",
+        "roleCustomer": "Клиенты",
+        "roleCompanyOwner": "Владельцы компаний",
+        "roleCompanyStaff": "Сотрудники компаний",
+        "roleSuperadmin": "Суперадмины",
+        "searchPlaceholder": "Поиск по email или имени...",
+        "user": "Пользователь",
+        "role": "Роль",
+        "status": "Статус",
+        "noUsers": "Пользователи не найдены",
+        "ban": "Заблокировать",
+        "unban": "Разблокировать"
+      },
+      "ai": {
+        "title": "AI-инсайты",
+        "desc": "Здесь отображаются аномалии платформы.",
+        "cta": "Проверить"
+      }
+    }
   }
 }

@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Car, CalendarCheck, Users, BarChart3, MapPin,
   UserCog, Star, Wallet, FileText, Settings, Search, Bell,
@@ -28,57 +29,57 @@ import { cn } from '@/lib/utils';
 type NavItem = { to: string; icon: any; label: string; end?: boolean; badge?: string | number };
 type NavGroup = { label: string; items: NavItem[] };
 
-const groups: NavGroup[] = [
-  {
-    label: 'Workspace',
-    items: [
-      { to: '/dashboard', icon: LayoutDashboard, label: 'Overview', end: true },
-      { to: '/dashboard/calendar', icon: CalendarDays, label: 'Calendar' },
-      { to: '/dashboard/reservations', icon: CalendarCheck, label: 'Reservations', badge: 4 },
-      { to: '/dashboard/messages', icon: MessageSquare, label: 'Messages', badge: 2 },
-    ],
-  },
-  {
-    label: 'Inventory',
-    items: [
-      { to: '/dashboard/cars', icon: Car, label: 'Fleet' },
-      { to: '/dashboard/extras', icon: Boxes, label: 'Extras' },
-      { to: '/dashboard/insurance', icon: Shield, label: 'Insurance' },
-      { to: '/dashboard/pricing', icon: Tag, label: 'Pricing & promos' },
-      { to: '/dashboard/branches', icon: MapPin, label: 'Branches' },
-    ],
-  },
-  {
-    label: 'People',
-    items: [
-      { to: '/dashboard/customers', icon: Users, label: 'Customers' },
-      { to: '/dashboard/staff', icon: UserCog, label: 'Staff' },
-      { to: '/dashboard/reviews', icon: Star, label: 'Reviews' },
-    ],
-  },
-  {
-    label: 'Insights',
-    items: [
-      { to: '/dashboard/statistics', icon: BarChart3, label: 'Statistics' },
-      { to: '/dashboard/payouts', icon: Wallet, label: 'Payouts' },
-    ],
-  },
-  {
-    label: 'Account',
-    items: [
-      { to: '/dashboard/documents', icon: FileText, label: 'Documents' },
-      { to: '/dashboard/integrations', icon: Plug, label: 'Integrations' },
-      { to: '/dashboard/settings', icon: Settings, label: 'Settings' },
-    ],
-  },
-];
-
 function CompanySidebar() {
+  const { t } = useTranslation();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const location = useLocation();
   const isItemActive = (to: string, end?: boolean) =>
     end ? location.pathname === to : location.pathname === to || location.pathname.startsWith(to + '/');
+  const groups: NavGroup[] = [
+    {
+      label: t('panel.company.groups.workspace'),
+      items: [
+        { to: '/dashboard', icon: LayoutDashboard, label: t('panel.company.nav.overview'), end: true },
+        { to: '/dashboard/calendar', icon: CalendarDays, label: t('panel.company.nav.calendar') },
+        { to: '/dashboard/reservations', icon: CalendarCheck, label: t('panel.company.nav.reservations') },
+        { to: '/dashboard/messages', icon: MessageSquare, label: t('panel.company.nav.messages') },
+      ],
+    },
+    {
+      label: t('panel.company.groups.inventory'),
+      items: [
+        { to: '/dashboard/cars', icon: Car, label: t('panel.company.nav.fleet') },
+        { to: '/dashboard/extras', icon: Boxes, label: t('panel.company.nav.extras') },
+        { to: '/dashboard/insurance', icon: Shield, label: t('panel.company.nav.insurance') },
+        { to: '/dashboard/pricing', icon: Tag, label: t('panel.company.nav.pricingPromos') },
+        { to: '/dashboard/branches', icon: MapPin, label: t('panel.company.nav.branches') },
+      ],
+    },
+    {
+      label: t('panel.company.groups.people'),
+      items: [
+        { to: '/dashboard/customers', icon: Users, label: t('panel.company.nav.customers') },
+        { to: '/dashboard/staff', icon: UserCog, label: t('panel.company.nav.staff') },
+        { to: '/dashboard/reviews', icon: Star, label: t('panel.company.nav.reviews') },
+      ],
+    },
+    {
+      label: t('panel.company.groups.insights'),
+      items: [
+        { to: '/dashboard/statistics', icon: BarChart3, label: t('panel.company.nav.statistics') },
+        { to: '/dashboard/payouts', icon: Wallet, label: t('panel.company.nav.payouts') },
+      ],
+    },
+    {
+      label: t('panel.company.groups.account'),
+      items: [
+        { to: '/dashboard/documents', icon: FileText, label: t('panel.company.nav.documents') },
+        { to: '/dashboard/integrations', icon: Plug, label: t('panel.company.nav.integrations') },
+        { to: '/dashboard/settings', icon: Settings, label: t('panel.company.nav.settings') },
+      ],
+    },
+  ];
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar">
       <SidebarHeader className="px-3 py-4 border-b border-sidebar-border">
@@ -156,11 +157,11 @@ function CompanySidebar() {
           <div className="rounded-xl bg-gradient-brand p-3 text-white">
             <div className="flex items-center gap-1.5 mb-1">
               <Sparkles className="h-3.5 w-3.5" />
-              <span className="text-xs font-semibold">Upgrade to Pro</span>
+              <span className="text-xs font-semibold">{t('panel.company.pro.title')}</span>
             </div>
-            <p className="text-[11px] text-white/80 leading-snug mb-2">Get lower commission, priority placement and AI insights.</p>
+            <p className="text-[11px] text-white/80 leading-snug mb-2">{t('panel.company.pro.desc')}</p>
             <Button size="sm" variant="secondary" className="w-full h-7 text-xs bg-white text-navy hover:bg-white/90">
-              Learn more
+              {t('panel.company.pro.cta')}
             </Button>
           </div>
         </SidebarFooter>
@@ -170,18 +171,19 @@ function CompanySidebar() {
 }
 
 function Topbar() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSession((s) => s.user);
   const setUser = useSession((s) => s.setUser);
   const segments = location.pathname.split('/').filter(Boolean);
-  const title = segments[1] ? segments[1].replace(/-/g, ' ') : 'Overview';
+  const title = segments[1] ? segments[1].replace(/-/g, ' ') : t('panel.company.nav.overview');
   const initials = (user?.name ?? 'U').split(/\s+/).map((s) => s[0]).slice(0, 2).join('').toUpperCase() || 'U';
 
   async function handleSignOut() {
     try { await apiLogout(); } catch { /* ignore */ }
     setUser(null);
-    toast.success('Signed out');
+    toast.success(t('auth.signedOut'));
     navigate('/login');
   }
 
@@ -189,21 +191,21 @@ function Topbar() {
     <header className="h-14 md:h-16 border-b border-border/60 bg-background/80 backdrop-blur-xl sticky top-0 z-30 flex items-center gap-2 md:gap-3 px-3 md:px-4">
       <SidebarTrigger />
       <div className="hidden md:flex flex-col leading-tight">
-        <span className="text-[11px] text-muted-foreground">Dashboard</span>
+        <span className="text-[11px] text-muted-foreground">{t('nav.dashboard')}</span>
         <span className="font-display font-semibold text-base capitalize">{title}</span>
       </div>
       <div className="flex-1 max-w-md mx-auto hidden sm:block">
         <div className="relative">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search reservations, cars, customers…" className="pl-9 h-9 bg-muted/50 border-border/60 rounded-full" />
+          <Input placeholder={t('panel.company.searchPlaceholder')} className="pl-9 h-9 bg-muted/50 border-border/60 rounded-full" />
           <kbd className="hidden lg:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center rounded border bg-muted px-1.5 font-mono text-[10px] text-muted-foreground">⌘K</kbd>
         </div>
       </div>
       <div className="ml-auto flex items-center gap-0.5 md:gap-1">
         <Button variant="ghost" size="sm" className="hidden lg:inline-flex gap-1.5 text-xs">
-          <LifeBuoy className="h-4 w-4" /> Help
+          <LifeBuoy className="h-4 w-4" /> {t('nav.help')}
         </Button>
-        <div className="hidden sm:flex"><LanguageSwitcher /></div>
+        <div className="flex"><LanguageSwitcher /></div>
         <ThemeToggle />
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-4 w-4" />
@@ -216,14 +218,14 @@ function Topbar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
-              <div className="font-semibold truncate">{user?.name ?? 'Account'}</div>
+              <div className="font-semibold truncate">{user?.name ?? t('nav.account')}</div>
               <div className="text-xs text-muted-foreground font-normal truncate">{user?.email ?? '—'}</div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild><NavLink to="/dashboard/settings">Settings</NavLink></DropdownMenuItem>
-            <DropdownMenuItem asChild><NavLink to="/">Public site</NavLink></DropdownMenuItem>
+            <DropdownMenuItem asChild><NavLink to="/dashboard/settings">{t('panel.company.nav.settings')}</NavLink></DropdownMenuItem>
+            <DropdownMenuItem asChild><NavLink to="/">{t('panel.common.publicSite')}</NavLink></DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive" onSelect={handleSignOut}>Sign out</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onSelect={handleSignOut}>{t('nav.signOut')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

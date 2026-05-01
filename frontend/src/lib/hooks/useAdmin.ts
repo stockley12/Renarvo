@@ -10,7 +10,6 @@ type AdminOverview = {
   reservations_total: number;
   reservations_this_month: number;
   gmv_this_month: number;
-  open_risk_flags: number;
 };
 
 export function useAdminOverview() {
@@ -42,7 +41,7 @@ export function useCompanyAction() {
   });
 }
 
-export function useAdminUsers(query?: { role?: string; status?: string; search?: string; page?: number; limit?: number }) {
+export function useAdminUsers(query?: { role?: string; kind?: 'all' | 'company_users' | 'normal_users'; status?: string; search?: string; page?: number; limit?: number }) {
   return useQuery({
     queryKey: ['admin', 'users', query],
     queryFn: () => api.get<Paginated<ApiUser>>('/admin/users', query),
@@ -85,23 +84,6 @@ export function useAdminAuditLog(query?: {
   });
 }
 
-export function useAdminRiskFlags(query?: { status?: string; type?: string; page?: number }) {
-  return useQuery({
-    queryKey: ['admin', 'risk', query],
-    queryFn: () =>
-      api.get<Paginated<{
-        id: number;
-        type: string;
-        subject_type: string;
-        subject_id: number;
-        reason: string;
-        score: number;
-        status: string;
-        resolved_at: string | null;
-      }>>('/admin/risk', query),
-  });
-}
-
 export function useAdminBroadcast() {
   const qc = useQueryClient();
   return useMutation({
@@ -124,6 +106,14 @@ export function useAdminSystemHealth() {
       fx: { last_refresh: string | null; fresh: boolean };
       jobs: { pending: number; failed_7d: number; last_run_at: string | null };
       php: { version: string; opcache_enabled: boolean; memory_peak_mb: number };
+      mail: {
+        mailer: string;
+        host: string;
+        port: number;
+        encryption: string;
+        from_address: string;
+        configured: boolean;
+      };
     }>('/admin/system/health'),
     refetchInterval: 30_000,
   });
@@ -236,16 +226,6 @@ export function useReviewAction() {
     mutationFn: ({ id, action, reason }: { id: number; action: 'hide' | 'restore'; reason?: string }) =>
       api.patch(`/admin/reviews/${id}/${action}`, reason ? { reason } : undefined),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'reviews'] }),
-  });
-}
-
-/* -------------------- Risk actions -------------------- */
-export function useRiskAction() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, action, note }: { id: number; action: 'clear' | 'escalate'; note?: string }) =>
-      api.patch(`/admin/risk/${id}/${action}`, note ? { note } : undefined),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'risk'] }),
   });
 }
 

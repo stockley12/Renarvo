@@ -14,12 +14,19 @@ use Illuminate\Support\Facades\Log;
 class PaymentWebhookController extends Controller
 {
     /**
-     * Generic webhook receiver for future PSP integration (Stripe / iyzico).
+     * Generic webhook receiver for optional non-TIKO PSP integrations.
      * Validates signature, deduplicates by event id, and records the raw payload.
      * Reservation status changes are applied through PaymentService.
      */
     public function handle(Request $request, string $provider): JsonResponse
     {
+        $supported = ['iyzico'];
+        if (! in_array($provider, $supported, true)) {
+            return response()->json([
+                'error' => ['code' => 'PROVIDER_NOT_SUPPORTED', 'message' => 'Unsupported webhook provider'],
+            ], 404);
+        }
+
         $secret = (string) config("services.payments.{$provider}.webhook_secret", '');
         if ($secret !== '' && !$this->verifySignature($request, $provider, $secret)) {
             return response()->json(['error' => ['code' => 'INVALID_SIGNATURE', 'message' => 'Bad signature']], 401);
@@ -81,7 +88,7 @@ class PaymentWebhookController extends Controller
 
     private function verifySignature(Request $request, string $provider, string $secret): bool
     {
-        $signature = $request->header('X-Signature') ?? $request->header('Stripe-Signature');
+        $signature = $request->header('X-Signature');
         if (!$signature) {
             return false;
         }

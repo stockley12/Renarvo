@@ -1,8 +1,9 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Shield, LayoutDashboard, Building2, ClipboardCheck, Car, CalendarRange,
   Users, Star, FileText, BadgeDollarSign, Settings, Search, Bell,
-  ShieldAlert, Activity, FileSearch, Megaphone, Sparkles, CreditCard,
+  Activity, FileSearch, Megaphone, Sparkles, CreditCard,
 } from 'lucide-react';
 import { useSession } from '@/store/session';
 import { logout as apiLogout } from '@/lib/api';
@@ -24,59 +25,56 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useAdminOverview } from '@/lib/hooks/useAdmin';
 
 type NavItem = { to: string; icon: any; label: string; end?: boolean; badge?: string | number };
 type NavGroup = { label: string; items: NavItem[] };
 
-const groups: NavGroup[] = [
-  {
-    label: 'Overview',
-    items: [
-      { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
-      { to: '/admin/system', icon: Activity, label: 'System health' },
-    ],
-  },
-  {
-    label: 'Marketplace',
-    items: [
-      { to: '/admin/companies', icon: Building2, label: 'Companies' },
-      { to: '/admin/approvals', icon: ClipboardCheck, label: 'Approvals', badge: 3 },
-      { to: '/admin/catalog', icon: Car, label: 'Catalog' },
-      { to: '/admin/reservations', icon: CalendarRange, label: 'Reservations' },
-      { to: '/admin/payments', icon: CreditCard, label: 'Payments' },
-    ],
-  },
-  {
-    label: 'People',
-    items: [
-      { to: '/admin/users', icon: Users, label: 'Users' },
-      { to: '/admin/reviews', icon: Star, label: 'Reviews' },
-    ],
-  },
-  {
-    label: 'Trust & Safety',
-    items: [
-      { to: '/admin/risk', icon: ShieldAlert, label: 'Risk & fraud', badge: 7 },
-      { to: '/admin/audit', icon: FileSearch, label: 'Audit log' },
-    ],
-  },
-  {
-    label: 'Operations',
-    items: [
-      { to: '/admin/finance', icon: BadgeDollarSign, label: 'Finance' },
-      { to: '/admin/notifications', icon: Megaphone, label: 'Broadcast' },
-      { to: '/admin/content', icon: FileText, label: 'Content' },
-      { to: '/admin/settings', icon: Settings, label: 'Settings' },
-    ],
-  },
-];
-
 function AdminSidebar() {
+  const { t } = useTranslation();
+  const overview = useAdminOverview();
+  const approvalsBadge = overview.data?.companies_pending ?? 0;
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const location = useLocation();
   const isItemActive = (to: string, end?: boolean) =>
     end ? location.pathname === to : location.pathname === to || location.pathname.startsWith(to + '/');
+  const groups: NavGroup[] = [
+    {
+      label: t('panel.admin.groups.overview'),
+      items: [
+        { to: '/admin', icon: LayoutDashboard, label: t('panel.admin.nav.dashboard'), end: true },
+        { to: '/admin/system', icon: Activity, label: t('panel.admin.nav.systemHealth') },
+      ],
+    },
+    {
+      label: t('panel.admin.groups.marketplace'),
+      items: [
+        { to: '/admin/companies', icon: Building2, label: t('panel.admin.nav.companies') },
+        { to: '/admin/approvals', icon: ClipboardCheck, label: t('panel.admin.nav.approvals'), badge: approvalsBadge > 0 ? approvalsBadge : undefined },
+        { to: '/admin/catalog', icon: Car, label: t('panel.admin.nav.catalog') },
+        { to: '/admin/reservations', icon: CalendarRange, label: t('panel.admin.nav.reservations') },
+        { to: '/admin/payments', icon: CreditCard, label: t('panel.admin.nav.payments') },
+      ],
+    },
+    {
+      label: t('panel.admin.groups.people'),
+      items: [
+        { to: '/admin/users', icon: Users, label: t('panel.admin.nav.users') },
+        { to: '/admin/reviews', icon: Star, label: t('panel.admin.nav.reviews') },
+      ],
+    },
+    {
+      label: t('panel.admin.groups.operations'),
+      items: [
+        { to: '/admin/audit', icon: FileSearch, label: t('panel.admin.nav.auditLog') },
+        { to: '/admin/finance', icon: BadgeDollarSign, label: t('panel.admin.nav.finance') },
+        { to: '/admin/notifications', icon: Megaphone, label: t('panel.admin.nav.broadcast') },
+        { to: '/admin/content', icon: FileText, label: t('panel.admin.nav.content') },
+        { to: '/admin/settings', icon: Settings, label: t('panel.admin.nav.settings') },
+      ],
+    },
+  ];
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar">
       <SidebarHeader className="px-3 py-4 border-b border-sidebar-border">
@@ -84,7 +82,7 @@ function AdminSidebar() {
           <Logo showWordmark={!collapsed} />
           {!collapsed && (
             <Badge variant="outline" className="border-brand/50 text-brand text-[10px] font-bold">
-              ADMIN
+              {t('panel.admin.badge')}
             </Badge>
           )}
         </div>
@@ -164,10 +162,10 @@ function AdminSidebar() {
           <div className="rounded-xl bg-muted/40 p-3 border border-border/60">
             <div className="flex items-center gap-1.5 mb-1">
               <Sparkles className="h-3.5 w-3.5 text-brand" />
-              <span className="text-xs font-semibold">AI insights</span>
+              <span className="text-xs font-semibold">{t('panel.admin.ai.title')}</span>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-snug mb-2">3 anomalies detected this week.</p>
-            <Button size="sm" variant="outline" className="w-full h-7 text-xs">Review</Button>
+            <p className="text-[11px] text-muted-foreground leading-snug mb-2">{t('panel.admin.ai.desc')}</p>
+            <Button size="sm" variant="outline" className="w-full h-7 text-xs">{t('panel.admin.ai.cta')}</Button>
           </div>
         </SidebarFooter>
       )}
@@ -176,18 +174,19 @@ function AdminSidebar() {
 }
 
 function Topbar() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSession((s) => s.user);
   const setUser = useSession((s) => s.setUser);
   const segments = location.pathname.split('/').filter(Boolean);
-  const title = segments[1] ? segments[1].replace(/-/g, ' ') : 'Dashboard';
+  const title = segments[1] ? segments[1].replace(/-/g, ' ') : t('panel.admin.nav.dashboard');
   const initials = (user?.name ?? 'SA').split(/\s+/).map((s) => s[0]).slice(0, 2).join('').toUpperCase() || 'SA';
 
   async function handleSignOut() {
     try { await apiLogout(); } catch { /* ignore */ }
     setUser(null);
-    toast.success('Signed out');
+    toast.success(t('auth.signedOut'));
     navigate('/login');
   }
 
@@ -197,19 +196,19 @@ function Topbar() {
       <div className="hidden md:flex items-center gap-2">
         <Shield className="h-4 w-4 text-brand" />
         <div className="flex flex-col leading-tight">
-          <span className="text-[11px] text-muted-foreground">Super admin</span>
+          <span className="text-[11px] text-muted-foreground">{t('panel.admin.superAdmin')}</span>
           <span className="font-display font-semibold text-base capitalize">{title}</span>
         </div>
       </div>
       <div className="flex-1 max-w-md mx-auto hidden sm:block">
         <div className="relative">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search platform — companies, users, reservations…" className="pl-9 h-9 bg-muted/50 border-border/60 rounded-full" />
+          <Input placeholder={t('panel.admin.searchPlaceholder')} className="pl-9 h-9 bg-muted/50 border-border/60 rounded-full" />
           <kbd className="hidden lg:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center rounded border bg-muted px-1.5 font-mono text-[10px] text-muted-foreground">⌘K</kbd>
         </div>
       </div>
       <div className="ml-auto flex items-center gap-0.5 md:gap-1">
-        <div className="hidden sm:flex"><LanguageSwitcher /></div>
+        <div className="flex"><LanguageSwitcher /></div>
         <ThemeToggle />
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-4 w-4" />
@@ -222,15 +221,15 @@ function Topbar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
-              <div className="font-semibold truncate">{user?.name ?? 'Super Admin'}</div>
-              <div className="text-xs text-muted-foreground font-normal truncate">{user?.email ?? 'Platform owner'}</div>
+              <div className="font-semibold truncate">{user?.name ?? t('panel.admin.superAdmin')}</div>
+              <div className="text-xs text-muted-foreground font-normal truncate">{user?.email ?? t('panel.admin.platformOwner')}</div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild><NavLink to="/admin/settings">Settings</NavLink></DropdownMenuItem>
-            <DropdownMenuItem asChild><NavLink to="/admin/audit">Audit log</NavLink></DropdownMenuItem>
-            <DropdownMenuItem asChild><NavLink to="/">Public site</NavLink></DropdownMenuItem>
+            <DropdownMenuItem asChild><NavLink to="/admin/settings">{t('panel.admin.nav.settings')}</NavLink></DropdownMenuItem>
+            <DropdownMenuItem asChild><NavLink to="/admin/audit">{t('panel.admin.nav.auditLog')}</NavLink></DropdownMenuItem>
+            <DropdownMenuItem asChild><NavLink to="/">{t('panel.common.publicSite')}</NavLink></DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive" onSelect={handleSignOut}>Sign out</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onSelect={handleSignOut}>{t('nav.signOut')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

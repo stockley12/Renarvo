@@ -9,14 +9,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { StatCard } from '@/components/dashboard/StatCard';
 import {
-  Activity, AlertTriangle, ShieldAlert, Server, Database, Globe, Cpu,
+  Activity, AlertTriangle, Server, Database, Globe, Cpu,
   CheckCircle2, Clock, Send, Mail, Loader2, FileSearch, ShieldCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   useAdminAuditLog,
-  useAdminRiskFlags,
-  useRiskAction,
   useAdminBroadcast,
   useAdminBroadcastHistory,
   useAdminSystemHealth,
@@ -122,115 +120,6 @@ export function AdminAuditLog() {
           </tbody>
         </table>
       </Card>
-    </div>
-  );
-}
-
-/* ============== RISK & FRAUD ============== */
-export function AdminRisk() {
-  const [tab, setTab] = useState('open');
-  const flags = useAdminRiskFlags({ status: tab, limit: 100 });
-  const action = useRiskAction();
-
-  async function go(id: number, type: 'clear' | 'escalate') {
-    const note = window.prompt(`${type === 'clear' ? 'Resolution' : 'Escalation'} note (optional)?`) ?? undefined;
-    try {
-      await action.mutateAsync({ id, action: type, note });
-      toast.success(`Flag ${type}ed`);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
-    }
-  }
-
-  const items = flags.data?.data ?? [];
-
-  return (
-    <div className="space-y-5 max-w-7xl">
-      <div>
-        <h1 className="font-display text-3xl font-extrabold">Risk & fraud</h1>
-        <p className="text-muted-foreground mt-1">Suspicious activity and account flags</p>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Open flags" value={flags.data?.meta.total ?? 0} icon={ShieldAlert} accent="warning" />
-        <StatCard label="High severity" value={items.filter((f) => f.score >= 70).length} icon={AlertTriangle} accent="brand" />
-        <StatCard label="Cleared" value="—" icon={ShieldCheck} accent="success" />
-        <StatCard label="Escalated" value="—" icon={ShieldAlert} accent="navy" />
-      </div>
-
-      <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
-          <TabsTrigger value="open">Open</TabsTrigger>
-          <TabsTrigger value="cleared">Cleared</TabsTrigger>
-          <TabsTrigger value="escalated">Escalated</TabsTrigger>
-        </TabsList>
-        <TabsContent value={tab} className="mt-4">
-          <Card className="overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Subject</th>
-                  <th className="px-4 py-3">Reason</th>
-                  <th className="px-4 py-3">Score</th>
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {flags.isLoading && (
-                  <tr>
-                    <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
-                      <Loader2 className="h-5 w-5 mx-auto animate-spin" />
-                    </td>
-                  </tr>
-                )}
-                {!flags.isLoading && items.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
-                      <CheckCircle2 className="h-6 w-6 mx-auto mb-2 text-success" />
-                      No {tab} risk flags
-                    </td>
-                  </tr>
-                )}
-                {items.map((r) => (
-                  <tr key={r.id} className="border-t hover:bg-muted/30">
-                    <td className="px-4 py-3">
-                      <Badge variant="outline">{r.type}</Badge>
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs">
-                      {r.subject_type} #{r.subject_id}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">{r.reason}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-20 rounded-full bg-muted overflow-hidden">
-                          <div
-                            className={`h-full ${r.score > 70 ? 'bg-destructive' : r.score > 50 ? 'bg-warning' : 'bg-success'}`}
-                            style={{ width: `${Math.min(100, r.score)}%` }}
-                          />
-                        </div>
-                        <span className="text-xs font-semibold">{r.score}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      {r.status === 'open' && (
-                        <div className="flex gap-2 justify-end">
-                          <Button size="sm" variant="outline" onClick={() => go(r.id, 'escalate')} disabled={action.isPending}>
-                            Escalate
-                          </Button>
-                          <Button size="sm" className="bg-success text-success-foreground" onClick={() => go(r.id, 'clear')} disabled={action.isPending}>
-                            Clear
-                          </Button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Card>
-        </TabsContent>
-      </Tabs>
     </div>
   );
 }
@@ -446,8 +335,10 @@ export function AdminSystem() {
     {
       name: 'Email (mailer)',
       icon: Mail,
-      ok: true,
-      info: 'Logged to storage/logs/laravel.log (SMTP not configured)',
+      ok: h.mail.configured,
+      info: h.mail.configured
+        ? `${h.mail.mailer.toUpperCase()} · ${h.mail.host}:${h.mail.port}`
+        : `${h.mail.mailer.toUpperCase()} mode (SMTP not configured)`,
     },
   ];
 
@@ -495,7 +386,11 @@ export function AdminSystem() {
           <div className="space-y-2 pr-4 text-sm text-muted-foreground">
             <p>Database: {h.database.ok ? `Connected, ${h.database.latency_ms}ms latency.` : 'Connection failed.'}</p>
             {h.jobs.last_run_at && <p>Last queue run: {h.jobs.last_run_at}.</p>}
-            <p>SMTP is not yet configured. Mail is written to backend logs.</p>
+            <p>
+              Mailer: {h.mail.mailer}. {h.mail.configured
+                ? `SMTP is configured for ${h.mail.from_address}.`
+                : 'SMTP is not configured yet.'}
+            </p>
           </div>
         </ScrollArea>
       </Card>

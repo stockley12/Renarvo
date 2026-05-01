@@ -44,7 +44,7 @@ export function SearchWidget({ compact = false }: { compact?: boolean }) {
   };
 
   return (
-    <div className={`bg-card text-card-foreground rounded-2xl shadow-elevated border p-4 md:p-5 ${compact ? '' : 'max-w-5xl mx-auto'}`}>
+    <div className={`bg-card text-card-foreground rounded-2xl shadow-elevated border p-4 md:p-5 min-w-0 ${compact ? '' : 'max-w-5xl mx-auto'}`}>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm">
         <div className="flex items-center gap-2">
           <Switch checked={same} onCheckedChange={setSame} id="same-place" />
@@ -66,9 +66,9 @@ export function SearchWidget({ compact = false }: { compact?: boolean }) {
           )}
         </button>
       </div>
-      <div className="grid gap-3 items-end md:grid-cols-12">
+      <div className="grid gap-3 items-end md:grid-cols-12 min-w-0">
         {manualMode ? (
-          <div className="md:col-span-7">
+          <div className="md:col-span-7 min-w-0">
             <Label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
               <MapPinned className="h-3.5 w-3.5" /> {t('search.pickup')}
             </Label>
@@ -77,32 +77,32 @@ export function SearchWidget({ compact = false }: { compact?: boolean }) {
               value={manualAddress}
               onChange={(e) => setManualAddress(e.target.value)}
               placeholder={t('search.manualAddressPlaceholder')}
-              className="h-11"
+              className="h-11 min-w-0 max-w-full"
             />
           </div>
         ) : (
           <>
-            <div className={same ? 'md:col-span-4' : 'md:col-span-3'}>
+            <div className={`${same ? 'md:col-span-4' : 'md:col-span-3'} min-w-0`}>
               <Label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5" /> {t('search.pickup')}
               </Label>
               <select
                 value={pickup}
                 onChange={(e) => { setPickup(e.target.value); if (same) setReturnLoc(e.target.value); }}
-                className="w-full h-11 rounded-lg border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full h-11 rounded-lg border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring min-w-0"
               >
                 {cities.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             {!same && (
-              <div className="md:col-span-3">
+              <div className="md:col-span-3 min-w-0">
                 <Label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
                   <ArrowRightLeft className="h-3.5 w-3.5" /> {t('search.return')}
                 </Label>
                 <select
                   value={returnLoc}
                   onChange={(e) => setReturnLoc(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full h-11 rounded-lg border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring min-w-0"
                 >
                   {cities.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -110,17 +110,17 @@ export function SearchWidget({ compact = false }: { compact?: boolean }) {
             )}
           </>
         )}
-        <div className={(manualMode || same) ? 'md:col-span-3' : 'md:col-span-2'}>
+        <div className={`${(manualMode || same) ? 'md:col-span-3' : 'md:col-span-2'} min-w-0`}>
           <Label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" /> {t('search.pickupDate')}
           </Label>
-          <Input type="date" value={pickupDate} onChange={(e) => setPickupDate(e.target.value)} className="h-11" />
+          <Input type="date" value={pickupDate} onChange={(e) => setPickupDate(e.target.value)} className="h-11 min-w-0 max-w-full" />
         </div>
-        <div className={(manualMode || same) ? 'md:col-span-3' : 'md:col-span-2'}>
+        <div className={`${(manualMode || same) ? 'md:col-span-3' : 'md:col-span-2'} min-w-0`}>
           <Label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" /> {t('search.returnDate')}
           </Label>
-          <Input type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} className="h-11" />
+          <Input type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} className="h-11 min-w-0 max-w-full" />
         </div>
         <div className="md:col-span-2">
           <Button onClick={handleSearch} className="w-full h-11 bg-gradient-brand text-white border-0 hover:opacity-90 shadow-md">

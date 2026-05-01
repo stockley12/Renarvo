@@ -20,6 +20,14 @@ class AdminUserController extends Controller
 
         $query = User::query();
 
+        if ($kind = $request->query('kind')) {
+            if ($kind === 'company_users') {
+                $query->whereIn('role', ['company_owner', 'company_staff']);
+            } elseif ($kind === 'normal_users') {
+                $query->where('role', 'customer');
+            }
+        }
+
         if ($role = $request->query('role')) {
             $query->where('role', $role);
         }

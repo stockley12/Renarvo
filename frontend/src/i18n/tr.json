@@ -317,5 +317,136 @@
     "email": "E-posta",
     "instagram": "Instagram",
     "facebook": "Facebook"
+  },
+  "panel": {
+    "common": {
+      "publicSite": "Genel site",
+      "code": "Kod",
+      "customer": "Müşteri",
+      "car": "Araç",
+      "pickup": "Alış",
+      "status": "Durum"
+    },
+    "company": {
+      "groups": {
+        "workspace": "Çalışma Alanı",
+        "inventory": "Envanter",
+        "people": "Kişiler",
+        "insights": "Analizler",
+        "account": "Hesap"
+      },
+      "nav": {
+        "overview": "Genel Bakış",
+        "calendar": "Takvim",
+        "reservations": "Rezervasyonlar",
+        "messages": "Mesajlar",
+        "fleet": "Filo",
+        "extras": "Ekstralar",
+        "insurance": "Sigorta",
+        "pricingPromos": "Fiyatlandırma ve kampanyalar",
+        "branches": "Şubeler",
+        "customers": "Müşteriler",
+        "staff": "Personel",
+        "reviews": "Yorumlar",
+        "statistics": "İstatistikler",
+        "payouts": "Ödemeler",
+        "documents": "Belgeler",
+        "integrations": "Entegrasyonlar",
+        "settings": "Ayarlar"
+      },
+      "searchPlaceholder": "Rezervasyon, araç, müşteri ara…",
+      "overview": {
+        "unavailable": "Genel bakış kullanılamıyor",
+        "loadFailed": "Genel bakış yüklenemedi.",
+        "subtitle": "İşletmenizin bugünkü görünümü",
+        "revenueThisMonth": "Bu ay gelir",
+        "activeRentals": "Aktif kiralamalar",
+        "pickupsToday": "Bugünkü teslimler",
+        "carsInFleet": "Filodaki araç sayısı",
+        "revenueTrend": "Gelir trendi",
+        "last12Months": "Son 12 ay",
+        "noRevenueData": "Henüz gelir verisi yok — rezervasyonlar geldikçe trend burada görünecek.",
+        "alerts": "Uyarılar",
+        "pendingReservations_one": "{{count}} rezervasyon onay bekliyor",
+        "pendingReservations_other": "{{count}} rezervasyon onay bekliyor",
+        "emptyFleet": "Filonuz boş —",
+        "addFirstCar": "ilk aracınızı ekleyin",
+        "allClear": "Her şey yolunda. Bekleyen görev yok.",
+        "recentReservations": "Son rezervasyonlar",
+        "noReservations": "Henüz rezervasyon yok."
+      },
+      "pro": {
+        "title": "Pro'ya yükselt",
+        "desc": "Daha düşük komisyon, öncelikli görünürlük ve yapay zeka içgörüleri alın.",
+        "cta": "Detayları gör"
+      }
+    },
+    "admin": {
+      "badge": "YÖNETİM",
+      "superAdmin": "Süper admin",
+      "platformOwner": "Platform sahibi",
+      "groups": {
+        "overview": "Genel",
+        "marketplace": "Pazar Yeri",
+        "people": "Kişiler",
+        "operations": "Operasyon"
+      },
+      "nav": {
+        "dashboard": "Panel",
+        "systemHealth": "Sistem sağlığı",
+        "companies": "Firmalar",
+        "approvals": "Onaylar",
+        "catalog": "Katalog",
+        "reservations": "Rezervasyonlar",
+        "payments": "Ödemeler",
+        "users": "Kullanıcılar",
+        "reviews": "Yorumlar",
+        "auditLog": "Denetim kaydı",
+        "finance": "Finans",
+        "broadcast": "Duyurular",
+        "content": "İçerik",
+        "settings": "Ayarlar"
+      },
+      "searchPlaceholder": "Platformda ara — firmalar, kullanıcılar, rezervasyonlar…",
+      "overview": {
+        "title": "Platform özeti",
+        "subtitle": "Renarvo genel görünüm"
+      },
+      "approvals": {
+        "title": "Onay kuyruğu",
+        "pendingCount_one": "İnceleme bekleyen {{count}} firma",
+        "pendingCount_other": "İnceleme bekleyen {{count}} firma",
+        "allCaughtUp": "Hepsi tamam — bekleyen onay yok",
+        "ownerLine": "Sahip: {{name}} ({{email}})",
+        "documentsPending": "Belgeler inceleme bekliyor",
+        "approve": "Onayla",
+        "reject": "Reddet",
+        "approvedToast": "Firma onaylandı — artık araç listeleyebilir",
+        "rejectedToast": "Firma reddedildi"
+      },
+      "users": {
+        "title": "Kullanıcılar",
+        "kindAll": "Tüm kullanıcı tipleri",
+        "kindNormal": "Normal kullanıcılar (müşteriler)",
+        "kindCompany": "Firma kullanıcıları (sahip + personel)",
+        "rolesAll": "Tüm roller",
+        "roleCustomer": "Müşteriler",
+        "roleCompanyOwner": "Firma sahipleri",
+        "roleCompanyStaff": "Firma personeli",
+        "roleSuperadmin": "Süper adminler",
+        "searchPlaceholder": "E-posta veya ada göre ara...",
+        "user": "Kullanıcı",
+        "role": "Rol",
+        "status": "Durum",
+        "noUsers": "Kullanıcı bulunamadı",
+        "ban": "Yasakla",
+        "unban": "Yasağı kaldır"
+      },
+      "ai": {
+        "title": "Yapay zeka içgörüleri",
+        "desc": "Platform anormallikleri burada listelenir.",
+        "cta": "İncele"
+      }
+    }
   }
 }

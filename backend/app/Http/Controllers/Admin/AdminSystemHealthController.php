@@ -58,6 +58,16 @@ class AdminSystemHealthController extends Controller
                     'opcache_enabled' => function_exists('opcache_get_status') && (bool) (@opcache_get_status(false) ?: false),
                     'memory_peak_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
                 ],
+                'mail' => [
+                    'mailer' => (string) config('mail.default', 'log'),
+                    'host' => (string) config('mail.mailers.smtp.host', ''),
+                    'port' => (int) config('mail.mailers.smtp.port', 0),
+                    'encryption' => (string) config('mail.mailers.smtp.encryption', ''),
+                    'from_address' => (string) config('mail.from.address', ''),
+                    'configured' => (string) config('mail.default', 'log') === 'smtp'
+                        && (string) config('mail.mailers.smtp.host', '') !== ''
+                        && (string) config('mail.mailers.smtp.username', '') !== '',
+                ],
             ],
         ]);
     }

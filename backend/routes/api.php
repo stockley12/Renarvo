@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\AdminOverviewController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\AdminReservationController;
 use App\Http\Controllers\Admin\AdminReviewController;
-use App\Http\Controllers\Admin\AdminRiskController;
 use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\AdminSystemHealthController;
 use App\Http\Controllers\Admin\AdminUserController;
@@ -217,10 +216,6 @@ Route::prefix('v1')->group(function () {
             Route::get('/reviews', [AdminReviewController::class, 'index']);
             Route::patch('/reviews/{id}/hide', [AdminReviewController::class, 'hide']);
             Route::patch('/reviews/{id}/restore', [AdminReviewController::class, 'restore']);
-
-            Route::get('/risk', [AdminRiskController::class, 'index']);
-            Route::patch('/risk/{id}/clear', [AdminRiskController::class, 'clear']);
-            Route::patch('/risk/{id}/escalate', [AdminRiskController::class, 'escalate']);
 
             Route::get('/notifications', [AdminNotificationController::class, 'index']);
             Route::post('/notifications', [AdminNotificationController::class, 'send']);

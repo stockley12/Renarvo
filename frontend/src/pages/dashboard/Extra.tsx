@@ -543,7 +543,7 @@ export function DashIntegrations() {
       <Card className="p-10 text-center text-muted-foreground">
         <Plug className="h-10 w-10 mx-auto mb-3 opacity-50" />
         <p className="text-sm">
-          Integrations are coming soon. Stripe payments, WhatsApp Business, Google Calendar, and webhook
+          Integrations are coming soon. TIKO payment extensions, WhatsApp Business, Google Calendar, and webhook
           subscriptions will be configurable here once enabled by your platform admin.
         </p>
       </Card>
