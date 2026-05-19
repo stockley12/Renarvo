@@ -125,8 +125,8 @@ class TikoService
         $urlFail = (string) config('services.tiko.urls.return_fail');
 
         // hashStr for onus3D request (v1.1.3):
-        //   MerchantId + OrderId + UrlOk + UrlFail + Amount + Currency + IsTest
-        $hashStr = $merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
+        //   MerchantId + UserName + OrderId + UrlOk + UrlFail + Amount + Currency + IsTest
+        $hashStr = $merchantId.$userName.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
         $hash = $this->generateHash($hashStr);
 
         $payload = [
