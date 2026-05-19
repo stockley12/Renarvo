@@ -22,6 +22,11 @@ class ApiExceptionHandler
         }
 
         if ($e instanceof ValidationException) {
+            \Illuminate\Support\Facades\Log::warning('Validation failed', [
+                'url' => $request->fullUrl(),
+                'errors' => $e->errors(),
+                'input_keys' => array_keys($request->all()),
+            ]);
             return self::envelope(
                 'VALIDATION_FAILED',
                 'The given data was invalid.',
