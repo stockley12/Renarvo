@@ -146,16 +146,15 @@
     @apply tracking-tight;
   }
 
-  [dir="rtl"] html,
-  [dir="rtl"] {
+  [lang="fa"] {
     font-family: 'Vazirmatn', 'Inter', system-ui, sans-serif;
   }
 
-  [dir="rtl"] h1,
-  [dir="rtl"] h2,
-  [dir="rtl"] h3,
-  [dir="rtl"] h4,
-  [dir="rtl"] h5 {
+  [lang="fa"] h1,
+  [lang="fa"] h2,
+  [lang="fa"] h3,
+  [lang="fa"] h4,
+  [lang="fa"] h5 {
     font-family: 'Vazirmatn', 'Plus Jakarta Sans', system-ui, sans-serif;
   }
 }
