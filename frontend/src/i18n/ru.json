@@ -77,7 +77,7 @@
       },
       "cancel": {
         "q": "Можно ли отменить бронь бесплатно?",
-        "a": "Большинство броней можно отменить бесплатно за 48 часов до получения."
+        "a": "Большинство броней можно отменить бесплатно за 24 часа до получения."
       },
       "documents": {
         "q": "Какие документы взять с собой?",
@@ -98,7 +98,7 @@
     "support": "Местная поддержка 24/7",
     "supportDesc": "WhatsApp и телефон, 3 языка",
     "freeCancel": "Бесплатная отмена",
-    "freeCancelDesc": "За 48 часов до получения",
+    "freeCancelDesc": "За 24 часа до получения",
     "verified": "Проверенные компании",
     "verifiedDesc": "Только лицензированные операторы"
   },
@@ -125,6 +125,7 @@
       "map": "Карта"
     },
     "instantOnly": "Только мгновенное подтверждение",
+    "instantBook": "Моментальное бронирование",
     "viewDetails": "Подробнее",
     "bookNow": "Арендовать",
     "noResults": "Под эти фильтры ничего не подошло",
@@ -170,7 +171,7 @@
     "serviceFee": "Сервисный сбор",
     "taxKdv": "НДС (KDV)",
     "total": "Итого",
-    "freeCancellation": "Бесплатная отмена за 48 часов до получения",
+    "freeCancellation": "Бесплатная отмена за 24 часа до получения",
     "similarCars": "Похожие автомобили"
   },
   "booking": {
@@ -199,7 +200,41 @@
     "continueToPayment": "Перейти к оплате",
     "payWithCard": "Оплатить картой",
     "paymentDisabled": "Онлайн-оплата пока не активна. Скоро!",
-    "success": "Бронь подтверждена"
+    "success": "Бронь подтверждена",
+    "roleGateTitle": "Бронирование доступно только клиентам",
+    "signedInAs": "Вы вошли как",
+    "roleGateBody": "Выйдите и используйте клиентский аккаунт или создайте новый.",
+    "backHome": "На главную",
+    "createAccount": "Создать клиентский аккаунт",
+    "validationName": "Введите имя и фамилию",
+    "validationEmail": "Введите корректный email",
+    "validationPhone": "Введите номер телефона",
+    "validationLicense": "Номер водительского удостоверения обязателен",
+    "validationId": "Номер удостоверения / паспорта обязателен",
+    "validationLicensePhoto": "Загрузите фото водительского удостоверения",
+    "validationIdPhoto": "Загрузите фото удостоверения / паспорта",
+    "createFailed": "Не удалось создать бронирование",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "email": "Email",
+    "phone": "Телефон",
+    "drivingLicense": "Номер водительского удостоверения",
+    "idNumber": "Номер удостоверения / паспорта",
+    "dateOfBirth": "Дата рождения",
+    "flightNumber": "Номер рейса (необязательно)",
+    "documentUploads": "Обязательные документы",
+    "licensePhoto": "Фото водительского удостоверения (лицевая сторона)",
+    "idPhoto": "Фото удостоверения / паспорта",
+    "reservationCode": "Код бронирования:",
+    "confirmationEmail": "Подтверждение будет отправлено на вашу почту.",
+    "browseMoreCars": "Ещё автомобили",
+    "perDay": "/день",
+    "daysCount_one": "{{count}} день",
+    "daysCount_few": "{{count}} дня",
+    "daysCount_many": "{{count}} дней",
+    "daysCount_other": "{{count}} дней",
+    "reservationConfirmed": "Бронирование {{code}} подтверждено.",
+    "defaultPickupAirport": "Аэропорт {{city}}"
   },
   "payment": {
     "result": {
@@ -281,7 +316,34 @@
       "failed": "Не удалось отправить заявку",
       "passwordTooShort": "Пароль должен быть не менее 8 символов"
     },
-    "signedOut": "Вы вышли"
+    "signedOut": "Вы вышли",
+    "login": "Войти",
+    "loggedIn": "Вход выполнен",
+    "loginFailed": "Ошибка входа",
+    "welcomeBack": "С возвращением в Renarvo",
+    "email": "Email",
+    "password": "Пароль",
+    "signingIn": "Вход…",
+    "forgotPassword": "Забыли пароль?",
+    "newHere": "Впервые здесь?",
+    "createAccount": "Создать аккаунт",
+    "areYouCompany": "Вы прокатная компания?",
+    "registerFleet": "Зарегистрируйте свой автопарк",
+    "resetPassword": "Сброс пароля",
+    "enterEmailForReset": "Введите email для получения ссылки для сброса",
+    "resetLinkSent": "Ссылка для сброса отправлена (проверьте почту)",
+    "resetLinkSentDesc": "Если email зарегистрирован, вы получите ссылку для сброса в течение минуты.",
+    "resetLinkFailed": "Не удалось отправить ссылку",
+    "sending": "Отправка…",
+    "sendLink": "Отправить ссылку",
+    "newPassword": "Новый пароль",
+    "confirm": "Подтвердить",
+    "passwordsNotMatch": "Пароли не совпадают",
+    "invalidResetLink": "Недействительная ссылка для сброса",
+    "passwordUpdated": "Пароль обновлён",
+    "resetFailed": "Сброс не удался",
+    "updating": "Обновление…",
+    "update": "Обновить"
   },
   "common": {
     "viewAll": "Все",
@@ -301,7 +363,12 @@
     "yes": "Да",
     "no": "Нет",
     "total": "Итого",
-    "free": "Бесплатно"
+    "free": "Бесплатно",
+    "city": "Город",
+    "on": "вкл",
+    "off": "выкл",
+    "saveChanges": "Сохранить изменения",
+    "actionFailed": "Не удалось выполнить действие"
   },
   "footer": {
     "rights": "Все права защищены.",
@@ -321,6 +388,60 @@
     "email": "Email",
     "instagram": "Instagram",
     "facebook": "Facebook"
+  },
+  "static": {
+    "about": {
+      "title": "О Renarvo",
+      "body": "Renarvo связывает путешественников, приезжающих на Северный Кипр, с местными лицензированными прокатными компаниями — от семейных агентств в Гирне до крупных автопарков в аэропорту Эрджан. Мы начали в 2024 году, потому что аренда машины на Северном Кипре означала звонки, WhatsApp и угадывание цен. Мы это изменили."
+    },
+    "howItWorks": {
+      "title": "Как это работает",
+      "body": "Укажите где вы приземляетесь (Эрджан, Ларнака или любая точка острова), выберите даты и сравните машины от реальных местных компаний. Оплатите онлайн или при получении, отмените бесплатно за 24 часа. Ключи вам вручает выбранная вами компания — не Renarvo."
+    },
+    "forCompanies": {
+      "title": "Для прокатных компаний",
+      "body": "Если у вас автопарк от Лефкоши до Карпаза — разместите его на Renarvo. Без платы за подключение. Вы платите комиссию только с подтверждённых бронирований. Мы берём на себя сайт, платежи и многоязычную поддержку; вы держите свой автопарк на дороге."
+    },
+    "help": {
+      "title": "Центр помощи",
+      "body": "Нужна помощь с бронированием, возвратом или вопросом о водительских правах? Поищите в базе знаний или напишите нашей команде — мы отвечаем на турецком, английском и русском."
+    },
+    "contact": {
+      "title": "Свяжитесь с нами",
+      "body": "Renarvo Ltd · Гирне, Северный Кипр · hello@renarvo.com · +90 533 000 00 00. Отвечаем в течение одного рабочего дня."
+    },
+    "terms": {
+      "title": "Условия использования",
+      "body": "Используя Renarvo, вы соглашаетесь с этими условиями. Бронирования — это договоры между вами и выбранной прокатной компанией. Renarvo обеспечивает бронирование и оплату, но не является оператором транспортного средства. Полный текст предоставляется по запросу."
+    },
+    "privacy": {
+      "title": "Политика конфиденциальности",
+      "body": "Мы собираем только данные, необходимые для подтверждения бронирования, и не продаём их. Данные водительского удостоверения передаются только выбранной вами прокатной компании. Полная политика предоставляется по запросу."
+    }
+  },
+  "companies": {
+    "title": "Местные прокатные компании",
+    "subtitle": "Лицензированные операторы по всему Северному Кипру — от Гирне до Карпаза",
+    "searchPlaceholder": "Поиск компаний...",
+    "loading": "Загрузка компаний…",
+    "empty": "Пока нет компаний",
+    "emptyDesc": "Станьте первой прокатной компанией на Renarvo. Верификация быстрая и бесплатная.",
+    "registerFleet": "Зарегистрируйте свой автопарк",
+    "since": "С",
+    "cars": "авто"
+  },
+  "companyDetail": {
+    "notFound": "Компания не найдена.",
+    "browseCompanies": "Смотреть компании",
+    "since": "С",
+    "carsCount": "{{count}} авто",
+    "reviewsCount": "{{count}} отзывов",
+    "about": "О компании",
+    "noDescription": "Эта компания ещё не добавила описание.",
+    "fleet": "Автопарк",
+    "loadingFleet": "Загрузка автопарка…",
+    "noCars": "Пока нет автомобилей.",
+    "browseAll": "Смотреть все"
   },
   "panel": {
     "common": {
@@ -362,6 +483,8 @@
       "overview": {
         "unavailable": "Обзор недоступен",
         "loadFailed": "Не удалось загрузить обзор.",
+        "loading": "Загрузка обзора...",
+        "welcomeBack": "С возвращением",
         "subtitle": "Состояние вашего бизнеса на сегодня",
         "revenueThisMonth": "Выручка за месяц",
         "activeRentals": "Активные аренды",
@@ -380,6 +503,612 @@
         "allClear": "Всё в порядке. Нет задач в ожидании.",
         "recentReservations": "Последние брони",
         "noReservations": "Пока нет бронирований."
+      },
+      "reservations": {
+        "subtitle": "Управляйте всеми бронированиями",
+        "booking": "Бронирование",
+        "flight": "Рейс",
+        "note": "Примечание",
+        "pricing": "Стоимость",
+        "baseDays": "База ({{days}} дн.)",
+        "discount": "Скидка",
+        "cancellationReason": "Причина отмены",
+        "driverDocuments": "Документы водителя",
+        "confirm": "Подтвердить",
+        "reject": "Отклонить",
+        "markPickedUp": "Отметить выдачу",
+        "markReturned": "Отметить возврат",
+        "rejectionReasonRequired": "Нужна причина отклонения",
+        "rejectionReasonPlaceholder": "Причина (обязательно для отклонения)",
+        "updateFailed": "Не удалось обновить бронирование",
+        "dates": "Даты",
+        "payment": "Оплата",
+        "noneForStatus": "Нет бронирований со статусом {{status}}",
+        "reservationCode": "Бронирование {{code}}",
+        "viaTiko": "через TIKO",
+        "status": {
+          "pending": "Ожидает",
+          "confirmed": "Подтверждено",
+          "active": "Активно",
+          "completed": "Завершено",
+          "cancelled": "Отменено"
+        },
+        "paymentStatus": {
+          "paid": "Оплачено",
+          "pending": "Ожидает",
+          "unpaid": "Не оплачено",
+          "failed": "Ошибка",
+          "refunded": "Возврат",
+          "authorized": "Авторизовано",
+          "captured": "Списано",
+          "cancelled": "Отменено"
+        },
+        "toast": {
+          "confirm": "Бронирование подтверждено",
+          "reject": "Бронирование отклонено",
+          "pickup": "Выдача отмечена",
+          "return": "Бронирование завершено"
+        }
+      },
+      "stats": {
+        "loading": "Загрузка статистики...",
+        "subtitle": "Аналитика по реальным бронированиям",
+        "totalBookings12m": "Всего броней (12 мес.)",
+        "totalRevenue12m": "Общая выручка (12 мес.)",
+        "avgBookingValue": "Средний чек брони",
+        "cancellationRate": "Процент отмен",
+        "revenueByMonth": "Выручка по месяцам",
+        "bookingsByMonth": "Брони по месяцам",
+        "statusBreakdown90d": "Брони по статусам (90 дней)",
+        "topCars90d": "Топ автомобилей (90 дней)",
+        "carId": "ID авто",
+        "bookings": "Брони",
+        "revenue": "Выручка",
+        "noData": "Пока нет данных.",
+        "noDataWithHint": "Пока нет данных — завершенные бронирования появятся здесь."
+      },
+      "sections": {
+        "customers": {
+          "searchPlaceholder": "Поиск по имени или email...",
+          "totalSpent": "Потрачено всего",
+          "lastBooking": "Последняя бронь",
+          "noCustomers": "Пока нет клиентов"
+        },
+        "branches": {
+          "addBranch": "Добавить филиал",
+          "namePlaceholder": "Офис в аэропорту Эрджан",
+          "cityPlaceholder": "Никосия",
+          "address": "Адрес",
+          "addressPlaceholder": "Аэропорт Эрджан, зона прилёта",
+          "noBranches": "Пока нет филиалов. Добавьте первую точку выдачи.",
+          "confirms": {
+            "deleteBranch": "Удалить этот филиал?"
+          },
+          "toasts": {
+            "nameAddressRequired": "Нужны название и адрес",
+            "branchAdded": "Филиал добавлен",
+            "couldNotAddBranch": "Не удалось добавить филиал",
+            "branchDeleted": "Филиал удалён",
+            "couldNotDelete": "Не удалось удалить"
+          }
+        },
+        "staff": {
+          "inviteMember": "Пригласить сотрудника",
+          "role": "Роль",
+          "sendInvite": "Отправить приглашение",
+          "noStaff": "Пока нет сотрудников",
+          "roles": {
+            "manager": "Менеджер",
+            "agent": "Агент"
+          },
+          "confirms": {
+            "removeStaffMember": "Удалить этого сотрудника?"
+          },
+          "toasts": {
+            "nameEmailRequired": "Нужны имя и email",
+            "memberInvited": "{{name}} добавлен — письмо для сброса пароля будет отправлено после настройки SMTP.",
+            "couldNotInviteStaff": "Не удалось пригласить сотрудника",
+            "staffRemoved": "Сотрудник удалён",
+            "couldNotRemove": "Не удалось удалить"
+          }
+        },
+        "reviews": {
+          "noReviews": "Пока нет отзывов — они появятся после завершения бронирований клиентами.",
+          "guest": "Гость",
+          "yourReply": "Ваш ответ",
+          "reply": "Ответить",
+          "typeResponse": "Введите ваш ответ...",
+          "postReply": "Отправить ответ",
+          "toasts": {
+            "replyCannotBeEmpty": "Ответ не может быть пустым",
+            "replyPosted": "Ответ отправлен",
+            "couldNotPostReply": "Не удалось отправить ответ"
+          }
+        },
+        "payouts": {
+          "bankAccount": "Банковский счёт",
+          "iban": "IBAN",
+          "accountHolder": "Владелец счёта",
+          "accountHolderPlaceholder": "Company Ltd",
+          "bankOptional": "Банк (необязательно)",
+          "saveBankInfo": "Сохранить данные банка",
+          "payoutHistory": "История выплат",
+          "noPayouts": "Пока нет выплат.",
+          "paid": "Оплачено",
+          "toasts": {
+            "ibanHolderRequired": "Требуются IBAN и имя владельца счёта",
+            "bankAccountSaved": "Банковский счёт сохранён",
+            "couldNotSaveBank": "Не удалось сохранить банковский счёт"
+          }
+        },
+        "documents": {
+          "uploadNewDocument": "Загрузить новый документ",
+          "type": "Тип",
+          "expiresOptional": "Срок действия (необязательно)",
+          "fileLabel": "Файл (PDF/JPG/PNG, до 10 МБ)",
+          "upload": "Загрузить",
+          "noDocuments": "Документы ещё не загружены.",
+          "expiresOn": "Действует до {{date}}",
+          "noExpiry": "Без срока",
+          "docTypes": {
+            "tradeRegistry": "Торговый реестр",
+            "taxCertificate": "Налоговый сертификат",
+            "operatingLicense": "Лицензия на деятельность",
+            "insuranceCertificate": "Страховой сертификат"
+          },
+          "toasts": {
+            "pickFileFirst": "Сначала выберите файл",
+            "documentUploaded": "Документ загружен — администратор проверит его",
+            "uploadFailed": "Загрузка не удалась"
+          }
+        },
+        "settings": {
+          "companyProfile": "Профиль компании",
+          "phoneInternal": "Телефон (внутренний)",
+          "address": "Адрес",
+          "languagesSpoken": "Языки общения",
+          "languagesPlaceholder": "Türkçe, English, Русский",
+          "rentalPolicy": "Политика аренды",
+          "minimumRentalDays": "Минимум дней аренды",
+          "minimumDriverAge": "Минимальный возраст водителя",
+          "kilometrePolicy": "Политика километража",
+          "kmLimitPerDay": "Лимит км в день",
+          "studentFriendly": "Подходит студентам",
+          "studentFriendlyHint": "Разрешить водителей младше стандартного минимума, если они являются студентами.",
+          "roadside247": "Помощь на дороге 24/7",
+          "roadside247Hint": "Показывать значок поддержки 24/7 на каждом авто.",
+          "publicContactSocial": "Публичные контакты и соцсети",
+          "publicEmail": "Публичный email",
+          "website": "Сайт",
+          "kmPolicy": {
+            "unlimited": "Безлимит",
+            "perDayLimit": "Лимит в день",
+            "totalLimit": "Общий лимит"
+          },
+          "toasts": {
+            "settingsSaved": "Настройки сохранены",
+            "couldNotSave": "Не удалось сохранить"
+          }
+        },
+        "extras": {
+          "addExtra": "Добавить доп. услугу",
+          "displayName": "Отображаемое название",
+          "chargeMode": "Режим оплаты",
+          "pricePerDay": "Цена в день (TRY)",
+          "pricePerRental": "Цена за аренду (TRY)",
+          "activeShownToCustomers": "Активно (видно клиентам)",
+          "descriptionOptional": "Описание (необязательно)",
+          "noExtras": "Пока нет доп. услуг. Добавьте хотя бы GPS, детское кресло и доп. водителя, чтобы клиенты могли выбирать их при бронировании.",
+          "active": "Активно",
+          "hidden": "Скрыто",
+          "pricePerDayFormatted": "₺{{amount}} / день",
+          "pricePerRentalFormatted": "₺{{amount}} / аренда",
+          "chargeModes": {
+            "perDay": "За день",
+            "perRental": "За аренду"
+          },
+          "optionLabels": {
+            "mobileWifi": "Мобильный WiFi",
+            "borderCrossing": "Пересечение границы",
+            "custom": "Свой вариант"
+          },
+          "confirms": {
+            "deleteExtra": "Удалить эту доп. услугу?"
+          },
+          "toasts": {
+            "extraUpdated": "Доп. услуга обновлена",
+            "extraAdded": "Доп. услуга добавлена",
+            "couldNotSave": "Не удалось сохранить",
+            "deleted": "Удалено",
+            "couldNotDelete": "Не удалось удалить"
+          }
+        },
+        "insurance": {
+          "addPackage": "Добавить пакет",
+          "tier": "Уровень",
+          "displayName": "Отображаемое название",
+          "pricePerDay": "Цена в день (TRY)",
+          "deductibleAmount": "Франшиза (TRY)",
+          "deductiblePlaceholder": "напр. 5000",
+          "coverageAmount": "Покрытие (TRY)",
+          "coveragePlaceholder": "напр. 200000",
+          "active": "Активно",
+          "hidden": "Скрыто",
+          "descriptionPlaceholder": "Что входит и что не входит в покрытие…",
+          "includedFeatures": "Что включено (по одной строке)",
+          "includedFeaturesPlaceholder": "Угон\nОтветственность перед третьими лицами\nПовреждение стекол",
+          "noPackages": "Пока нет страховых пакетов. Добавьте Mini, Mid и Full, чтобы клиенты могли выбрать при бронировании.",
+          "pricePerDayFormatted": "₺{{amount}} / день",
+          "deductibleFormatted": "Франшиза: ₺{{amount}}",
+          "coverageFormatted": "Покрытие: ₺{{amount}}",
+          "tierLabels": {
+            "mini": "Мини-защита (Mini)",
+            "mid": "Стандартная защита (Mid)",
+            "full": "Полная защита (Full)"
+          },
+          "confirms": {
+            "deletePackage": "Удалить этот пакет?"
+          },
+          "toasts": {
+            "packageUpdated": "Пакет обновлён",
+            "packageAdded": "Пакет добавлен",
+            "couldNotSave": "Не удалось сохранить",
+            "deleted": "Удалено",
+            "couldNotDelete": "Не удалось удалить"
+          }
+        }
+      },
+      "fleet": {
+        "vehicles_one": "{{count}} автомобиль",
+        "vehicles_few": "{{count}} автомобиля",
+        "vehicles_many": "{{count}} автомобилей",
+        "vehicles_other": "{{count}} автомобиля",
+        "searchPlaceholder": "Поиск по марке, модели или номеру...",
+        "titles": {
+          "addNewCar": "Добавить автомобиль",
+          "editCar": "Редактировать автомобиль"
+        },
+        "actions": {
+          "addCar": "Добавить авто",
+          "addFirstCar": "Добавить первый автомобиль",
+          "createCar": "Создать авто"
+        },
+        "table": {
+          "plate": "Номер",
+          "pricePerDay": "Цена/день",
+          "noCars": "Пока нет автомобилей"
+        },
+        "status": {
+          "active": "Активно",
+          "draft": "Черновик",
+          "maintenance": "Обслуживание",
+          "hidden": "Скрыто"
+        },
+        "transmission": {
+          "automatic": "Автомат",
+          "manual": "Механика"
+        },
+        "fuel": {
+          "petrol": "Бензин",
+          "diesel": "Дизель",
+          "hybrid": "Гибрид",
+          "electric": "Электро"
+        },
+        "confirms": {
+          "removeImage": "Удалить это изображение?",
+          "deleteCar": "Удалить этот автомобиль? Действие необратимо."
+        },
+        "toasts": {
+          "brandModelPriceRequired": "Марка, модель и цена за день обязательны",
+          "imagesFailed_one": "Авто сохранено, но {{count}} изображение не загрузилось",
+          "imagesFailed_few": "Авто сохранено, но {{count}} изображения не загрузились",
+          "imagesFailed_many": "Авто сохранено, но {{count}} изображений не загрузились",
+          "imagesFailed_other": "Авто сохранено, но {{count}} изображения не загрузились",
+          "carUpdated": "Автомобиль обновлен",
+          "carCreated": "Автомобиль создан",
+          "couldNotSaveCar": "Не удалось сохранить автомобиль",
+          "imageRemoved": "Изображение удалено",
+          "couldNotRemoveImage": "Не удалось удалить изображение",
+          "fileTooLarge": "{{name}} слишком большой (макс. 5 MB)",
+          "carDeleted": "Автомобиль удален",
+          "couldNotDeleteCar": "Не удалось удалить автомобиль"
+        },
+        "form": {
+          "brand": "Марка",
+          "brandPlaceholder": "Toyota",
+          "model": "Модель",
+          "modelPlaceholder": "Corolla",
+          "year": "Год",
+          "plate": "Номер",
+          "platePlaceholder": "34 AB 1234",
+          "vin": "VIN",
+          "doors": "Двери",
+          "cityPlaceholder": "Гирне",
+          "dailyPrice": "Цена за день (₺)",
+          "weeklyPrice": "Цена за неделю (₺)",
+          "deposit": "Депозит (₺)",
+          "minDriverAgeDefault": "Мин. возраст водителя (по умолчанию)",
+          "minDriverAgeOverride": "Мин. возраст водителя (переопределение)",
+          "useCompanyDefault": "Использовать настройки компании",
+          "enginePower": "Мощность двигателя (л.с.)",
+          "enginePowerPlaceholder": "напр. 130",
+          "engineSize": "Объем двигателя (cc)",
+          "engineSizePlaceholder": "напр. 1600",
+          "dailyKmLimit": "Лимит км в день (для этого авто)",
+          "mileagePolicy": "Политика пробега",
+          "mileagePolicyPlaceholder": "300 км/день включено, после — ₺2/км",
+          "photoGallery": "Галерея фото (салон + кузов)",
+          "deleteImageAria": "Удалить изображение",
+          "pendingImages_one": "{{count}} новое изображение готово к загрузке:",
+          "pendingImages_few": "{{count}} новых изображения готовы к загрузке:",
+          "pendingImages_many": "{{count}} новых изображений готовы к загрузке:",
+          "pendingImages_other": "{{count}} новых изображения готовы к загрузке:",
+          "uploadHelp": "Нажмите или перетащите несколько JPG / PNG / WEBP (макс 5 MB каждое)"
+        }
+      },
+      "extra": {
+        "calendar": {
+          "subtitle": "Бронирования по вашему автопарку",
+          "weekdays": {
+            "mon": "Пн",
+            "tue": "Вт",
+            "wed": "Ср",
+            "thu": "Чт",
+            "fri": "Пт",
+            "sat": "Сб",
+            "sun": "Вс"
+          },
+          "activeRental": "Активная аренда",
+          "allBookingsThisMonth": "Все бронирования за месяц",
+          "noBookingsInMonth": "В этом месяце бронирований нет."
+        },
+        "pricing": {
+          "subtitle": "Скидки по сроку и промокоды",
+          "tabs": {
+            "lengthDiscounts": "Скидки по сроку",
+            "promoCodes": "Промокоды"
+          },
+          "weeklyMonthlyDiscounts": "Недельные и месячные скидки",
+          "weeklyDiscount": "Скидка за неделю (7+ дней)",
+          "monthlyDiscount": "Скидка за месяц (28+ дней)",
+          "createPromoCode": "Создать промокод",
+          "type": "Тип",
+          "value": "Значение",
+          "maxUses": "Макс. использований",
+          "expires": "Срок действия",
+          "existingCodes": "Существующие коды",
+          "noPromoCodes": "Пока нет промокодов.",
+          "discountType": {
+            "percent": "Процент",
+            "fixed": "Фикс (₺)"
+          },
+          "actions": {
+            "createCode": "Создать код"
+          },
+          "table": {
+            "discount": "Скидка",
+            "used": "Использовано",
+            "active": "Активен"
+          },
+          "confirms": {
+            "deletePromoCode": "Удалить этот промокод?"
+          },
+          "toasts": {
+            "promoCodeRequired": "Нужен промокод",
+            "promoCodeCreated": "Промокод создан",
+            "couldNotCreatePromo": "Не удалось создать промокод",
+            "couldNotUpdatePromo": "Не удалось обновить",
+            "promoDeleted": "Промокод удален",
+            "couldNotDeletePromo": "Не удалось удалить",
+            "lengthDiscountsSaved": "Скидки сохранены",
+            "couldNotSaveDiscounts": "Не удалось сохранить"
+          }
+        },
+        "messages": {
+          "subtitle": "Чат с клиентами и вопросы до брони",
+          "loadingMessages": "Загрузка сообщений...",
+          "noConversations": "Пока нет диалогов.",
+          "customer": "Клиент",
+          "conversation": "Диалог",
+          "typeMessage": "Введите сообщение...",
+          "toasts": {
+            "couldNotSendMessage": "Не удалось отправить сообщение"
+          }
+        },
+        "integrations": {
+          "subtitle": "Подключите Renarvo к вашим инструментам",
+          "comingSoon": "Интеграции скоро появятся. Расширения TIKO Payment, WhatsApp Business, Google Calendar и webhook-подписки можно будет настроить здесь после включения администратором платформы."
+        }
+      },
+      "sections": {
+        "customers": {
+          "searchPlaceholder": "Поиск по имени или email...",
+          "totalSpent": "Всего потрачено",
+          "lastBooking": "Последняя бронь",
+          "noCustomers": "Пока нет клиентов"
+        },
+        "branches": {
+          "addBranch": "Добавить филиал",
+          "address": "Адрес",
+          "namePlaceholder": "Офис в аэропорту Эрджан",
+          "cityPlaceholder": "Лефкоша",
+          "addressPlaceholder": "Аэропорт Эрджан, прилет",
+          "noBranches": "Пока нет филиалов. Добавьте первую точку выдачи.",
+          "confirms": {
+            "deleteBranch": "Удалить этот филиал?"
+          },
+          "toasts": {
+            "nameAddressRequired": "Название и адрес обязательны",
+            "branchAdded": "Филиал добавлен",
+            "couldNotAddBranch": "Не удалось добавить филиал",
+            "branchDeleted": "Филиал удален",
+            "couldNotDelete": "Не удалось удалить"
+          }
+        },
+        "staff": {
+          "inviteMember": "Пригласить сотрудника",
+          "role": "Роль",
+          "sendInvite": "Отправить приглашение",
+          "noStaff": "Пока нет сотрудников",
+          "roles": {
+            "manager": "Менеджер",
+            "agent": "Агент"
+          },
+          "confirms": {
+            "removeStaffMember": "Удалить этого сотрудника?"
+          },
+          "toasts": {
+            "nameEmailRequired": "Имя и email обязательны",
+            "memberInvited": "{{name}} добавлен — он получит письмо для сброса пароля после настройки SMTP.",
+            "couldNotInviteStaff": "Не удалось пригласить сотрудника",
+            "staffRemoved": "Сотрудник удален",
+            "couldNotRemove": "Не удалось удалить"
+          }
+        },
+        "reviews": {
+          "noReviews": "Пока нет отзывов — они появятся после завершения бронирований клиентами.",
+          "guest": "Гость",
+          "yourReply": "Ваш ответ",
+          "reply": "Ответить",
+          "typeResponse": "Введите ответ...",
+          "postReply": "Опубликовать ответ",
+          "toasts": {
+            "replyCannotBeEmpty": "Ответ не может быть пустым",
+            "replyPosted": "Ответ опубликован",
+            "couldNotPostReply": "Не удалось опубликовать ответ"
+          }
+        },
+        "payouts": {
+          "bankAccount": "Банковский счет",
+          "accountHolder": "Владелец счета",
+          "accountHolderPlaceholder": "Company Ltd",
+          "bankOptional": "Банк (необязательно)",
+          "saveBankInfo": "Сохранить банковские данные",
+          "payoutHistory": "История выплат",
+          "noPayouts": "Пока нет выплат.",
+          "paid": "Выплачено",
+          "toasts": {
+            "ibanHolderRequired": "IBAN и имя владельца обязательны",
+            "bankAccountSaved": "Банковский счет сохранен",
+            "couldNotSaveBank": "Не удалось сохранить банковский счет"
+          }
+        },
+        "documents": {
+          "uploadNewDocument": "Загрузить новый документ",
+          "type": "Тип",
+          "expiresOptional": "Срок действия (необязательно)",
+          "fileLabel": "Файл (PDF/JPG/PNG, макс 10 MB)",
+          "upload": "Загрузить",
+          "noDocuments": "Пока нет загруженных документов.",
+          "expiresOn": "Действует до {{date}}",
+          "noExpiry": "Без срока",
+          "docTypes": {
+            "tradeRegistry": "Торговый реестр",
+            "taxCertificate": "Налоговый сертификат",
+            "operatingLicense": "Лицензия на деятельность",
+            "insuranceCertificate": "Страховой сертификат"
+          },
+          "toasts": {
+            "pickFileFirst": "Сначала выберите файл",
+            "documentUploaded": "Документ загружен — администратор проверит его",
+            "uploadFailed": "Ошибка загрузки"
+          }
+        },
+        "settings": {
+          "companyProfile": "Профиль компании",
+          "phoneInternal": "Телефон (внутренний)",
+          "address": "Адрес",
+          "languagesSpoken": "Языки",
+          "languagesPlaceholder": "Türkçe, English, Русский",
+          "rentalPolicy": "Политика аренды",
+          "minimumRentalDays": "Минимум дней аренды",
+          "minimumDriverAge": "Минимальный возраст водителя",
+          "kilometrePolicy": "Политика километража",
+          "kmLimitPerDay": "Лимит километров в день (км)",
+          "studentFriendly": "Подходит студентам",
+          "studentFriendlyHint": "Разрешать водителей моложе стандартного минимума, если они студенты.",
+          "roadside247": "Помощь на дороге 24/7",
+          "roadside247Hint": "Показывать значок 24/7 на каждом автомобиле.",
+          "publicContactSocial": "Публичные контакты и соцсети",
+          "publicEmail": "Публичный email",
+          "website": "Сайт",
+          "kmPolicy": {
+            "unlimited": "Безлимит",
+            "perDayLimit": "Лимит в день",
+            "totalLimit": "Общий лимит"
+          },
+          "toasts": {
+            "settingsSaved": "Настройки сохранены",
+            "couldNotSave": "Не удалось сохранить"
+          }
+        },
+        "extras": {
+          "addExtra": "Добавить услугу",
+          "displayName": "Отображаемое название",
+          "chargeMode": "Режим оплаты",
+          "pricePerDay": "Цена за день (TRY)",
+          "pricePerRental": "Цена за аренду (TRY)",
+          "activeShownToCustomers": "Активно (видно клиентам)",
+          "descriptionOptional": "Описание (необязательно)",
+          "noExtras": "Пока нет доп. услуг. Добавьте хотя бы GPS, детское кресло и дополнительного водителя, чтобы клиенты могли выбрать их при бронировании.",
+          "active": "Активно",
+          "hidden": "Скрыто",
+          "pricePerDayFormatted": "₺{{amount}} / день",
+          "pricePerRentalFormatted": "₺{{amount}} / аренда",
+          "chargeModes": {
+            "perDay": "За день",
+            "perRental": "За аренду"
+          },
+          "optionLabels": {
+            "mobileWifi": "Мобильный WiFi",
+            "borderCrossing": "Пересечение границы",
+            "custom": "Произвольная"
+          },
+          "confirms": {
+            "deleteExtra": "Удалить эту услугу?"
+          },
+          "toasts": {
+            "extraUpdated": "Услуга обновлена",
+            "extraAdded": "Услуга добавлена",
+            "couldNotSave": "Не удалось сохранить",
+            "deleted": "Удалено",
+            "couldNotDelete": "Не удалось удалить"
+          }
+        },
+        "insurance": {
+          "addPackage": "Добавить пакет",
+          "tier": "Уровень",
+          "displayName": "Отображаемое название",
+          "pricePerDay": "Цена за день (TRY)",
+          "deductibleAmount": "Франшиза (TRY)",
+          "deductiblePlaceholder": "напр. 5000",
+          "coverageAmount": "Покрытие (TRY)",
+          "coveragePlaceholder": "напр. 200000",
+          "active": "Активно",
+          "hidden": "Скрыто",
+          "descriptionPlaceholder": "Что покрывается, а что нет...",
+          "includedFeatures": "Включенные опции (по одной в строке)",
+          "includedFeaturesPlaceholder": "Угон\nОтветственность перед третьими лицами\nПовреждение стекол",
+          "noPackages": "Пока нет страховых пакетов. Добавьте Mini, Mid и Full, чтобы клиенты могли выбрать пакет при бронировании.",
+          "pricePerDayFormatted": "₺{{amount}} / день",
+          "deductibleFormatted": "Франшиза: ₺{{amount}}",
+          "coverageFormatted": "Покрытие: ₺{{amount}}",
+          "tierLabels": {
+            "mini": "Мини-защита (Mini)",
+            "mid": "Стандартная защита (Mid)",
+            "full": "Полная защита (Full)"
+          },
+          "confirms": {
+            "deletePackage": "Удалить этот пакет?"
+          },
+          "toasts": {
+            "packageUpdated": "Пакет обновлен",
+            "packageAdded": "Пакет добавлен",
+            "couldNotSave": "Не удалось сохранить",
+            "deleted": "Удалено",
+            "couldNotDelete": "Не удалось удалить"
+          }
+        }
       },
       "pro": {
         "title": "Перейти на Pro",
@@ -417,6 +1146,8 @@
       "overview": {
         "title": "Обзор платформы",
         "subtitle": "Ключевые метрики Renarvo",
+        "loading": "Загрузка метрик платформы...",
+        "unavailable": "Обзор недоступен.",
         "gmvThisMonth": "GMV (за месяц)",
         "activeCompanies": "Активные компании",
         "pendingCompanies": "Ожидающие компании",
@@ -425,6 +1156,26 @@
         "reservationsTotal": "Всего бронирований",
         "reservationsThisMonth": "Бронирований за месяц",
         "openApprovals": "Открытые одобрения"
+      },
+      "companies": {
+        "company": "Компания",
+        "owner": "Владелец",
+        "noneForStatus": "Нет компаний со статусом {{status}}",
+        "suspend": "Приостановить",
+        "reinstate": "Восстановить",
+        "rejectionReason": "Причина отклонения?",
+        "suspensionReason": "Причина приостановки?",
+        "status": {
+          "approved": "Одобрено",
+          "pending": "Ожидает",
+          "suspended": "Приостановлено",
+          "rejected": "Отклонено"
+        },
+        "toast": {
+          "approve": "Компания одобрена",
+          "suspend": "Компания приостановлена",
+          "reject": "Компания отклонена"
+        }
       },
       "approvals": {
         "title": "Очередь одобрений",
@@ -438,7 +1189,70 @@
         "approve": "Одобрить",
         "reject": "Отклонить",
         "approvedToast": "Компания одобрена — теперь можно публиковать авто",
-        "rejectedToast": "Компания отклонена"
+        "rejectedToast": "Компания отклонена",
+        "rejectionReasonPrompt": "Причина отклонения?"
+      },
+      "catalog": {
+        "title": "Модерация каталога",
+        "searchPlaceholder": "Поиск автомобилей...",
+        "pricePerDay": "Цена/день",
+        "noCars": "В каталоге нет машин",
+        "flag": "Пометить",
+        "hide": "Скрыть",
+        "reasonHideOptional": "Причина скрытия (необязательно)?",
+        "reasonFlag": "Причина пометки?",
+        "hiddenToast": "Авто скрыто из публичного каталога",
+        "flaggedToast": "Авто помечено",
+        "status": {
+          "active": "Активно",
+          "draft": "Черновик",
+          "maintenance": "Обслуживание",
+          "hidden": "Скрыто"
+        }
+      },
+      "reservations": {
+        "title": "Все бронирования",
+        "detail": "Бронирование",
+        "anyPayment": "Любой платеж",
+        "searchPlaceholder": "Код, email, компания, TIKO ref...",
+        "payment": "Оплата",
+        "paidTry": "Оплачено (TRY)",
+        "noReservations": "Бронирований нет",
+        "status": {
+          "pending": "Ожидает",
+          "confirmed": "Подтверждено",
+          "active": "Активно",
+          "completed": "Завершено",
+          "cancelled": "Отменено"
+        },
+        "paymentStatus": {
+          "paid": "Оплачено",
+          "pending": "Ожидает",
+          "unpaid": "Не оплачено",
+          "failed": "Ошибка",
+          "refunded": "Возврат",
+          "authorized": "Авторизовано",
+          "captured": "Списано",
+          "cancelled": "Отменено"
+        }
+      },
+      "payments": {
+        "anyProvider": "Любой провайдер",
+        "anyStatus": "Любой статус",
+        "searchPlaceholder": "Order, trans, code, email...",
+        "reservation": "Бронь",
+        "provider": "Провайдер",
+        "amountTry": "Сумма (TRY)",
+        "captured": "Списано",
+        "none": "Платежей нет",
+        "status": {
+          "pending": "Ожидает",
+          "authorized": "Авторизовано",
+          "captured": "Списано",
+          "failed": "Ошибка",
+          "cancelled": "Отменено",
+          "refunded": "Возврат"
+        }
       },
       "users": {
         "title": "Пользователи",
@@ -458,7 +1272,104 @@
         "statusBanned": "Заблокирован",
         "noUsers": "Пользователи не найдены",
         "ban": "Заблокировать",
-        "unban": "Разблокировать"
+        "unban": "Разблокировать",
+        "reasonForBan": "Причина блокировки?",
+        "bannedToast": "Пользователь заблокирован",
+        "unbannedToast": "Пользователь разблокирован",
+        "roleUnknown": "{{role}}",
+        "statusUnknown": "{{status}}"
+      },
+      "reviews": {
+        "title": "Модерация отзывов",
+        "none": "На платформе пока нет отзывов.",
+        "anonymous": "Аноним",
+        "hide": "Скрыть",
+        "restore": "Восстановить",
+        "hiddenToast": "Отзыв скрыт",
+        "restoredToast": "Отзыв восстановлен",
+        "status": {
+          "visible": "Виден",
+          "hidden": "Скрыт"
+        }
+      },
+      "content": {
+        "placeholder": "Управление контентом (баннеры, блог, FAQ) в дорожной карте. Пока используйте Настройки для текста заголовков."
+      },
+      "finance": {
+        "gmvThisMonth": "GMV (за месяц)",
+        "commissionThisMonth": "Комиссия (за месяц)",
+        "pendingPayouts": "Выплаты в ожидании",
+        "paidPayouts": "Оплаченные выплаты",
+        "companyPayouts": "Выплаты компаниям",
+        "period": "Период",
+        "gross": "Валовая",
+        "commission": "Комиссия",
+        "net": "Чистая",
+        "noPayouts": "Пока нет выплат",
+        "markPaid": "Отметить как оплачено",
+        "bankTransferReference": "Референс банковского перевода?",
+        "payoutMarkedPaid": "Выплата отмечена как оплаченная",
+        "status": {
+          "pending": "Ожидает",
+          "paid": "Оплачено",
+          "failed": "Ошибка",
+          "cancelled": "Отменено"
+        }
+      },
+      "settings": {
+        "title": "Настройки платформы",
+        "loading": "Загрузка настроек...",
+        "none": "Пока нет настроек.",
+        "saved": "Настройки сохранены",
+        "saveFailed": "Не удалось сохранить"
+      },
+      "audit": {
+        "subtitle": "Все привилегированные действия записываются здесь",
+        "allSeverities": "Все уровни",
+        "filterPlaceholder": "Фильтр по действию...",
+        "when": "Когда",
+        "actor": "Кто",
+        "action": "Действие",
+        "target": "Цель",
+        "severityLabel": "Серьезность",
+        "none": "Нет событий аудита по фильтру",
+        "system": "system",
+        "severity": {
+          "info": "Инфо",
+          "warning": "Предупреждение",
+          "critical": "Критично"
+        }
+      },
+      "system": {
+        "loading": "Загрузка телеметрии системы...",
+        "unavailable": "Состояние системы недоступно.",
+        "subtitle": "Состояние сервисов платформы в реальном времени",
+        "serviceDatabase": "База данных",
+        "serviceDisk": "Диск",
+        "serviceFx": "Курсы валют",
+        "serviceQueue": "Очередь задач",
+        "servicePhp": "Среда PHP",
+        "serviceMailer": "Почта (mailer)",
+        "latency": "Задержка · {{ms}}мс",
+        "connectionFailed": "Ошибка подключения",
+        "diskUsed": "Использовано · {{used}}% из {{total}} ГБ",
+        "unknown": "Неизвестно",
+        "lastRefresh": "Последнее обновление · {{value}}",
+        "neverRefreshed": "Никогда не обновлялось",
+        "queueInfo": "{{pending}} в очереди · {{failed}} ошибок (7д)",
+        "phpInfo": "v{{version}} · OPcache {{opcache}} · пик {{memory}}MB",
+        "mailerInfoConfigured": "{{mailer}} · {{host}}:{{port}}",
+        "mailerInfoNotConfigured": "Режим {{mailer}} (SMTP не настроен)",
+        "allOperational": "Все системы работают",
+        "needsAttention": "Некоторые проверки требуют внимания",
+        "autoRefresh": "Автообновление каждые 30с",
+        "operational": "норма",
+        "attention": "внимание",
+        "notes": "Примечания",
+        "databaseLine": "База данных: {{status}}",
+        "databaseConnected": "Подключено, задержка {{ms}}мс.",
+        "lastQueueRun": "Последний запуск очереди: {{value}}.",
+        "mailerLine": "Mailer: {{mailer}}. {{configured}}"
       },
       "notifications": {
         "title": "Уведомления",
@@ -492,6 +1403,45 @@
         "desc": "Здесь отображаются аномалии платформы.",
         "cta": "Проверить"
       }
+    }
+  },
+  "enums": {
+    "transmission": {
+      "automatic": "Автомат",
+      "manual": "Механика",
+      "semi_automatic": "Полуавтомат (Типтроник)"
+    },
+    "fuel": {
+      "petrol": "Бензин",
+      "diesel": "Дизель",
+      "hybrid": "Гибрид",
+      "electric": "Электро",
+      "lpg": "Газ"
+    },
+    "category": {
+      "economy": "Эконом",
+      "compact": "Компакт",
+      "comfort": "Комфорт",
+      "prestige": "Престиж",
+      "premium": "Премиум",
+      "luxury": "Люкс",
+      "suv": "Внедорожник",
+      "minivan": "Минивэн",
+      "van": "Фургон",
+      "electric": "Электро"
+    },
+    "feature": {
+      "Air conditioning": "Кондиционер",
+      "GPS navigation": "GPS-навигация",
+      "Bluetooth": "Bluetooth",
+      "USB charger": "USB-зарядка",
+      "Backup camera": "Камера заднего вида",
+      "Cruise control": "Круиз-контроль",
+      "Heated seats": "Подогрев сидений",
+      "Sunroof": "Люк",
+      "Keyless entry": "Бесключевой доступ",
+      "Apple CarPlay": "Apple CarPlay",
+      "Android Auto": "Android Auto"
     }
   }
 }

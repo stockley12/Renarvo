@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type Theme = 'light' | 'dark';
-export type Locale = 'tr' | 'en' | 'ru';
+export type Locale = 'tr' | 'en' | 'ru' | 'fa';
 export type Currency = 'TRY' | 'USD' | 'EUR' | 'RUB';
 
 interface AppState {

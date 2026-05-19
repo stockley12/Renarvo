@@ -1,0 +1,1432 @@
+{
+  "brand": "Renarvo",
+  "tagline": "بازار مورد اعتماد اجاره خودرو در سراسر قبرس شمالی از Lefke تا Karpaz",
+  "nav": {
+    "home": "خانه",
+    "cars": "خودروها",
+    "companies": "شرکت‌ها",
+    "howItWorks": "نحوه کار",
+    "forCompanies": "برای شرکت‌ها",
+    "help": "راهنما",
+    "about": "درباره ما",
+    "contact": "تماس",
+    "login": "ورود",
+    "register": "ثبت‌نام",
+    "signUp": "ثبت‌نام",
+    "signOut": "خروج",
+    "dashboard": "داشبورد",
+    "adminPanel": "پنل مدیر",
+    "browseCars": "مشاهده خودروها",
+    "myReservations": "رزروهای من",
+    "account": "حساب کاربری",
+    "categories": {
+      "all": "همه خودروهای اجاره‌ای",
+      "economy": "خودروهای اقتصادی",
+      "compact": "خودروهای کامپکت",
+      "comfort": "خودروهای راحتی",
+      "prestige": "خودروهای پرستیژ",
+      "premium": "خودروهای ممتاز",
+      "luxury": "خودروهای لوکس",
+      "suv": "شاسی‌بلندها",
+      "minivan": "مینی‌ون‌ها",
+      "van": "ون‌ها",
+      "electric": "خودروهای برقی"
+    }
+  },
+  "search": {
+    "pickup": "محل تحویل",
+    "return": "محل بازگشت",
+    "pickupDate": "تاریخ تحویل",
+    "returnDate": "تاریخ بازگشت",
+    "driverAge": "سن راننده",
+    "search": "جستجوی خودرو",
+    "samePlace": "بازگشت به همان مکان",
+    "manualAddress": "آدرس را دستی وارد کنید",
+    "manualAddressPlaceholder": "آدرس کامل یا موقعیت (مثلاً فرودگاه Ercan، ترمینال ۱)",
+    "useDropdown": "انتخاب شهر"
+  },
+  "home": {
+    "heroTitle": "اجاره خودرو در هر نقطه از قبرس شمالی",
+    "heroSubtitle": "از Lefke تا Karpaz، از Ercan تا Larnaca، شرکت‌های اجاره محلی را مقایسه کنید، قیمت‌های واقعی را ببینید و در کمتر از یک دقیقه رزرو کنید.",
+    "categories": "مرور بر اساس دسته‌بندی",
+    "popularCars": "محبوب‌های این هفته",
+    "noCarsTitle": "هنوز خودرویی ثبت نشده",
+    "noCarsDesc": "Renarvo در منطقه شما تازه راه‌اندازی شده است. شرکت‌ها در حال ثبت‌نام هستند — شرکت شما می‌تواند اولین باشد.",
+    "popularPickupTitle": "مکان‌های محبوب تحویل",
+    "popularPickupSubtitle": "جایی که بیشتر مسافران خودروی خود را تحویل می‌گیرند",
+    "browseAvailability": "مشاهده موجودی",
+    "whyUs": "چرا Renarvo؟",
+    "featuredCompanies": "شرکت‌های محلی مورد اعتماد",
+    "howItWorksTitle": "سه مرحله تا کلیدهای شما",
+    "step1Title": "جستجو",
+    "step1Desc": "به ما بگویید کجا فرود می‌آیید — Ercan، Larnaca یا هر نقطه‌ای در جزیره — و تاریخ‌هایتان را وارد کنید.",
+    "step2Title": "رزرو",
+    "step2Desc": "شرکت‌های محلی را کنار هم مقایسه کنید و در کمتر از یک دقیقه رزرو کنید. بدون هزینه‌های پنهان.",
+    "step3Title": "رانندگی",
+    "step3Desc": "شرکت را در نقطه توافق‌شده ملاقات کنید، یک بازدید سریع انجام دهید و حرکت کنید.",
+    "testimonials": "نظر مستأجران",
+    "faq": "سؤالات متداول",
+    "faqs": {
+      "license": {
+        "q": "آیا به گواهینامه رانندگی بین‌المللی نیاز دارم؟",
+        "a": "خیر. گواهینامه معتبر کشور خودتان برای اقامت‌های کمتر از ۹۰ روز در قبرس شمالی پذیرفته می‌شود."
+      },
+      "ercan": {
+        "q": "آیا می‌توانم از فرودگاه Ercan تحویل بگیرم؟",
+        "a": "بله. بیشتر شرکت‌ها تحویل رایگان در فرودگاه Ercan ارائه می‌دهند. تحویل از Larnaca معمولاً با هزینه ترانسفر در دسترس است."
+      },
+      "cancel": {
+        "q": "آیا می‌توانم رایگان لغو کنم؟",
+        "a": "بیشتر رزروها تا ۲۴ ساعت قبل از تحویل به صورت رایگان قابل لغو هستند."
+      },
+      "documents": {
+        "q": "در روز تحویل چه مدارکی باید همراه داشته باشم؟",
+        "a": "پاسپورت، گواهینامه رانندگی و یک کارت اعتباری به نام راننده برای ودیعه."
+      },
+      "insurance": {
+        "q": "آیا بیمه در قیمت شامل شده است؟",
+        "a": "بیمه شخص ثالث پایه همیشه شامل است. پوشش کامل (CDW + سرقت، بدون فرانشیز) به عنوان گزینه اضافی در هنگام پرداخت موجود است."
+      }
+    },
+    "ctaTitle": "شرکت اجاره خودرو در قبرس شمالی دارید؟",
+    "ctaSubtitle": "هر روز به مسافرانی که در Ercan و Larnaca فرود می‌آیند دسترسی پیدا کنید. بدون هزینه راه‌اندازی، فقط کمیسیون بر رزروهای تأیید شده.",
+    "listFleet": "ناوگان خود را ثبت کنید"
+  },
+  "trust": {
+    "insurance": "بیمه کامل",
+    "insuranceDesc": "شامل در هر اجاره",
+    "support": "پشتیبانی محلی ۲۴/۷",
+    "supportDesc": "WhatsApp و تلفن، به ۳ زبان",
+    "freeCancel": "لغو رایگان",
+    "freeCancelDesc": "تا ۲۴ ساعت قبل از تحویل",
+    "verified": "شرکت‌های تأیید شده",
+    "verifiedDesc": "فقط شرکت‌های محلی دارای مجوز"
+  },
+  "cars": {
+    "perDay": "/ روز",
+    "priceUnit": "قیمت (₺/روز)",
+    "filters": "فیلترها",
+    "category": "دسته‌بندی",
+    "brand": "برند",
+    "transmission": "گیربکس",
+    "fuel": "سوخت",
+    "seats": "صندلی",
+    "price": "قیمت",
+    "rating": "امتیاز",
+    "sortBy": "مرتب‌سازی بر اساس",
+    "sort": {
+      "topRated": "بالاترین امتیاز",
+      "priceAsc": "قیمت: کم به زیاد",
+      "priceDesc": "قیمت: زیاد به کم",
+      "newest": "جدیدترین"
+    },
+    "view": {
+      "list": "لیست",
+      "map": "نقشه"
+    },
+    "instantOnly": "فقط رزرو فوری",
+    "instantBook": "رزرو فوری",
+    "viewDetails": "مشاهده جزئیات",
+    "bookNow": "همین الان رزرو کنید",
+    "noResults": "هیچ خودرویی با این فیلترها مطابقت ندارد",
+    "noCarsTitle": "هنوز خودرویی موجود نیست",
+    "noCarsDesc": "Renarvo به تازگی در {{city}} شروع به کار کرده است. شرکت‌ها در حال ثبت‌نام هستند — اولین کسی باشید که ناوگان خود را ارائه می‌دهد.",
+    "noCarsDescGeneric": "Renarvo به تازگی در قبرس شمالی شروع به کار کرده است. شرکت‌ها در حال ثبت‌نام هستند — اولین کسی باشید که ناوگان خود را ارائه می‌دهد.",
+    "registerYourCompany": "شرکت خود را ثبت کنید",
+    "totalCount_one": "{{count}} خودرو",
+    "totalCount_other": "{{count}} خودرو",
+    "inCity": "در {{city}}"
+  },
+  "carDetail": {
+    "loading": "در حال بارگذاری خودرو…",
+    "notFound": "خودرو یافت نشد.",
+    "browseCars": "مشاهده خودروها",
+    "back": "بازگشت",
+    "seats_one": "{{count}} صندلی",
+    "seats_other": "{{count}} صندلی",
+    "features": "ویژگی‌ها",
+    "specs": "مشخصات خودرو",
+    "engine": "موتور",
+    "engineHp": "{{hp}} اسب بخار",
+    "engineCc": "{{cc}} سی‌سی",
+    "ac": "تهویه مطبوع",
+    "acYes": "تهویه مطبوع",
+    "acNo": "بدون تهویه مطبوع",
+    "minAge": "حداقل سن راننده: {{age}}",
+    "kmLimit": "{{km}} کیلومتر / روز",
+    "kmUnlimited": "کیلومتر نامحدود",
+    "studentFriendly": "مناسب دانشجویان",
+    "includedAndPolicy": "شامل‌ها و شرایط",
+    "basicInsurance": "بیمه پایه",
+    "roadside247": "امداد جاده‌ای ۲۴/۷",
+    "fuelExcluded": "سوخت (شامل نمی‌شود)",
+    "deposit": "ودیعه: ₺{{amount}}",
+    "respondsWithin1h": "در کمتر از ۱ ساعت پاسخ می‌دهد",
+    "view": "مشاهده",
+    "daysCalc": "{{days}} روز × {{price}}",
+    "serviceFee": "هزینه خدمات",
+    "taxKdv": "مالیات (KDV)",
+    "total": "مجموع",
+    "freeCancellation": "لغو رایگان تا ۲۴ ساعت قبل از تحویل",
+    "similarCars": "خودروهای مشابه"
+  },
+  "booking": {
+    "step1": "تاریخ‌ها و موارد اضافی",
+    "step2": "مشخصات راننده",
+    "step3": "پرداخت",
+    "step4": "تأیید",
+    "extras": "موارد اضافی",
+    "gps": "ناوبری GPS",
+    "childSeat": "صندلی کودک",
+    "babySeat": "صندلی نوزاد",
+    "additionalDriver": "راننده اضافی",
+    "fullInsurance": "بیمه کامل",
+    "insurancePackage": "بسته بیمه",
+    "insuranceMini": "حفاظت مینی",
+    "insuranceMid": "حفاظت استاندارد",
+    "insuranceFull": "حفاظت کامل",
+    "insuranceNone": "بدون بیمه",
+    "noExtras": "هیچ گزینه اضافی توسط این شرکت پیکربندی نشده",
+    "noInsurance": "این شرکت بسته‌های بیمه ارائه نمی‌دهد",
+    "extrasFromCompany": "موارد اضافی ارائه شده توسط {{company}}",
+    "minDaysWarning": "این شرکت حداقل {{days}} روز اجاره الزامی دارد.",
+    "next": "ادامه",
+    "back": "بازگشت",
+    "confirm": "تأیید رزرو",
+    "continueToPayment": "ادامه به پرداخت",
+    "payWithCard": "پرداخت با کارت اعتباری",
+    "paymentDisabled": "پرداخت آنلاین هنوز فعال نشده است. به زودی!",
+    "success": "رزرو تأیید شد",
+    "roleGateTitle": "رزرو فقط برای حساب‌های مشتری است",
+    "signedInAs": "شما وارد شده‌اید به عنوان",
+    "roleGateBody": "لطفاً خارج شوید و از یک حساب مشتری استفاده کنید، یا یک حساب جدید بسازید.",
+    "backHome": "بازگشت به خانه",
+    "createAccount": "ایجاد حساب مشتری",
+    "validationName": "نام و نام خانوادگی خود را وارد کنید",
+    "validationEmail": "یک ایمیل معتبر وارد کنید",
+    "validationPhone": "شماره تلفن وارد کنید",
+    "createFailed": "ایجاد رزرو ممکن نبود",
+    "firstName": "نام",
+    "lastName": "نام خانوادگی",
+    "email": "ایمیل",
+    "phone": "تلفن",
+    "drivingLicense": "شماره گواهینامه رانندگی",
+    "dateOfBirth": "تاریخ تولد",
+    "flightNumber": "شماره پرواز (اختیاری)",
+    "documentUploads": "مدارک مورد نیاز",
+    "idNumber": "شماره شناسنامه / پاسپورت",
+    "idPhoto": "عکس شناسنامه / پاسپورت",
+    "licensePhoto": "عکس گواهینامه رانندگی (جلو)",
+    "validationId": "شماره شناسنامه / پاسپورت الزامی است",
+    "validationIdPhoto": "لطفاً عکس شناسنامه / پاسپورت خود را بارگذاری کنید",
+    "validationLicense": "شماره گواهینامه رانندگی الزامی است",
+    "validationLicensePhoto": "لطفاً عکس گواهینامه رانندگی خود را بارگذاری کنید",
+    "reservationCode": "کد رزرو:",
+    "confirmationEmail": "تأییدیه به زودی به ایمیل شما ارسال خواهد شد.",
+    "browseMoreCars": "مشاهده خودروهای بیشتر",
+    "perDay": "/روز",
+    "daysCount_one": "{{count}} روز",
+    "daysCount_other": "{{count}} روز",
+    "reservationConfirmed": "رزرو {{code}} تأیید شد.",
+    "defaultPickupAirport": "فرودگاه {{city}}"
+  },
+  "payment": {
+    "result": {
+      "pending": "در انتظار تأیید پرداخت",
+      "pendingDesc": "ما منتظر تأیید بانک شما هستیم. ممکن است چند ثانیه طول بکشد، لطفاً صفحه را ترک نکنید.",
+      "success": "پرداخت موفق!",
+      "successDesc": "رزرو شما تأیید شد. جزئیات را به ایمیل شما ارسال کردیم.",
+      "failed": "پرداخت ناموفق",
+      "failedDesc": "پرداخت انجام نشد. لطفاً دوباره تلاش کنید یا از کارت دیگری استفاده کنید.",
+      "tryAgain": "تلاش مجدد",
+      "viewReservation": "مشاهده رزرو",
+      "backToCars": "بازگشت به خودروها"
+    }
+  },
+  "auth": {
+    "login": "ورود",
+    "loggedIn": "وارد شدید",
+    "loginFailed": "ورود ناموفق بود",
+    "welcomeBack": "خوش‌آمدید به Renarvo",
+    "email": "ایمیل",
+    "password": "رمز عبور",
+    "signingIn": "در حال ورود…",
+    "forgotPassword": "رمز عبور را فراموش کردید؟",
+    "newHere": "تازه وارد هستید؟",
+    "createAccount": "ایجاد حساب کاربری",
+    "areYouCompany": "شرکت اجاره خودرو هستید؟",
+    "registerFleet": "ناوگان خود را ثبت کنید",
+    "resetPassword": "بازنشانی رمز عبور",
+    "enterEmailForReset": "ایمیل خود را وارد کنید تا لینک بازنشانی دریافت کنید",
+    "resetLinkSent": "لینک بازنشانی ارسال شد (ایمیل خود را بررسی کنید)",
+    "resetLinkSentDesc": "اگر ایمیل ثبت‌شده باشد، ظرف یک دقیقه لینک بازنشانی دریافت خواهید کرد.",
+    "resetLinkFailed": "ارسال لینک بازنشانی ناموفق بود",
+    "sending": "در حال ارسال…",
+    "sendLink": "ارسال لینک",
+    "newPassword": "رمز عبور جدید",
+    "confirm": "تأیید",
+    "passwordsNotMatch": "رمزهای عبور مطابقت ندارند",
+    "invalidResetLink": "لینک بازنشانی نامعتبر",
+    "passwordUpdated": "رمز عبور به‌روز شد",
+    "resetFailed": "بازنشانی ناموفق بود",
+    "updating": "در حال به‌روزرسانی…",
+    "update": "به‌روزرسانی",
+    "register": {
+      "title": "حساب خود را بسازید",
+      "subtitle": "خودرو در سراسر قبرس شمالی را با چند کلیک رزرو کنید.",
+      "name": "نام کامل",
+      "namePh": "علی رضایی",
+      "email": "ایمیل",
+      "emailPh": "you@example.com",
+      "phone": "تلفن",
+      "phoneOptional": "(اختیاری)",
+      "phonePh": "+90 533 123 45 67",
+      "password": "رمز عبور",
+      "passwordPh": "حداقل ۸ کاراکتر",
+      "confirmPassword": "تأیید رمز عبور",
+      "agreeTo": "با شرایط استفاده و سیاست حریم خصوصی موافقم.",
+      "termsLink": "شرایط",
+      "privacyLink": "حریم خصوصی",
+      "submit": "ایجاد حساب",
+      "submitting": "در حال ایجاد حساب…",
+      "passwordTooShort": "رمز عبور باید حداقل ۸ کاراکتر باشد",
+      "passwordMismatch": "رمزهای عبور مطابقت ندارند",
+      "mustAcceptTerms": "لطفاً شرایط را بپذیرید تا ادامه دهید",
+      "welcome": "به Renarvo خوش آمدید",
+      "failed": "ثبت‌نام ناموفق بود",
+      "alreadyHaveAccount": "قبلاً حساب دارید؟",
+      "logIn": "ورود",
+      "areYouCompany": "شرکت اجاره خودرو هستید؟",
+      "registerYourFleet": "ناوگان خود را ثبت کنید",
+      "back": "بازگشت"
+    },
+    "registerCompany": {
+      "title": "ناوگان خود را در Renarvo ثبت کنید",
+      "subtitle": "به شرکت‌های اجاره محلی مورد اعتماد Renarvo بپیوندید",
+      "step1": "اطلاعات شرکت",
+      "step2": "مالک و رمز عبور",
+      "step3": "انجام شد",
+      "companyName": "نام شرکت",
+      "companyNamePh": "مثلاً Kyrenia Rent A Car",
+      "vkn": "شماره مالیاتی / VKN",
+      "vknPh": "1234567890",
+      "city": "شهر",
+      "cityPh": "Girne",
+      "phone": "تلفن",
+      "phonePh": "+90 533 123 45 67",
+      "emailPublic": "ایمیل شرکت",
+      "emailPublicPh": "info@yourcompany.com",
+      "description": "توضیحات",
+      "descriptionPh": "درباره شرکت خود بگویید…",
+      "ownerSection": "مشخصات مالک / مدیر",
+      "ownerName": "نام کامل",
+      "ownerNamePh": "Mehmet Demir",
+      "ownerEmail": "ایمیل ورود",
+      "ownerEmailPh": "you@yourcompany.com",
+      "ownerPassword": "رمز عبور",
+      "ownerPasswordPh": "حداقل ۸ کاراکتر",
+      "ownerPasswordHint": "با این ایمیل و رمز عبور وارد پنل شرکت خود می‌شوید.",
+      "back": "بازگشت",
+      "continue": "ادامه",
+      "submit": "ارسال درخواست",
+      "submitting": "در حال ارسال…",
+      "submitted": "درخواست ارسال شد!",
+      "submittedDesc": "شرکت شما در انتظار تأیید است. ظرف ۲۴ ساعت به شما ایمیل خواهیم زد.",
+      "alreadyPartner": "قبلاً همکار هستید؟",
+      "logIn": "ورود",
+      "failed": "ارسال درخواست ناموفق بود",
+      "passwordTooShort": "رمز عبور باید حداقل ۸ کاراکتر باشد"
+    },
+    "signedOut": "خارج شدید"
+  },
+  "common": {
+    "viewAll": "مشاهده همه",
+    "view": "مشاهده",
+    "loading": "در حال بارگذاری…",
+    "loadingCars": "در حال بارگذاری خودروها…",
+    "save": "ذخیره",
+    "saving": "در حال ذخیره…",
+    "cancel": "لغو",
+    "delete": "حذف",
+    "edit": "ویرایش",
+    "create": "ایجاد",
+    "search": "جستجو",
+    "back": "بازگشت",
+    "continue": "ادامه",
+    "close": "بستن",
+    "yes": "بله",
+    "no": "خیر",
+    "total": "مجموع",
+    "free": "رایگان",
+    "city": "شهر",
+    "on": "روشن",
+    "off": "خاموش",
+    "saveChanges": "ذخیره تغییرات",
+    "actionFailed": "عملیات ناموفق بود"
+  },
+  "footer": {
+    "rights": "تمامی حقوق محفوظ است.",
+    "company": "شرکت",
+    "support": "پشتیبانی",
+    "legal": "حقوقی",
+    "language": "زبان",
+    "currency": "واحد پول",
+    "about": "درباره ما",
+    "contact": "تماس",
+    "terms": "شرایط",
+    "privacy": "حریم خصوصی",
+    "social": "ما را دنبال کنید",
+    "contactSection": "تماس با ما",
+    "whatsapp": "WhatsApp",
+    "phone": "تلفن",
+    "email": "ایمیل",
+    "instagram": "Instagram",
+    "facebook": "Facebook"
+  },
+  "static": {
+    "about": {
+      "title": "درباره Renarvo",
+      "body": "Renarvo مسافران قبرس شمالی را با شرکت‌های اجاره محلی دارای مجوز — از آژانس‌های خانوادگی در Girne تا ناوگان‌های بزرگ در فرودگاه Ercan — متصل می‌کند. ما در سال ۲۰۲۴ شروع کردیم زیرا رزرو خودرو در KKTC هنوز به معنای تماس تلفنی، پیام‌های WhatsApp و حدس زدن قیمت بود. ما این را تغییر دادیم."
+    },
+    "howItWorks": {
+      "title": "نحوه کار",
+      "body": "به ما بگویید کجا فرود می‌آیید (Ercan، Larnaca یا هر نقطه‌ای در جزیره)، تاریخ‌هایتان را انتخاب کنید و خودروها را از شرکت‌های محلی واقعی مقایسه کنید. آنلاین یا هنگام تحویل پرداخت کنید، تا ۲۴ ساعت قبل رایگان لغو کنید. شرکتی که رزرو می‌کنید — نه Renarvo — کلیدها را به شما تحویل می‌دهد."
+    },
+    "forCompanies": {
+      "title": "برای شرکت‌های اجاره",
+      "body": "اگر ناوگان اجاره‌ای در هر نقطه‌ای از Lefkoşa تا Karpaz دارید، آن را در Renarvo ثبت کنید. بدون هزینه راه‌اندازی. شما فقط کمیسیون بر رزروهای تأیید شده پرداخت می‌کنید. ما وب‌سایت، پرداخت‌ها و پشتیبانی چندزبانه مشتری را مدیریت می‌کنیم؛ شما ناوگان خود را در جاده نگه دارید."
+    },
+    "help": {
+      "title": "مرکز راهنما",
+      "body": "برای رزرو، بازپرداخت یا سؤال درباره گواهینامه در KKTC کمک می‌خواهید؟ پایگاه دانش ما را جستجو کنید یا به تیم ما پیام دهید — ما به ترکی، انگلیسی و روسی پاسخ می‌دهیم."
+    },
+    "contact": {
+      "title": "تماس با ما",
+      "body": "Renarvo Ltd · Girne, North Cyprus · hello@renarvo.com · +90 533 000 00 00. ما ظرف یک روز کاری پاسخ می‌دهیم."
+    },
+    "terms": {
+      "title": "شرایط استفاده",
+      "body": "با استفاده از Renarvo شما با این شرایط موافقت می‌کنید. رزروها قراردادهایی بین شما و شرکت اجاره‌ای هستند که انتخاب می‌کنید. Renarvo رزرو و پرداخت را تسهیل می‌کند اما اپراتور خودرو نیست. متن کامل بنا به درخواست در دسترس است."
+    },
+    "privacy": {
+      "title": "سیاست حریم خصوصی",
+      "body": "ما فقط اطلاعاتی را جمع‌آوری می‌کنیم که برای تأیید رزرو شما لازم است و داده‌های شما را نمی‌فروشیم. مشخصات گواهینامه رانندگی فقط با شرکت اجاره‌ای که رزرو می‌کنید به اشتراک گذاشته می‌شود و نه هیچ‌کس دیگری. سیاست کامل بنا به درخواست در دسترس است."
+    }
+  },
+  "companies": {
+    "title": "شرکت‌های اجاره محلی",
+    "subtitle": "شرکت‌های دارای مجوز در سراسر قبرس شمالی — از Girne تا Karpaz",
+    "searchPlaceholder": "جستجوی شرکت‌ها...",
+    "loading": "در حال بارگذاری شرکت‌ها…",
+    "empty": "هنوز شرکتی ثبت نشده",
+    "emptyDesc": "اولین شرکت اجاره در Renarvo باشید. تأیید سریع و رایگان است.",
+    "registerFleet": "ناوگان خود را ثبت کنید",
+    "since": "از سال",
+    "cars": "خودرو"
+  },
+  "companyDetail": {
+    "notFound": "شرکت یافت نشد.",
+    "browseCompanies": "مشاهده شرکت‌ها",
+    "since": "از سال",
+    "carsCount": "{{count}} خودرو",
+    "reviewsCount": "{{count}} نظر",
+    "about": "درباره",
+    "noDescription": "این شرکت هنوز توضیحاتی اضافه نکرده است.",
+    "fleet": "ناوگان",
+    "loadingFleet": "در حال بارگذاری ناوگان…",
+    "noCars": "هنوز خودرویی ثبت نشده.",
+    "browseAll": "مشاهده همه"
+  },
+  "panel": {
+    "common": {
+      "publicSite": "سایت عمومی",
+      "code": "کد",
+      "customer": "مشتری",
+      "car": "خودرو",
+      "pickup": "تحویل",
+      "status": "وضعیت"
+    },
+    "company": {
+      "groups": {
+        "workspace": "فضای کاری",
+        "inventory": "موجودی",
+        "people": "افراد",
+        "insights": "بینش‌ها",
+        "account": "حساب"
+      },
+      "nav": {
+        "overview": "نمای کلی",
+        "calendar": "تقویم",
+        "reservations": "رزروها",
+        "messages": "پیام‌ها",
+        "fleet": "ناوگان",
+        "extras": "موارد اضافی",
+        "insurance": "بیمه",
+        "pricingPromos": "قیمت‌گذاری و تخفیفات",
+        "branches": "شعب",
+        "customers": "مشتریان",
+        "staff": "کارکنان",
+        "reviews": "نظرات",
+        "statistics": "آمار",
+        "payouts": "پرداخت‌ها",
+        "documents": "مدارک",
+        "integrations": "یکپارچه‌سازی‌ها",
+        "settings": "تنظیمات"
+      },
+      "searchPlaceholder": "جستجوی رزروها، خودروها، مشتریان…",
+      "overview": {
+        "unavailable": "نمای کلی در دسترس نیست",
+        "loadFailed": "بارگذاری نمای کلی ممکن نبود.",
+        "loading": "در حال بارگذاری نمای کلی...",
+        "welcomeBack": "خوش‌آمدید",
+        "subtitle": "وضعیت کسب‌وکار شما امروز",
+        "revenueThisMonth": "درآمد این ماه",
+        "activeRentals": "اجاره‌های فعال",
+        "pickupsToday": "تحویل‌های امروز",
+        "carsInFleet": "خودرو در ناوگان",
+        "revenueTrend": "روند درآمد",
+        "last12Months": "۱۲ ماه گذشته",
+        "noRevenueData": "هنوز داده درآمدی وجود ندارد — روند شما پس از شروع رزروها در اینجا نمایش داده می‌شود.",
+        "alerts": "هشدارها",
+        "pendingReservations_one": "{{count}} رزرو در انتظار تأیید",
+        "pendingReservations_other": "{{count}} رزرو در انتظار تأیید",
+        "emptyFleet": "ناوگان شما خالی است —",
+        "addFirstCar": "اولین خودرو خود را اضافه کنید",
+        "allClear": "همه چیز مرتب است. کار معلقی وجود ندارد.",
+        "recentReservations": "رزروهای اخیر",
+        "noReservations": "هنوز رزروی وجود ندارد."
+      },
+      "reservations": {
+        "subtitle": "مدیریت تمام رزروهای شما",
+        "booking": "رزرو",
+        "flight": "پرواز",
+        "note": "یادداشت",
+        "pricing": "قیمت‌گذاری",
+        "baseDays": "پایه ({{days}} روز)",
+        "discount": "تخفیف",
+        "cancellationReason": "دلیل لغو",
+        "driverDocuments": "مدارک راننده",
+        "confirm": "تأیید",
+        "reject": "رد",
+        "markPickedUp": "علامت‌گذاری به عنوان تحویل داده شده",
+        "markReturned": "علامت‌گذاری به عنوان بازگشت داده شده",
+        "rejectionReasonRequired": "دلیل رد الزامی است",
+        "rejectionReasonPlaceholder": "دلیل (برای رد الزامی است)",
+        "updateFailed": "به‌روزرسانی رزرو ممکن نبود",
+        "dates": "تاریخ‌ها",
+        "payment": "پرداخت",
+        "noneForStatus": "هیچ رزرو {{status}} وجود ندارد",
+        "reservationCode": "رزرو {{code}}",
+        "viaTiko": "از طریق TIKO",
+        "status": {
+          "pending": "در انتظار",
+          "confirmed": "تأیید شده",
+          "active": "فعال",
+          "completed": "تکمیل شده",
+          "cancelled": "لغو شده"
+        },
+        "paymentStatus": {
+          "paid": "پرداخت شده",
+          "pending": "در انتظار",
+          "unpaid": "پرداخت نشده",
+          "failed": "ناموفق",
+          "refunded": "بازپرداخت شده",
+          "authorized": "مجاز",
+          "captured": "دریافت شده",
+          "cancelled": "لغو شده"
+        },
+        "toast": {
+          "confirm": "رزرو تأیید شد",
+          "reject": "رزرو رد شد",
+          "pickup": "خودرو تحویل داده شد",
+          "return": "رزرو تکمیل شد"
+        }
+      },
+      "stats": {
+        "loading": "در حال بارگذاری آمار...",
+        "subtitle": "بینش‌های عملکردی از رزروهای واقعی",
+        "totalBookings12m": "کل رزروها (۱۲ ماه)",
+        "totalRevenue12m": "کل درآمد (۱۲ ماه)",
+        "avgBookingValue": "میانگین ارزش رزرو",
+        "cancellationRate": "نرخ لغو",
+        "revenueByMonth": "درآمد ماهانه",
+        "bookingsByMonth": "رزرو در ماه",
+        "statusBreakdown90d": "رزروها بر اساس وضعیت (۹۰ روز گذشته)",
+        "topCars90d": "خودروهای برتر (۹۰ روز گذشته)",
+        "carId": "شناسه خودرو",
+        "bookings": "رزروها",
+        "revenue": "درآمد",
+        "noData": "هنوز داده‌ای وجود ندارد.",
+        "noDataWithHint": "هنوز داده‌ای وجود ندارد — رزروهای تکمیل‌شده اینجا نمایش داده می‌شوند."
+      },
+      "sections": {
+        "customers": {
+          "searchPlaceholder": "جستجو بر اساس نام یا ایمیل...",
+          "totalSpent": "مجموع هزینه",
+          "lastBooking": "آخرین رزرو",
+          "noCustomers": "هنوز مشتری‌ای وجود ندارد"
+        },
+        "branches": {
+          "addBranch": "افزودن شعبه",
+          "namePlaceholder": "دفتر فرودگاه Ercan",
+          "cityPlaceholder": "Nicosia",
+          "address": "آدرس",
+          "addressPlaceholder": "فرودگاه Ercan، ورودی‌ها",
+          "noBranches": "هنوز شعبه‌ای وجود ندارد. اولین مکان تحویل خود را اضافه کنید.",
+          "confirms": {
+            "deleteBranch": "این شعبه حذف شود؟"
+          },
+          "toasts": {
+            "nameAddressRequired": "نام و آدرس الزامی است",
+            "branchAdded": "شعبه اضافه شد",
+            "couldNotAddBranch": "افزودن شعبه ممکن نبود",
+            "branchDeleted": "شعبه حذف شد",
+            "couldNotDelete": "حذف ممکن نبود"
+          }
+        },
+        "staff": {
+          "inviteMember": "دعوت عضو",
+          "role": "نقش",
+          "sendInvite": "ارسال دعوت",
+          "noStaff": "هنوز کارمندی وجود ندارد",
+          "roles": {
+            "manager": "مدیر",
+            "agent": "نماینده"
+          },
+          "confirms": {
+            "removeStaffMember": "این عضو کارکنان حذف شود؟"
+          },
+          "toasts": {
+            "nameEmailRequired": "نام و ایمیل الزامی است",
+            "memberInvited": "{{name}} اضافه شد — پس از پیکربندی SMTP ایمیل بازنشانی رمز عبور دریافت خواهند کرد.",
+            "couldNotInviteStaff": "دعوت کارمند ممکن نبود",
+            "staffRemoved": "عضو کارکنان حذف شد",
+            "couldNotRemove": "حذف ممکن نبود"
+          }
+        },
+        "reviews": {
+          "noReviews": "هنوز نظری وجود ندارد — پس از تکمیل رزرو توسط مشتریان نمایش داده می‌شوند.",
+          "guest": "مهمان",
+          "yourReply": "پاسخ شما",
+          "reply": "پاسخ",
+          "typeResponse": "پاسخ خود را بنویسید...",
+          "postReply": "ارسال پاسخ",
+          "toasts": {
+            "replyCannotBeEmpty": "پاسخ نمی‌تواند خالی باشد",
+            "replyPosted": "پاسخ ارسال شد",
+            "couldNotPostReply": "ارسال پاسخ ممکن نبود"
+          }
+        },
+        "payouts": {
+          "bankAccount": "حساب بانکی",
+          "iban": "IBAN",
+          "accountHolder": "صاحب حساب",
+          "accountHolderPlaceholder": "شرکت نمونه",
+          "bankOptional": "بانک (اختیاری)",
+          "saveBankInfo": "ذخیره اطلاعات بانکی",
+          "payoutHistory": "سابقه پرداخت‌ها",
+          "noPayouts": "هنوز پرداختی وجود ندارد.",
+          "paid": "پرداخت شده",
+          "toasts": {
+            "ibanHolderRequired": "IBAN و نام صاحب حساب الزامی است",
+            "bankAccountSaved": "حساب بانکی ذخیره شد",
+            "couldNotSaveBank": "ذخیره حساب بانکی ممکن نبود"
+          }
+        },
+        "documents": {
+          "uploadNewDocument": "بارگذاری مدرک جدید",
+          "type": "نوع",
+          "expiresOptional": "تاریخ انقضا (اختیاری)",
+          "fileLabel": "فایل (PDF/JPG/PNG، حداکثر ۱۰ مگابایت)",
+          "upload": "بارگذاری",
+          "noDocuments": "هنوز مدرکی بارگذاری نشده.",
+          "expiresOn": "انقضا {{date}}",
+          "noExpiry": "بدون انقضا",
+          "docTypes": {
+            "tradeRegistry": "ثبت تجاری",
+            "taxCertificate": "گواهی مالیاتی",
+            "operatingLicense": "مجوز بهره‌برداری",
+            "insuranceCertificate": "گواهی بیمه"
+          },
+          "toasts": {
+            "pickFileFirst": "ابتدا یک فایل انتخاب کنید",
+            "documentUploaded": "مدرک بارگذاری شد — مدیر آن را بررسی خواهد کرد",
+            "uploadFailed": "بارگذاری ناموفق بود"
+          }
+        },
+        "settings": {
+          "companyProfile": "پروفایل شرکت",
+          "phoneInternal": "تلفن (داخلی)",
+          "address": "آدرس",
+          "languagesSpoken": "زبان‌های قابل ارتباط",
+          "languagesPlaceholder": "Turkish, English, Russian",
+          "rentalPolicy": "شرایط اجاره",
+          "minimumRentalDays": "حداقل روزهای اجاره",
+          "minimumDriverAge": "حداقل سن راننده",
+          "kilometrePolicy": "سیاست کیلومتر",
+          "kmLimitPerDay": "محدودیت کیلومتر در روز (کیلومتر)",
+          "studentFriendly": "مناسب دانشجویان",
+          "studentFriendlyHint": "اجازه رانندگی به رانندگان جوان‌تر از حداقل استاندارد در صورتی که دانشجو هستند.",
+          "roadside247": "امداد جاده‌ای ۲۴/۷",
+          "roadside247Hint": "نمایش نشان پشتیبانی ۲۴/۷ بر روی هر خودرو.",
+          "publicContactSocial": "اطلاعات تماس و شبکه‌های اجتماعی",
+          "publicEmail": "ایمیل عمومی",
+          "website": "وب‌سایت",
+          "kmPolicy": {
+            "unlimited": "نامحدود",
+            "perDayLimit": "محدودیت روزانه",
+            "totalLimit": "محدودیت کل"
+          },
+          "toasts": {
+            "settingsSaved": "تنظیمات ذخیره شد",
+            "couldNotSave": "ذخیره ممکن نبود"
+          }
+        },
+        "extras": {
+          "addExtra": "افزودن مورد اضافی",
+          "displayName": "نام نمایشی",
+          "chargeMode": "نحوه شارژ",
+          "pricePerDay": "قیمت در روز (TRY)",
+          "pricePerRental": "قیمت در هر اجاره (TRY)",
+          "activeShownToCustomers": "فعال (قابل مشاهده برای مشتریان)",
+          "descriptionOptional": "توضیحات (اختیاری)",
+          "noExtras": "هنوز مورد اضافی وجود ندارد. حداقل GPS، صندلی کودک و راننده اضافی اضافه کنید تا مشتریان بتوانند هنگام رزرو انتخاب کنند.",
+          "active": "فعال",
+          "hidden": "مخفی",
+          "pricePerDayFormatted": "₺{{amount}} / روز",
+          "pricePerRentalFormatted": "₺{{amount}} / اجاره",
+          "chargeModes": {
+            "perDay": "در روز",
+            "perRental": "در هر اجاره"
+          },
+          "optionLabels": {
+            "mobileWifi": "WiFi همراه",
+            "borderCrossing": "عبور از مرز",
+            "custom": "سفارشی"
+          },
+          "confirms": {
+            "deleteExtra": "این مورد اضافی حذف شود؟"
+          },
+          "toasts": {
+            "extraUpdated": "مورد اضافی به‌روز شد",
+            "extraAdded": "مورد اضافی اضافه شد",
+            "couldNotSave": "ذخیره ممکن نبود",
+            "deleted": "حذف شد",
+            "couldNotDelete": "حذف ممکن نبود"
+          }
+        },
+        "insurance": {
+          "addPackage": "افزودن بسته",
+          "tier": "سطح",
+          "displayName": "نام نمایشی",
+          "pricePerDay": "قیمت در روز (TRY)",
+          "deductibleAmount": "مبلغ فرانشیز (TRY)",
+          "deductiblePlaceholder": "مثلاً 5000",
+          "coverageAmount": "مبلغ پوشش (TRY)",
+          "coveragePlaceholder": "مثلاً 200000",
+          "active": "فعال",
+          "hidden": "مخفی",
+          "descriptionPlaceholder": "چه چیزی شامل می‌شود و چه چیزی نمی‌شود…",
+          "includedFeatures": "ویژگی‌های شامل (هر خط یکی)",
+          "includedFeaturesPlaceholder": "سرقت\nمسئولیت شخص ثالث\nآسیب شیشه",
+          "noPackages": "هنوز بسته بیمه‌ای وجود ندارد. مینی، استاندارد و کامل اضافه کنید تا مشتریان بتوانند هنگام رزرو انتخاب کنند.",
+          "pricePerDayFormatted": "₺{{amount}} / روز",
+          "deductibleFormatted": "فرانشیز: ₺{{amount}}",
+          "coverageFormatted": "پوشش: ₺{{amount}}",
+          "tierLabels": {
+            "mini": "حفاظت مینی (Mini)",
+            "mid": "حفاظت استاندارد (Mid)",
+            "full": "حفاظت کامل (Full)"
+          },
+          "confirms": {
+            "deletePackage": "این بسته حذف شود؟"
+          },
+          "toasts": {
+            "packageUpdated": "بسته به‌روز شد",
+            "packageAdded": "بسته اضافه شد",
+            "couldNotSave": "ذخیره ممکن نبود",
+            "deleted": "حذف شد",
+            "couldNotDelete": "حذف ممکن نبود"
+          }
+        }
+      },
+      "fleet": {
+        "vehicles_one": "{{count}} خودرو",
+        "vehicles_other": "{{count}} خودرو",
+        "searchPlaceholder": "جستجو بر اساس برند، مدل یا پلاک...",
+        "titles": {
+          "addNewCar": "افزودن خودرو جدید",
+          "editCar": "ویرایش خودرو"
+        },
+        "actions": {
+          "addCar": "افزودن خودرو",
+          "addFirstCar": "اولین خودرو خود را اضافه کنید",
+          "createCar": "ایجاد خودرو"
+        },
+        "table": {
+          "plate": "پلاک",
+          "pricePerDay": "قیمت/روز",
+          "noCars": "هنوز خودرویی وجود ندارد"
+        },
+        "status": {
+          "active": "فعال",
+          "draft": "پیش‌نویس",
+          "maintenance": "تعمیرات",
+          "hidden": "مخفی"
+        },
+        "transmission": {
+          "automatic": "اتوماتیک",
+          "manual": "دستی",
+          "semi_automatic": "نیمه‌اتوماتیک (Triptronic)"
+        },
+        "fuel": {
+          "petrol": "بنزین",
+          "diesel": "دیزل",
+          "hybrid": "هیبرید",
+          "electric": "برقی"
+        },
+        "confirms": {
+          "removeImage": "این تصویر حذف شود؟",
+          "deleteCar": "این خودرو حذف شود؟ این عمل قابل بازگشت نیست."
+        },
+        "toasts": {
+          "brandModelPriceRequired": "برند، مدل و قیمت روزانه الزامی است",
+          "imagesFailed_one": "خودرو ذخیره شد، اما {{count}} تصویر بارگذاری نشد",
+          "imagesFailed_other": "خودرو ذخیره شد، اما {{count}} تصویر بارگذاری نشدند",
+          "carUpdated": "خودرو به‌روز شد",
+          "carCreated": "خودرو ایجاد شد",
+          "couldNotSaveCar": "ذخیره خودرو ممکن نبود",
+          "imageRemoved": "تصویر حذف شد",
+          "couldNotRemoveImage": "حذف تصویر ممکن نبود",
+          "fileTooLarge": "{{name}} بیش از حد بزرگ است (حداکثر ۵ مگابایت)",
+          "carDeleted": "خودرو حذف شد",
+          "couldNotDeleteCar": "حذف خودرو ممکن نبود"
+        },
+        "form": {
+          "brand": "برند",
+          "brandPlaceholder": "Toyota",
+          "model": "مدل",
+          "modelPlaceholder": "Corolla",
+          "year": "سال",
+          "plate": "پلاک",
+          "platePlaceholder": "34 AB 1234",
+          "vin": "VIN",
+          "doors": "درها",
+          "cityPlaceholder": "Girne",
+          "dailyPrice": "قیمت روزانه (₺)",
+          "weeklyPrice": "قیمت هفتگی (₺)",
+          "deposit": "ودیعه (₺)",
+          "minDriverAgeDefault": "حداقل سن راننده (پیش‌فرض)",
+          "minDriverAgeOverride": "حداقل سن راننده (سفارشی)",
+          "useCompanyDefault": "استفاده از پیش‌فرض شرکت",
+          "enginePower": "قدرت موتور (HP)",
+          "enginePowerPlaceholder": "مثلاً 130",
+          "engineSize": "حجم موتور (cc)",
+          "engineSizePlaceholder": "مثلاً 1600",
+          "dailyKmLimit": "محدودیت کیلومتر روزانه (این خودرو)",
+          "mileagePolicy": "سیاست کیلومتر",
+          "mileagePolicyPlaceholder": "۳۰۰ کیلومتر/روز شامل، ₺۲/کیلومتر پس از آن",
+          "photoGallery": "گالری عکس (داخلی + خارجی)",
+          "deleteImageAria": "حذف تصویر",
+          "pendingImages_one": "{{count}} تصویر جدید آماده بارگذاری:",
+          "pendingImages_other": "{{count}} تصویر جدید آماده بارگذاری:",
+          "uploadHelp": "کلیک کنید یا چندین فایل JPG / PNG / WEBP بکشید (حداکثر ۵ مگابایت هر کدام)"
+        }
+      },
+      "extra": {
+        "calendar": {
+          "subtitle": "رزروها در سراسر ناوگان شما",
+          "weekdays": {
+            "mon": "دو",
+            "tue": "سه",
+            "wed": "چها",
+            "thu": "پنج",
+            "fri": "جمع",
+            "sat": "شنب",
+            "sun": "یک"
+          },
+          "activeRental": "اجاره فعال",
+          "allBookingsThisMonth": "تمام رزروهای این ماه",
+          "noBookingsInMonth": "رزروی در این ماه وجود ندارد."
+        },
+        "pricing": {
+          "subtitle": "تخفیفات مدت‌دار و کدهای تبلیغاتی",
+          "tabs": {
+            "lengthDiscounts": "تخفیفات مدت‌دار",
+            "promoCodes": "کدهای تبلیغاتی"
+          },
+          "weeklyMonthlyDiscounts": "تخفیفات هفتگی و ماهانه",
+          "weeklyDiscount": "تخفیف هفتگی (۷+ روز)",
+          "monthlyDiscount": "تخفیف ماهانه (۲۸+ روز)",
+          "createPromoCode": "ایجاد کد تبلیغاتی",
+          "type": "نوع",
+          "value": "مقدار",
+          "maxUses": "حداکثر استفاده",
+          "expires": "انقضا",
+          "existingCodes": "کدهای موجود",
+          "noPromoCodes": "هنوز کد تبلیغاتی وجود ندارد.",
+          "discountType": {
+            "percent": "درصد",
+            "fixed": "ثابت (₺)"
+          },
+          "actions": {
+            "createCode": "ایجاد کد"
+          },
+          "table": {
+            "discount": "تخفیف",
+            "used": "استفاده شده",
+            "active": "فعال"
+          },
+          "confirms": {
+            "deletePromoCode": "این کد تبلیغاتی حذف شود؟"
+          },
+          "toasts": {
+            "promoCodeRequired": "کد تبلیغاتی الزامی است",
+            "promoCodeCreated": "کد تبلیغاتی ایجاد شد",
+            "couldNotCreatePromo": "ایجاد کد تبلیغاتی ممکن نبود",
+            "couldNotUpdatePromo": "به‌روزرسانی ممکن نبود",
+            "promoDeleted": "کد تبلیغاتی حذف شد",
+            "couldNotDeletePromo": "حذف ممکن نبود",
+            "lengthDiscountsSaved": "تخفیفات مدت‌دار ذخیره شد",
+            "couldNotSaveDiscounts": "ذخیره ممکن نبود"
+          }
+        },
+        "messages": {
+          "subtitle": "چت با مشتری و سؤالات قبل از رزرو",
+          "loadingMessages": "در حال بارگذاری پیام‌ها...",
+          "noConversations": "هنوز مکالمه‌ای وجود ندارد.",
+          "customer": "مشتری",
+          "conversation": "مکالمه",
+          "typeMessage": "پیام خود را بنویسید...",
+          "toasts": {
+            "couldNotSendMessage": "ارسال پیام ممکن نبود"
+          }
+        },
+        "integrations": {
+          "subtitle": "اتصال Renarvo با ابزارهای شما",
+          "comingSoon": "یکپارچه‌سازی‌ها به زودی در دسترس خواهند بود. افزونه‌های پرداخت TIKO، WhatsApp Business، Google Calendar و اشتراک‌های webhook پس از فعال‌سازی توسط مدیر پلتفرم در اینجا قابل پیکربندی خواهند بود."
+        }
+      },
+      "sections": {
+        "customers": {
+          "searchPlaceholder": "جستجو بر اساس نام یا ایمیل...",
+          "totalSpent": "مجموع هزینه",
+          "lastBooking": "آخرین رزرو",
+          "noCustomers": "هنوز مشتری‌ای وجود ندارد"
+        },
+        "branches": {
+          "addBranch": "افزودن شعبه",
+          "address": "آدرس",
+          "namePlaceholder": "دفتر فرودگاه Ercan",
+          "cityPlaceholder": "Lefkosa",
+          "addressPlaceholder": "فرودگاه Ercan، ورودی‌ها",
+          "noBranches": "هنوز شعبه‌ای وجود ندارد. اولین مکان تحویل خود را اضافه کنید.",
+          "confirms": {
+            "deleteBranch": "این شعبه حذف شود؟"
+          },
+          "toasts": {
+            "nameAddressRequired": "نام و آدرس الزامی است",
+            "branchAdded": "شعبه اضافه شد",
+            "couldNotAddBranch": "افزودن شعبه ممکن نبود",
+            "branchDeleted": "شعبه حذف شد",
+            "couldNotDelete": "حذف ممکن نبود"
+          }
+        },
+        "staff": {
+          "inviteMember": "دعوت عضو",
+          "role": "نقش",
+          "sendInvite": "ارسال دعوت",
+          "noStaff": "هنوز کارمندی وجود ندارد",
+          "roles": {
+            "manager": "مدیر",
+            "agent": "نماینده"
+          },
+          "confirms": {
+            "removeStaffMember": "این عضو کارکنان حذف شود؟"
+          },
+          "toasts": {
+            "nameEmailRequired": "نام و ایمیل الزامی است",
+            "memberInvited": "{{name}} اضافه شد — پس از پیکربندی SMTP ایمیل بازنشانی رمز عبور دریافت خواهند کرد.",
+            "couldNotInviteStaff": "دعوت کارمند ممکن نبود",
+            "staffRemoved": "عضو کارکنان حذف شد",
+            "couldNotRemove": "حذف ممکن نبود"
+          }
+        },
+        "reviews": {
+          "noReviews": "هنوز نظری وجود ندارد — پس از تکمیل رزرو توسط مشتریان نمایش داده می‌شوند.",
+          "guest": "مهمان",
+          "yourReply": "پاسخ شما",
+          "reply": "پاسخ",
+          "typeResponse": "پاسخ خود را بنویسید...",
+          "postReply": "ارسال پاسخ",
+          "toasts": {
+            "replyCannotBeEmpty": "پاسخ نمی‌تواند خالی باشد",
+            "replyPosted": "پاسخ ارسال شد",
+            "couldNotPostReply": "ارسال پاسخ ممکن نبود"
+          }
+        },
+        "payouts": {
+          "bankAccount": "حساب بانکی",
+          "accountHolder": "صاحب حساب",
+          "accountHolderPlaceholder": "شرکت نمونه",
+          "bankOptional": "بانک (اختیاری)",
+          "saveBankInfo": "ذخیره اطلاعات بانکی",
+          "payoutHistory": "سابقه پرداخت‌ها",
+          "noPayouts": "هنوز پرداختی وجود ندارد.",
+          "paid": "پرداخت شده",
+          "toasts": {
+            "ibanHolderRequired": "IBAN و نام صاحب حساب الزامی است",
+            "bankAccountSaved": "حساب بانکی ذخیره شد",
+            "couldNotSaveBank": "ذخیره حساب بانکی ممکن نبود"
+          }
+        },
+        "documents": {
+          "uploadNewDocument": "بارگذاری مدرک جدید",
+          "type": "نوع",
+          "expiresOptional": "تاریخ انقضا (اختیاری)",
+          "fileLabel": "فایل (PDF/JPG/PNG، حداکثر ۱۰ مگابایت)",
+          "upload": "بارگذاری",
+          "noDocuments": "هنوز مدرکی بارگذاری نشده.",
+          "expiresOn": "انقضا {{date}}",
+          "noExpiry": "بدون انقضا",
+          "docTypes": {
+            "tradeRegistry": "ثبت تجاری",
+            "taxCertificate": "گواهی مالیاتی",
+            "operatingLicense": "مجوز بهره‌برداری",
+            "insuranceCertificate": "گواهی بیمه"
+          },
+          "toasts": {
+            "pickFileFirst": "ابتدا یک فایل انتخاب کنید",
+            "documentUploaded": "مدرک بارگذاری شد — مدیر آن را بررسی خواهد کرد",
+            "uploadFailed": "بارگذاری ناموفق بود"
+          }
+        },
+        "settings": {
+          "companyProfile": "پروفایل شرکت",
+          "phoneInternal": "تلفن (داخلی)",
+          "address": "آدرس",
+          "languagesSpoken": "زبان‌های قابل ارتباط",
+          "languagesPlaceholder": "Turkce, English, Russkiy",
+          "rentalPolicy": "شرایط اجاره",
+          "minimumRentalDays": "حداقل روزهای اجاره",
+          "minimumDriverAge": "حداقل سن راننده",
+          "kilometrePolicy": "سیاست کیلومتر",
+          "kmLimitPerDay": "محدودیت کیلومتر در روز (کیلومتر)",
+          "studentFriendly": "مناسب دانشجویان",
+          "studentFriendlyHint": "اجازه رانندگی به رانندگان جوان‌تر از حداقل استاندارد در صورتی که دانشجو هستند.",
+          "roadside247": "امداد جاده‌ای ۲۴/۷",
+          "roadside247Hint": "نمایش نشان پشتیبانی ۲۴/۷ بر روی هر خودرو.",
+          "publicContactSocial": "اطلاعات تماس و شبکه‌های اجتماعی",
+          "publicEmail": "ایمیل عمومی",
+          "website": "وب‌سایت",
+          "kmPolicy": {
+            "unlimited": "نامحدود",
+            "perDayLimit": "محدودیت روزانه",
+            "totalLimit": "محدودیت کل"
+          },
+          "toasts": {
+            "settingsSaved": "تنظیمات ذخیره شد",
+            "couldNotSave": "ذخیره ممکن نبود"
+          }
+        },
+        "extras": {
+          "addExtra": "افزودن مورد اضافی",
+          "displayName": "نام نمایشی",
+          "chargeMode": "نحوه شارژ",
+          "pricePerDay": "قیمت در روز (TRY)",
+          "pricePerRental": "قیمت در هر اجاره (TRY)",
+          "activeShownToCustomers": "فعال (قابل مشاهده برای مشتریان)",
+          "descriptionOptional": "توضیحات (اختیاری)",
+          "noExtras": "هنوز مورد اضافی وجود ندارد. حداقل GPS، صندلی کودک و راننده اضافی اضافه کنید تا مشتریان بتوانند هنگام رزرو انتخاب کنند.",
+          "active": "فعال",
+          "hidden": "مخفی",
+          "pricePerDayFormatted": "₺{{amount}} / روز",
+          "pricePerRentalFormatted": "₺{{amount}} / اجاره",
+          "chargeModes": {
+            "perDay": "در روز",
+            "perRental": "در هر اجاره"
+          },
+          "optionLabels": {
+            "mobileWifi": "WiFi همراه",
+            "borderCrossing": "عبور از مرز",
+            "custom": "سفارشی"
+          },
+          "confirms": {
+            "deleteExtra": "این مورد اضافی حذف شود؟"
+          },
+          "toasts": {
+            "extraUpdated": "مورد اضافی به‌روز شد",
+            "extraAdded": "مورد اضافی اضافه شد",
+            "couldNotSave": "ذخیره ممکن نبود",
+            "deleted": "حذف شد",
+            "couldNotDelete": "حذف ممکن نبود"
+          }
+        },
+        "insurance": {
+          "addPackage": "افزودن بسته",
+          "tier": "سطح",
+          "displayName": "نام نمایشی",
+          "pricePerDay": "قیمت در روز (TRY)",
+          "deductibleAmount": "مبلغ فرانشیز (TRY)",
+          "deductiblePlaceholder": "مثلاً 5000",
+          "coverageAmount": "مبلغ پوشش (TRY)",
+          "coveragePlaceholder": "مثلاً 200000",
+          "active": "فعال",
+          "hidden": "مخفی",
+          "descriptionPlaceholder": "چه چیزی شامل می‌شود و چه چیزی نمی‌شود...",
+          "includedFeatures": "ویژگی‌های شامل (هر خط یکی)",
+          "includedFeaturesPlaceholder": "سرقت\nمسئولیت شخص ثالث\nآسیب شیشه",
+          "noPackages": "هنوز بسته بیمه‌ای وجود ندارد. مینی، استاندارد و کامل اضافه کنید تا مشتریان بتوانند هنگام رزرو انتخاب کنند.",
+          "pricePerDayFormatted": "₺{{amount}} / روز",
+          "deductibleFormatted": "فرانشیز: ₺{{amount}}",
+          "coverageFormatted": "پوشش: ₺{{amount}}",
+          "tierLabels": {
+            "mini": "حفاظت مینی (Mini)",
+            "mid": "حفاظت استاندارد (Mid)",
+            "full": "حفاظت کامل (Full)"
+          },
+          "confirms": {
+            "deletePackage": "این بسته حذف شود؟"
+          },
+          "toasts": {
+            "packageUpdated": "بسته به‌روز شد",
+            "packageAdded": "بسته اضافه شد",
+            "couldNotSave": "ذخیره ممکن نبود",
+            "deleted": "حذف شد",
+            "couldNotDelete": "حذف ممکن نبود"
+          }
+        }
+      },
+      "pro": {
+        "title": "ارتقا به حرفه‌ای",
+        "desc": "کمیسیون کمتر، اولویت در نمایش و بینش‌های هوش مصنوعی دریافت کنید.",
+        "cta": "اطلاعات بیشتر"
+      }
+    },
+    "admin": {
+      "badge": "مدیر",
+      "superAdmin": "مدیر ارشد",
+      "platformOwner": "مالک پلتفرم",
+      "groups": {
+        "overview": "نمای کلی",
+        "marketplace": "بازار",
+        "people": "افراد",
+        "operations": "عملیات"
+      },
+      "nav": {
+        "dashboard": "داشبورد",
+        "systemHealth": "سلامت سیستم",
+        "companies": "شرکت‌ها",
+        "approvals": "تأییدها",
+        "catalog": "کاتالوگ",
+        "reservations": "رزروها",
+        "payments": "پرداخت‌ها",
+        "users": "کاربران",
+        "reviews": "نظرات",
+        "auditLog": "گزارش فعالیت‌ها",
+        "finance": "مالی",
+        "broadcast": "ارسال گروهی",
+        "content": "محتوا",
+        "settings": "تنظیمات"
+      },
+      "searchPlaceholder": "جستجو در پلتفرم — شرکت‌ها، کاربران، رزروها…",
+      "overview": {
+        "title": "نمای کلی پلتفرم",
+        "subtitle": "Renarvo در یک نگاه",
+        "loading": "در حال بارگذاری شاخص‌های پلتفرم...",
+        "unavailable": "نمای کلی در دسترس نیست.",
+        "gmvThisMonth": "GMV (این ماه)",
+        "activeCompanies": "شرکت‌های فعال",
+        "pendingCompanies": "شرکت‌های در انتظار",
+        "totalUsers": "کل کاربران",
+        "customers": "مشتریان",
+        "reservationsTotal": "کل رزروها",
+        "reservationsThisMonth": "رزروهای این ماه",
+        "openApprovals": "تأییدهای باز"
+      },
+      "companies": {
+        "company": "شرکت",
+        "owner": "مالک",
+        "noneForStatus": "هیچ شرکت {{status}} وجود ندارد",
+        "suspend": "تعلیق",
+        "reinstate": "بازگردانی",
+        "rejectionReason": "دلیل رد؟",
+        "suspensionReason": "دلیل تعلیق؟",
+        "status": {
+          "approved": "تأیید شده",
+          "pending": "در انتظار",
+          "suspended": "تعلیق شده",
+          "rejected": "رد شده"
+        },
+        "toast": {
+          "approve": "شرکت تأیید شد",
+          "suspend": "شرکت تعلیق شد",
+          "reject": "شرکت رد شد"
+        }
+      },
+      "approvals": {
+        "title": "صف تأییدها",
+        "pendingCount_one": "{{count}} شرکت در انتظار بررسی",
+        "pendingCount_other": "{{count}} شرکت در انتظار بررسی",
+        "allCaughtUp": "همه چیز بررسی شده — تأیید معلقی وجود ندارد",
+        "ownerLine": "مالک: {{name}} ({{email}})",
+        "documentsPending": "مدارک در انتظار بررسی",
+        "approve": "تأیید",
+        "reject": "رد",
+        "approvedToast": "شرکت تأیید شد — اکنون می‌توانند خودرو ثبت کنند",
+        "rejectedToast": "شرکت رد شد",
+        "rejectionReasonPrompt": "دلیل رد؟"
+      },
+      "catalog": {
+        "title": "نظارت بر کاتالوگ",
+        "searchPlaceholder": "جستجوی خودروها...",
+        "pricePerDay": "قیمت/روز",
+        "noCars": "هیچ خودرویی در کاتالوگ نیست",
+        "flag": "پرچم‌گذاری",
+        "hide": "مخفی کردن",
+        "reasonHideOptional": "دلیل مخفی کردن (اختیاری)؟",
+        "reasonFlag": "دلیل پرچم‌گذاری؟",
+        "hiddenToast": "خودرو از کاتالوگ عمومی مخفی شد",
+        "flaggedToast": "خودرو پرچم‌گذاری شد",
+        "status": {
+          "active": "فعال",
+          "draft": "پیش‌نویس",
+          "maintenance": "تعمیرات",
+          "hidden": "مخفی"
+        }
+      },
+      "reservations": {
+        "title": "تمام رزروها",
+        "detail": "رزرو",
+        "anyPayment": "هر پرداختی",
+        "searchPlaceholder": "کد، ایمیل، شرکت، مرجع TIKO...",
+        "payment": "پرداخت",
+        "paidTry": "پرداخت شده (TRY)",
+        "noReservations": "رزروی وجود ندارد",
+        "status": {
+          "pending": "در انتظار",
+          "confirmed": "تأیید شده",
+          "active": "فعال",
+          "completed": "تکمیل شده",
+          "cancelled": "لغو شده"
+        },
+        "paymentStatus": {
+          "paid": "پرداخت شده",
+          "pending": "در انتظار",
+          "unpaid": "پرداخت نشده",
+          "failed": "ناموفق",
+          "refunded": "بازپرداخت شده",
+          "authorized": "مجاز",
+          "captured": "دریافت شده",
+          "cancelled": "لغو شده"
+        }
+      },
+      "payments": {
+        "anyProvider": "هر ارائه‌دهنده‌ای",
+        "anyStatus": "هر وضعیتی",
+        "searchPlaceholder": "سفارش، تراکنش، کد، ایمیل...",
+        "reservation": "رزرو",
+        "provider": "ارائه‌دهنده",
+        "amountTry": "مبلغ (TRY)",
+        "captured": "دریافت شده",
+        "none": "پرداختی وجود ندارد",
+        "status": {
+          "pending": "در انتظار",
+          "authorized": "مجاز",
+          "captured": "دریافت شده",
+          "failed": "ناموفق",
+          "cancelled": "لغو شده",
+          "refunded": "بازپرداخت شده"
+        }
+      },
+      "users": {
+        "title": "کاربران",
+        "kindAll": "همه انواع کاربران",
+        "kindNormal": "کاربران عادی (مشتریان)",
+        "kindCompany": "کاربران شرکت (مالکان + کارکنان)",
+        "rolesAll": "همه نقش‌ها",
+        "roleCustomer": "مشتریان",
+        "roleCompanyOwner": "مالکان شرکت",
+        "roleCompanyStaff": "کارکنان شرکت",
+        "roleSuperadmin": "مدیران ارشد",
+        "searchPlaceholder": "جستجو بر اساس ایمیل یا نام...",
+        "user": "کاربر",
+        "role": "نقش",
+        "status": "وضعیت",
+        "statusActive": "فعال",
+        "statusBanned": "مسدود",
+        "noUsers": "هیچ کاربری یافت نشد",
+        "ban": "مسدود کردن",
+        "unban": "رفع مسدودیت",
+        "reasonForBan": "دلیل مسدودیت؟",
+        "bannedToast": "کاربر مسدود شد",
+        "unbannedToast": "مسدودیت کاربر رفع شد",
+        "roleUnknown": "{{role}}",
+        "statusUnknown": "{{status}}"
+      },
+      "reviews": {
+        "title": "نظارت بر نظرات",
+        "none": "هنوز نظری در پلتفرم وجود ندارد.",
+        "anonymous": "ناشناس",
+        "hide": "مخفی کردن",
+        "restore": "بازگردانی",
+        "hiddenToast": "نظر مخفی شد",
+        "restoredToast": "نظر بازگردانی شد",
+        "status": {
+          "visible": "قابل مشاهده",
+          "hidden": "مخفی"
+        }
+      },
+      "content": {
+        "placeholder": "مدیریت محتوا (بنرها، بلاگ، سؤالات متداول) در برنامه آینده است. فعلاً از تنظیمات برای کنترل متن عنوان استفاده کنید."
+      },
+      "finance": {
+        "gmvThisMonth": "GMV (این ماه)",
+        "commissionThisMonth": "کمیسیون (این ماه)",
+        "pendingPayouts": "پرداخت‌های معلق",
+        "paidPayouts": "پرداخت‌های انجام شده",
+        "companyPayouts": "پرداخت به شرکت‌ها",
+        "period": "دوره",
+        "gross": "ناخالص",
+        "commission": "کمیسیون",
+        "net": "خالص",
+        "noPayouts": "هنوز پرداختی وجود ندارد",
+        "markPaid": "علامت‌گذاری به عنوان پرداخت شده",
+        "bankTransferReference": "مرجع انتقال بانکی؟",
+        "payoutMarkedPaid": "پرداخت به عنوان انجام شده علامت‌گذاری شد",
+        "status": {
+          "pending": "در انتظار",
+          "paid": "پرداخت شده",
+          "failed": "ناموفق",
+          "cancelled": "لغو شده"
+        }
+      },
+      "settings": {
+        "title": "تنظیمات پلتفرم",
+        "loading": "در حال بارگذاری تنظیمات...",
+        "none": "هنوز تنظیماتی پیکربندی نشده.",
+        "saved": "تنظیمات ذخیره شد",
+        "saveFailed": "ذخیره ممکن نبود"
+      },
+      "audit": {
+        "subtitle": "هر عمل دارای دسترسی ویژه در اینجا ثبت می‌شود",
+        "allSeverities": "همه سطوح اهمیت",
+        "filterPlaceholder": "فیلتر بر اساس عمل...",
+        "when": "زمان",
+        "actor": "عامل",
+        "action": "عمل",
+        "target": "هدف",
+        "severityLabel": "اهمیت",
+        "none": "هیچ رویداد فعالیتی با فیلتر شما مطابقت ندارد",
+        "system": "سیستم",
+        "severity": {
+          "info": "اطلاعاتی",
+          "warning": "هشدار",
+          "critical": "بحرانی"
+        }
+      },
+      "system": {
+        "loading": "در حال بارگذاری تله‌متری سیستم...",
+        "unavailable": "سلامت سیستم در دسترس نیست.",
+        "subtitle": "وضعیت لحظه‌ای سرویس‌های پلتفرم",
+        "serviceDatabase": "پایگاه داده",
+        "serviceDisk": "دیسک",
+        "serviceFx": "نرخ ارز",
+        "serviceQueue": "صف کارها",
+        "servicePhp": "PHP",
+        "serviceMailer": "ایمیل (میلر)",
+        "latency": "تأخیر · {{ms}}ms",
+        "connectionFailed": "اتصال ناموفق بود",
+        "diskUsed": "استفاده شده · {{used}}% از {{total}} GB",
+        "unknown": "نامشخص",
+        "lastRefresh": "آخرین به‌روزرسانی · {{value}}",
+        "neverRefreshed": "هرگز به‌روز نشده",
+        "queueInfo": "{{pending}} در انتظار · {{failed}} ناموفق (۷ روز)",
+        "phpInfo": "v{{version}} · OPcache {{opcache}} · {{memory}}MB حداکثر",
+        "mailerInfoConfigured": "{{mailer}} · {{host}}:{{port}}",
+        "mailerInfoNotConfigured": "حالت {{mailer}} (SMTP پیکربندی نشده)",
+        "allOperational": "تمام سیستم‌ها عملیاتی هستند",
+        "needsAttention": "برخی بررسی‌ها نیاز به توجه دارند",
+        "autoRefresh": "به‌روزرسانی خودکار هر ۳۰ ثانیه",
+        "operational": "عملیاتی",
+        "attention": "نیاز به توجه",
+        "notes": "یادداشت‌ها",
+        "databaseLine": "پایگاه داده: {{status}}",
+        "databaseConnected": "متصل، {{ms}}ms تأخیر.",
+        "lastQueueRun": "آخرین اجرای صف: {{value}}.",
+        "mailerLine": "میلر: {{mailer}}. {{configured}}"
+      },
+      "notifications": {
+        "title": "اعلان‌ها",
+        "subtitle": "ارسال اطلاعیه به شرکت‌ها یا مشتریان",
+        "compose": "نوشتن",
+        "history": "سابقه",
+        "audience": "مخاطبان",
+        "audienceEveryone": "همه",
+        "audienceCustomers": "فقط مشتریان",
+        "audienceCompanyOwners": "مالکان شرکت",
+        "audienceCompanyOwnersAlias": "مالکان شرکت (نام مستعار)",
+        "audienceCompanyStaff": "کارکنان شرکت",
+        "channels": "کانال‌ها",
+        "channelInApp": "درون‌برنامه‌ای",
+        "channelEmail": "ایمیل",
+        "subject": "موضوع",
+        "subjectPlaceholder": "به‌روزرسانی مهم درباره رزرو شما",
+        "message": "پیام",
+        "messagePlaceholder": "اطلاعیه خود را بنویسید...",
+        "sendNow": "ارسال",
+        "sent": "ارسال شده",
+        "reach": "دسترسی",
+        "noneYet": "هنوز اطلاعیه‌ای ارسال نشده",
+        "validationSubjectBody": "موضوع و پیام الزامی است",
+        "validationChannel": "حداقل یک کانال انتخاب کنید",
+        "queued": "اطلاعیه برای ارسال در صف قرار گرفت",
+        "sendFailed": "ارسال اطلاعیه ناموفق بود"
+      },
+      "ai": {
+        "title": "بینش‌های هوش مصنوعی",
+        "desc": "ناهنجاری‌های پلتفرم در اینجا نمایش داده می‌شوند.",
+        "cta": "بررسی"
+      }
+    }
+  },
+  "enums": {
+    "transmission": {
+      "automatic": "اتوماتیک",
+      "manual": "دستی",
+      "semi_automatic": "نیمه‌اتوماتیک (Triptronic)"
+    },
+    "fuel": {
+      "petrol": "بنزین",
+      "diesel": "دیزل",
+      "hybrid": "هیبرید",
+      "electric": "برقی",
+      "lpg": "LPG"
+    },
+    "category": {
+      "economy": "اقتصادی",
+      "compact": "کامپکت",
+      "comfort": "راحتی",
+      "prestige": "پرستیژ",
+      "premium": "ممتاز",
+      "luxury": "لوکس",
+      "suv": "شاسی‌بلند",
+      "minivan": "مینی‌ون",
+      "van": "ون",
+      "electric": "برقی"
+    },
+    "feature": {
+      "Air conditioning": "تهویه مطبوع",
+      "GPS navigation": "ناوبری GPS",
+      "Bluetooth": "Bluetooth",
+      "USB charger": "شارژر USB",
+      "Backup camera": "دوربین عقب",
+      "Cruise control": "کروز کنترل",
+      "Heated seats": "صندلی‌های گرمکن‌دار",
+      "Sunroof": "سانروف",
+      "Keyless entry": "ورود بدون کلید",
+      "Apple CarPlay": "Apple CarPlay",
+      "Android Auto": "Android Auto"
+    }
+  }
+}

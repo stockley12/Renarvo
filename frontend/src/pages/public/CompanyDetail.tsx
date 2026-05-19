@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Loader2, Star } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,20 +9,21 @@ import { usePublicCars } from '@/lib/hooks/useCars';
 
 export default function CompanyDetail() {
   const { slug } = useParams();
+  const { t } = useTranslation();
   const companyQ = usePublicCompany(slug);
   const carsQ = usePublicCars({ company: slug, limit: 60 });
 
   if (companyQ.isLoading) {
     return (
       <div className="container py-20 text-center text-muted-foreground flex flex-col items-center gap-2">
-        <Loader2 className="h-5 w-5 animate-spin" /> Loading company…
+        <Loader2 className="h-5 w-5 animate-spin" /> {t('common.loading')}
       </div>
     );
   }
   if (companyQ.isError || !companyQ.data) {
     return (
       <div className="container py-20 text-center">
-        Company not found. <Link to="/companies" className="text-primary">Browse companies</Link>
+        {t('companyDetail.notFound')} <Link to="/companies" className="text-primary">{t('companyDetail.browseCompanies')}</Link>
       </div>
     );
   }
@@ -41,7 +43,7 @@ export default function CompanyDetail() {
           <div>
             <h1 className="font-display text-3xl md:text-4xl font-extrabold">{company.name}</h1>
             <p className="text-white/80 mt-1">
-              {company.city}{company.founded_year ? ` · Since ${company.founded_year}` : ''}
+              {company.city}{company.founded_year ? ` · ${t('companyDetail.since')} ${company.founded_year}` : ''}
             </p>
             <div className="flex gap-2 mt-3">
               {company.rating_avg > 0 && (
@@ -49,28 +51,28 @@ export default function CompanyDetail() {
                   <Star className="h-3 w-3 fill-warning text-warning" /> {Number(company.rating_avg).toFixed(1)}
                 </Badge>
               )}
-              <Badge className="bg-white/15 text-white border-0">{company.fleet_size} cars</Badge>
-              <Badge className="bg-white/15 text-white border-0">{company.review_count} reviews</Badge>
+              <Badge className="bg-white/15 text-white border-0">{t('companyDetail.carsCount', { count: company.fleet_size })}</Badge>
+              <Badge className="bg-white/15 text-white border-0">{t('companyDetail.reviewsCount', { count: company.review_count })}</Badge>
             </div>
           </div>
         </div>
       </div>
       <div className="container py-10 grid lg:grid-cols-[280px_1fr] gap-8">
         <Card className="p-5 h-fit">
-          <h3 className="font-semibold mb-2">About</h3>
+          <h3 className="font-semibold mb-2">{t('companyDetail.about')}</h3>
           <p className="text-sm text-muted-foreground">
-            {company.description || 'This company has not added a description yet.'}
+            {company.description || t('companyDetail.noDescription')}
           </p>
         </Card>
         <div>
-          <h2 className="font-display text-2xl font-bold mb-5">Fleet ({fleet.length})</h2>
+          <h2 className="font-display text-2xl font-bold mb-5">{t('companyDetail.fleet')} ({fleet.length})</h2>
           {carsQ.isLoading ? (
             <Card className="p-10 text-center text-muted-foreground flex flex-col items-center gap-2">
-              <Loader2 className="h-5 w-5 animate-spin" /> Loading fleet…
+              <Loader2 className="h-5 w-5 animate-spin" /> {t('companyDetail.loadingFleet')}
             </Card>
           ) : fleet.length === 0 ? (
             <Card className="p-10 text-center text-muted-foreground">
-              No cars listed yet. <Link to="/cars" className="text-primary">Browse all</Link>
+              {t('companyDetail.noCars')} <Link to="/cars" className="text-primary">{t('companyDetail.browseAll')}</Link>
             </Card>
           ) : (
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">

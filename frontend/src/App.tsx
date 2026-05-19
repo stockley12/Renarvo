@@ -42,10 +42,17 @@ import { AdminAuditLog, AdminNotifications, AdminSystem } from "@/pages/admin/Ex
 
 const queryClient = new QueryClient();
 
+const RTL_LOCALES = ['fa', 'ar'];
+
 function I18nSync() {
   const { locale } = useApp();
   const { i18n } = useTranslation();
-  useEffect(() => { if (i18n.language !== locale) i18n.changeLanguage(locale); }, [locale, i18n]);
+  useEffect(() => {
+    if (i18n.language !== locale) i18n.changeLanguage(locale);
+    const dir = RTL_LOCALES.includes(locale) ? 'rtl' : 'ltr';
+    document.documentElement.dir = dir;
+    document.documentElement.lang = locale;
+  }, [locale, i18n]);
   return null;
 }
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Loader2, Search, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { usePublicCompanies } from '@/lib/hooks/usePublic';
 
 export default function Companies() {
+  const { t } = useTranslation();
   const [q, setQ] = useState('');
   const debouncedQ = q.trim();
   const companiesQ = usePublicCompanies({ q: debouncedQ || undefined, limit: 48 });
@@ -15,28 +17,28 @@ export default function Companies() {
   return (
     <div className="container py-10">
       <div className="max-w-2xl mb-8">
-        <h1 className="font-display text-3xl md:text-4xl font-extrabold mb-2">Local rental companies</h1>
+        <h1 className="font-display text-3xl md:text-4xl font-extrabold mb-2">{t('companies.title')}</h1>
         <p className="text-muted-foreground mb-5">
-          Licensed operators across North Cyprus — from Girne to Karpaz
+          {t('companies.subtitle')}
         </p>
         <div className="relative">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search companies..." className="pl-9 h-11" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('companies.searchPlaceholder')} className="pl-9 h-11" />
         </div>
       </div>
 
       {companiesQ.isLoading ? (
         <Card className="p-12 text-center text-muted-foreground flex flex-col items-center gap-2">
-          <Loader2 className="h-5 w-5 animate-spin" /> Loading companies…
+          <Loader2 className="h-5 w-5 animate-spin" /> {t('companies.loading')}
         </Card>
       ) : list.length === 0 ? (
         <Card className="p-12 text-center">
-          <h3 className="font-display font-bold text-xl mb-2">No companies yet</h3>
+          <h3 className="font-display font-bold text-xl mb-2">{t('companies.empty')}</h3>
           <p className="text-sm text-muted-foreground max-w-md mx-auto mb-5">
-            Be the first rental company on Renarvo. Verification is fast and free.
+            {t('companies.emptyDesc')}
           </p>
           <Button asChild className="bg-gradient-brand text-white border-0">
-            <Link to="/register-company">Register your fleet</Link>
+            <Link to="/register-company">{t('companies.registerFleet')}</Link>
           </Button>
         </Card>
       ) : (
@@ -54,7 +56,7 @@ export default function Companies() {
                   <div className="min-w-0">
                     <div className="font-display font-bold truncate">{co.name}</div>
                     <div className="text-xs text-muted-foreground truncate">
-                      {co.city}{co.founded_year ? ` · Since ${co.founded_year}` : ''}
+                      {co.city}{co.founded_year ? ` · ${t('companies.since')} ${co.founded_year}` : ''}
                     </div>
                     <div className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-1">
                       {co.rating_avg > 0 && (
@@ -63,7 +65,7 @@ export default function Companies() {
                           {Number(co.rating_avg).toFixed(1)} ({co.review_count}) ·{' '}
                         </>
                       )}
-                      {co.fleet_size} cars
+                      {co.fleet_size} {t('companies.cars')}
                     </div>
                   </div>
                 </div>

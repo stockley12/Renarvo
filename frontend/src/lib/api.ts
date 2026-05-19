@@ -346,6 +346,10 @@ export type ApiReservation = {
   } | null;
   promo_code?: string | null;
   flight_number?: string | null;
+  driving_license_number?: string | null;
+  id_number?: string | null;
+  date_of_birth?: string | null;
+  documents?: Array<{ type: string; url: string; uploaded_at: string }>;
   notes?: string | null;
   cancellation_reason?: string | null;
   return_location?: string | null;

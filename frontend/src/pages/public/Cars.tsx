@@ -17,7 +17,7 @@ import type { ApiCar } from '@/lib/api';
 
 const CarsMap = lazy(() => import('@/components/public/CarsMap').then((m) => ({ default: m.CarsMap })));
 
-type Transmission = 'manual' | 'automatic';
+type Transmission = 'manual' | 'automatic' | 'semi_automatic';
 
 type FilterState = {
   price: [number, number];
@@ -45,7 +45,7 @@ function FilterPanel({
     <div className="space-y-6">
       <div>
         <h4 className="font-semibold text-sm mb-3">{t('cars.priceUnit')}</h4>
-        <Slider min={300} max={3500} step={100} value={state.price} onValueChange={(v) => set({ ...state, price: [v[0], v[1]] as [number, number] })} />
+        <Slider min={300} max={10000} step={100} value={state.price} onValueChange={(v) => set({ ...state, price: [v[0], v[1]] as [number, number] })} />
         <div className="flex justify-between text-xs text-muted-foreground mt-2">
           <span>₺{state.price[0]}</span><span>₺{state.price[1]}</span>
         </div>
@@ -88,7 +88,7 @@ function FilterPanel({
       )}
       <div>
         <h4 className="font-semibold text-sm mb-3">{t('cars.transmission')}</h4>
-        {(['automatic', 'manual'] as Transmission[]).map((tr) => (
+        {(['automatic', 'manual', 'semi_automatic'] as Transmission[]).map((tr) => (
           <label key={tr} className="flex items-center gap-2 cursor-pointer text-sm py-1">
             <Checkbox
               checked={state.trans.includes(tr)}
@@ -96,7 +96,7 @@ function FilterPanel({
                 set({ ...state, trans: v ? [...state.trans, tr] : state.trans.filter((x) => x !== tr) })
               }
             />
-            <span className="capitalize">{tr}</span>
+            <span>{t(`enums.transmission.${tr}`)}</span>
           </label>
         ))}
       </div>
@@ -116,10 +116,10 @@ export default function Cars() {
   const [params] = useSearchParams();
   const cityFilter = params.get('city');
   const catFilter = params.get('category');
-  const lang = (i18n.language?.slice(0, 2) === 'ru' ? 'ru' : i18n.language?.slice(0, 2) === 'en' ? 'en' : 'tr') as 'tr' | 'en' | 'ru';
+  const lang = (i18n.language?.slice(0, 2) === 'ru' ? 'ru' : i18n.language?.slice(0, 2) === 'en' ? 'en' : i18n.language?.slice(0, 2) === 'fa' ? 'fa' : 'tr') as 'tr' | 'en' | 'ru' | 'fa';
 
   const [state, setState] = useState<FilterState>({
-    price: [300, 3500],
+    price: [300, 10000],
     cats: catFilter ? [catFilter] : [],
     brands: [] as string[],
     trans: [] as Transmission[],

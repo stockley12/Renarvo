@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ import {
 
 /* ============== CALENDAR ============== */
 export function DashCalendar() {
+  const { t } = useTranslation();
   const { locale } = useApp();
   const today = new Date();
   const [monthOffset, setMonthOffset] = useState(0);
@@ -42,7 +44,7 @@ export function DashCalendar() {
   const toIso = monthEnd.toISOString().slice(0, 10);
 
   const events = useCompanyCalendar(fromIso, toIso);
-  const monthLabel = monthStart.toLocaleString('en', { month: 'long', year: 'numeric' });
+  const monthLabel = monthStart.toLocaleString(locale, { month: 'long', year: 'numeric' });
 
   const eventsByDay: Record<number, Array<{ id: number; code: string; status: string; car: string | null }>> = {};
   (events.data ?? []).forEach((e) => {
@@ -61,8 +63,8 @@ export function DashCalendar() {
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-display text-3xl font-extrabold">Calendar</h1>
-          <p className="text-muted-foreground mt-1">Reservations across your fleet</p>
+          <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.calendar')}</h1>
+          <p className="text-muted-foreground mt-1">{t('panel.company.extra.calendar.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => setMonthOffset((m) => m - 1)}>
@@ -84,7 +86,15 @@ export function DashCalendar() {
         {!events.isLoading && (
           <>
             <div className="grid grid-cols-7 gap-1.5 mb-2 text-[11px] font-semibold uppercase text-muted-foreground">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
+              {[
+                t('panel.company.extra.calendar.weekdays.mon'),
+                t('panel.company.extra.calendar.weekdays.tue'),
+                t('panel.company.extra.calendar.weekdays.wed'),
+                t('panel.company.extra.calendar.weekdays.thu'),
+                t('panel.company.extra.calendar.weekdays.fri'),
+                t('panel.company.extra.calendar.weekdays.sat'),
+                t('panel.company.extra.calendar.weekdays.sun'),
+              ].map((d) => (
                 <div key={d} className="text-center">
                   {d}
                 </div>
@@ -131,13 +141,13 @@ export function DashCalendar() {
             </div>
             <div className="flex flex-wrap gap-3 mt-4 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded bg-warning/70" /> Pending
+                <span className="h-2.5 w-2.5 rounded bg-warning/70" /> {t('panel.company.reservations.status.pending')}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded bg-primary/70" /> Confirmed
+                <span className="h-2.5 w-2.5 rounded bg-primary/70" /> {t('panel.company.reservations.status.confirmed')}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded bg-success/70" /> Active rental
+                <span className="h-2.5 w-2.5 rounded bg-success/70" /> {t('panel.company.extra.calendar.activeRental')}
               </span>
             </div>
           </>
@@ -145,9 +155,9 @@ export function DashCalendar() {
       </Card>
 
       <Card className="p-5">
-        <h3 className="font-display font-bold text-lg mb-4">All bookings this month</h3>
+        <h3 className="font-display font-bold text-lg mb-4">{t('panel.company.extra.calendar.allBookingsThisMonth')}</h3>
         {(events.data ?? []).length === 0 ? (
-          <p className="text-sm text-muted-foreground">No bookings in this month.</p>
+          <p className="text-sm text-muted-foreground">{t('panel.company.extra.calendar.noBookingsInMonth')}</p>
         ) : (
           <div className="space-y-2">
             {(events.data ?? []).map((e) => (
@@ -171,6 +181,7 @@ export function DashCalendar() {
 
 /* ============== PRICING & PROMOS ============== */
 export function DashPricing() {
+  const { t } = useTranslation();
   const pricing = useCompanyPricing();
   const updatePricing = useUpdatePricing();
   const promos = useCompanyPromos();
@@ -188,7 +199,7 @@ export function DashPricing() {
   async function onCreatePromo(e: React.FormEvent) {
     e.preventDefault();
     if (!promoCode.trim()) {
-      toast.error('Promo code required');
+      toast.error(t('panel.company.extra.pricing.toasts.promoCodeRequired'));
       return;
     }
     try {
@@ -200,13 +211,13 @@ export function DashPricing() {
         expires_at: promoExpires || null,
         active: true,
       });
-      toast.success('Promo code created');
+      toast.success(t('panel.company.extra.pricing.toasts.promoCodeCreated'));
       setPromoCode('');
       setPromoValue(10);
       setPromoMaxUses('');
       setPromoExpires('');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not create promo');
+      toast.error(err instanceof Error ? err.message : t('panel.company.extra.pricing.toasts.couldNotCreatePromo'));
     }
   }
 
@@ -214,17 +225,17 @@ export function DashPricing() {
     try {
       await updatePromo.mutateAsync({ id, input: { active } });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not update');
+      toast.error(err instanceof Error ? err.message : t('panel.company.extra.pricing.toasts.couldNotUpdatePromo'));
     }
   }
 
   async function onDeletePromo(id: number) {
-    if (!window.confirm('Delete this promo code?')) return;
+    if (!window.confirm(t('panel.company.extra.pricing.confirms.deletePromoCode'))) return;
     try {
       await deletePromo.mutateAsync(id);
-      toast.success('Promo deleted');
+      toast.success(t('panel.company.extra.pricing.toasts.promoDeleted'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not delete');
+      toast.error(err instanceof Error ? err.message : t('panel.company.extra.pricing.toasts.couldNotDeletePromo'));
     }
   }
 
@@ -252,31 +263,31 @@ export function DashPricing() {
         seasonal: seasonal.map(({ id: _id, ...rest }) => rest as never),
         length_discounts: next as never,
       });
-      toast.success('Length discounts saved');
+      toast.success(t('panel.company.extra.pricing.toasts.lengthDiscountsSaved'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not save');
+      toast.error(err instanceof Error ? err.message : t('panel.company.extra.pricing.toasts.couldNotSaveDiscounts'));
     }
   }
 
   return (
     <div className="space-y-5 max-w-6xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">Pricing & promotions</h1>
-        <p className="text-muted-foreground mt-1">Length discounts and promo codes</p>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.pricingPromos')}</h1>
+        <p className="text-muted-foreground mt-1">{t('panel.company.extra.pricing.subtitle')}</p>
       </div>
 
       <Tabs defaultValue="discounts">
         <TabsList>
-          <TabsTrigger value="discounts">Length discounts</TabsTrigger>
-          <TabsTrigger value="promos">Promo codes</TabsTrigger>
+          <TabsTrigger value="discounts">{t('panel.company.extra.pricing.tabs.lengthDiscounts')}</TabsTrigger>
+          <TabsTrigger value="promos">{t('panel.company.extra.pricing.tabs.promoCodes')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="discounts" className="mt-4">
           <Card className="p-5">
-            <h3 className="font-display font-bold mb-4">Weekly & monthly discounts</h3>
+            <h3 className="font-display font-bold mb-4">{t('panel.company.extra.pricing.weeklyMonthlyDiscounts')}</h3>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <Label>Weekly discount (7+ days)</Label>
+                <Label>{t('panel.company.extra.pricing.weeklyDiscount')}</Label>
                 <div className="relative">
                   <Input
                     type="number"
@@ -289,7 +300,7 @@ export function DashPricing() {
                 </div>
               </div>
               <div>
-                <Label>Monthly discount (28+ days)</Label>
+                <Label>{t('panel.company.extra.pricing.monthlyDiscount')}</Label>
                 <div className="relative">
                   <Input
                     type="number"
@@ -303,36 +314,36 @@ export function DashPricing() {
               </div>
             </div>
             <Button onClick={onSaveDiscounts} disabled={updatePricing.isPending} className="mt-5 bg-gradient-brand text-white border-0">
-              {updatePricing.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save changes
+              {updatePricing.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t('common.saveChanges')}
             </Button>
           </Card>
         </TabsContent>
 
         <TabsContent value="promos" className="mt-4 space-y-4">
           <Card className="p-5">
-            <h3 className="font-display font-bold mb-4">Create promo code</h3>
+            <h3 className="font-display font-bold mb-4">{t('panel.company.extra.pricing.createPromoCode')}</h3>
             <form onSubmit={onCreatePromo} className="grid sm:grid-cols-5 gap-3 items-end">
               <div>
-                <Label>Code</Label>
+                <Label>{t('panel.common.code')}</Label>
                 <Input value={promoCode} onChange={(e) => setPromoCode(e.target.value.toUpperCase())} placeholder="WELCOME10" />
               </div>
               <div>
-                <Label>Type</Label>
+                <Label>{t('panel.company.extra.pricing.type')}</Label>
                 <select
                   value={promoType}
                   onChange={(e) => setPromoType(e.target.value as 'percent' | 'fixed')}
                   className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
                 >
-                  <option value="percent">Percent</option>
-                  <option value="fixed">Fixed (₺)</option>
+                  <option value="percent">{t('panel.company.extra.pricing.discountType.percent')}</option>
+                  <option value="fixed">{t('panel.company.extra.pricing.discountType.fixed')}</option>
                 </select>
               </div>
               <div>
-                <Label>Value</Label>
+                <Label>{t('panel.company.extra.pricing.value')}</Label>
                 <Input type="number" value={promoValue} onChange={(e) => setPromoValue(parseInt(e.target.value) || 0)} />
               </div>
               <div>
-                <Label>Max uses</Label>
+                <Label>{t('panel.company.extra.pricing.maxUses')}</Label>
                 <Input
                   type="number"
                   value={promoMaxUses}
@@ -341,34 +352,34 @@ export function DashPricing() {
                 />
               </div>
               <div>
-                <Label>Expires</Label>
+                <Label>{t('panel.company.extra.pricing.expires')}</Label>
                 <Input type="date" value={promoExpires} onChange={(e) => setPromoExpires(e.target.value)} />
               </div>
               <div className="sm:col-span-5">
                 <Button type="submit" disabled={createPromo.isPending} className="bg-gradient-brand text-white border-0">
-                  <Plus className="h-4 w-4 mr-1.5" /> Create code
+                  <Plus className="h-4 w-4 mr-1.5" /> {t('panel.company.extra.pricing.actions.createCode')}
                 </Button>
               </div>
             </form>
           </Card>
 
           <Card className="overflow-hidden">
-            <div className="p-5 border-b font-display font-bold">Existing codes</div>
+            <div className="p-5 border-b font-display font-bold">{t('panel.company.extra.pricing.existingCodes')}</div>
             {promos.isLoading ? (
               <div className="py-12 text-center text-muted-foreground">
                 <Loader2 className="h-5 w-5 mx-auto animate-spin" />
               </div>
             ) : (promos.data ?? []).length === 0 ? (
-              <div className="p-10 text-center text-muted-foreground">No promo codes yet.</div>
+              <div className="p-10 text-center text-muted-foreground">{t('panel.company.extra.pricing.noPromoCodes')}</div>
             ) : (
               <table className="w-full text-sm">
                 <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3">Code</th>
-                    <th className="px-4 py-3">Discount</th>
-                    <th className="px-4 py-3">Used</th>
-                    <th className="px-4 py-3">Expires</th>
-                    <th className="px-4 py-3">Active</th>
+                    <th className="px-4 py-3">{t('panel.common.code')}</th>
+                    <th className="px-4 py-3">{t('panel.company.extra.pricing.table.discount')}</th>
+                    <th className="px-4 py-3">{t('panel.company.extra.pricing.table.used')}</th>
+                    <th className="px-4 py-3">{t('panel.company.extra.pricing.expires')}</th>
+                    <th className="px-4 py-3">{t('panel.company.extra.pricing.table.active')}</th>
                     <th className="px-4 py-3 w-16"></th>
                   </tr>
                 </thead>
@@ -408,6 +419,7 @@ export function DashPricing() {
 
 /* ============== MESSAGES ============== */
 export function DashMessages() {
+  const { t } = useTranslation();
   const threads = useCompanyMessages();
   const [active, setActive] = useState<number | null>(null);
   const thread = useCompanyMessageThread(active);
@@ -423,47 +435,47 @@ export function DashMessages() {
       await reply.mutateAsync({ threadId: active, body });
       setBody('');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not send message');
+      toast.error(err instanceof Error ? err.message : t('panel.company.extra.messages.toasts.couldNotSendMessage'));
     }
   }
 
   return (
     <div className="space-y-5 max-w-7xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">Messages</h1>
-        <p className="text-muted-foreground mt-1">Customer chat and pre-booking inquiries</p>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.messages')}</h1>
+        <p className="text-muted-foreground mt-1">{t('panel.company.extra.messages.subtitle')}</p>
       </div>
 
       {threads.isLoading ? (
         <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
-          <Loader2 className="h-6 w-6 mr-2 animate-spin" /> Loading messages...
+          <Loader2 className="h-6 w-6 mr-2 animate-spin" /> {t('panel.company.extra.messages.loadingMessages')}
         </div>
       ) : items.length === 0 ? (
         <Card className="p-10 text-center text-muted-foreground">
-          No conversations yet.
+          {t('panel.company.extra.messages.noConversations')}
         </Card>
       ) : (
         <Card className="grid grid-cols-1 md:grid-cols-[300px_1fr] h-[600px] overflow-hidden">
           <div className="border-r flex flex-col">
             <ScrollArea className="flex-1">
-              {items.map((t) => (
+              {items.map((threadItem) => (
                 <button
-                  key={t.id}
-                  onClick={() => setActive(t.id)}
+                  key={threadItem.id}
+                  onClick={() => setActive(threadItem.id)}
                   className={`w-full flex items-start gap-3 p-3 border-b text-left hover:bg-muted/40 transition-colors ${
-                    active === t.id ? 'bg-primary/5' : ''
+                    active === threadItem.id ? 'bg-primary/5' : ''
                   }`}
                 >
                   <Avatar className="h-9 w-9">
                     <AvatarFallback className="bg-gradient-brand text-white text-xs">
-                      {(t.customer?.name ?? '?').split(' ').map((w) => w[0]).slice(0, 2).join('')}
+                      {(threadItem.customer?.name ?? '?').split(' ').map((w) => w[0]).slice(0, 2).join('')}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-sm truncate">{t.customer?.name ?? 'Customer'}</span>
+                      <span className="font-semibold text-sm truncate">{threadItem.customer?.name ?? t('panel.company.extra.messages.customer')}</span>
                     </div>
-                    <div className="text-xs text-muted-foreground truncate">{t.subject ?? 'Conversation'}</div>
+                    <div className="text-xs text-muted-foreground truncate">{threadItem.subject ?? t('panel.company.extra.messages.conversation')}</div>
                   </div>
                 </button>
               ))}
@@ -473,7 +485,7 @@ export function DashMessages() {
           <div className="flex flex-col">
             {!thread.data ? (
               <div className="flex items-center justify-center flex-1 text-muted-foreground">
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" /> Loading...
+                <Loader2 className="h-5 w-5 mr-2 animate-spin" /> {t('common.loading')}
               </div>
             ) : (
               <>
@@ -484,7 +496,7 @@ export function DashMessages() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <div className="font-semibold text-sm">{thread.data.customer?.name ?? 'Customer'}</div>
+                    <div className="font-semibold text-sm">{thread.data.customer?.name ?? t('panel.company.extra.messages.customer')}</div>
                     <div className="text-xs text-muted-foreground">{thread.data.customer?.email}</div>
                   </div>
                 </div>
@@ -516,7 +528,7 @@ export function DashMessages() {
                         onSend();
                       }
                     }}
-                    placeholder="Type a message..."
+                    placeholder={t('panel.company.extra.messages.typeMessage')}
                     className="flex-1"
                   />
                   <Button onClick={onSend} disabled={reply.isPending} className="bg-gradient-brand text-white border-0">
@@ -534,17 +546,17 @@ export function DashMessages() {
 
 /* ============== INTEGRATIONS ============== */
 export function DashIntegrations() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-5 max-w-5xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">Integrations</h1>
-        <p className="text-muted-foreground mt-1">Connect Renarvo with your tools</p>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.integrations')}</h1>
+        <p className="text-muted-foreground mt-1">{t('panel.company.extra.integrations.subtitle')}</p>
       </div>
       <Card className="p-10 text-center text-muted-foreground">
         <Plug className="h-10 w-10 mx-auto mb-3 opacity-50" />
         <p className="text-sm">
-          Integrations are coming soon. TIKO payment extensions, WhatsApp Business, Google Calendar, and webhook
-          subscriptions will be configurable here once enabled by your platform admin.
+          {t('panel.company.extra.integrations.comingSoon')}
         </p>
       </Card>
     </div>

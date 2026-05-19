@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -45,6 +46,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 /* ============== CUSTOMERS ============== */
 export function DashCustomers() {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const [q, setQ] = useState('');
   const customers = useCompanyCustomers({ search: q || undefined, limit: 100 });
@@ -53,7 +55,7 @@ export function DashCustomers() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="font-display text-3xl font-extrabold">Customers</h1>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.customers')}</h1>
       </div>
       <Card className="p-3">
         <div className="relative">
@@ -61,7 +63,7 @@ export function DashCustomers() {
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search by name or email..."
+            placeholder={t('panel.company.sections.customers.searchPlaceholder')}
             className="pl-9 border-0 bg-transparent"
           />
         </div>
@@ -70,11 +72,11 @@ export function DashCustomers() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 font-medium">Customer</th>
-              <th className="px-4 py-3 font-medium">Phone</th>
-              <th className="px-4 py-3 font-medium">Bookings</th>
-              <th className="px-4 py-3 font-medium text-right">Total spent</th>
-              <th className="px-4 py-3 font-medium">Last booking</th>
+              <th className="px-4 py-3 font-medium">{t('panel.common.customer')}</th>
+              <th className="px-4 py-3 font-medium">{t('auth.register.phone')}</th>
+              <th className="px-4 py-3 font-medium">{t('panel.company.stats.bookings')}</th>
+              <th className="px-4 py-3 font-medium text-right">{t('panel.company.sections.customers.totalSpent')}</th>
+              <th className="px-4 py-3 font-medium">{t('panel.company.sections.customers.lastBooking')}</th>
             </tr>
           </thead>
           <tbody>
@@ -88,7 +90,7 @@ export function DashCustomers() {
             {!customers.isLoading && items.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
-                  No customers yet
+                  {t('panel.company.sections.customers.noCustomers')}
                 </td>
               </tr>
             )}
@@ -128,6 +130,7 @@ export function DashCustomers() {
 
 /* ============== BRANCHES ============== */
 export function DashBranches() {
+  const { t } = useTranslation();
   const branches = useCompanyBranches();
   const create = useCreateBranch();
   const remove = useDeleteBranch();
@@ -139,28 +142,28 @@ export function DashBranches() {
   async function onCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!name || !address) {
-      toast.error('Name and address required');
+      toast.error(t('panel.company.sections.branches.toasts.nameAddressRequired'));
       return;
     }
     try {
       await create.mutateAsync({ name, address, city: city || null, latitude: null, longitude: null, opening_hours: null });
-      toast.success('Branch added');
+      toast.success(t('panel.company.sections.branches.toasts.branchAdded'));
       setCreating(false);
       setName('');
       setAddress('');
       setCity('');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not add branch');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.branches.toasts.couldNotAddBranch'));
     }
   }
 
   async function onDelete(id: number) {
-    if (!window.confirm('Delete this branch?')) return;
+    if (!window.confirm(t('panel.company.sections.branches.confirms.deleteBranch'))) return;
     try {
       await remove.mutateAsync(id);
-      toast.success('Branch deleted');
+      toast.success(t('panel.company.sections.branches.toasts.branchDeleted'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not delete');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.branches.toasts.couldNotDelete'));
     }
   }
 
@@ -169,10 +172,10 @@ export function DashBranches() {
   return (
     <div className="space-y-5 max-w-5xl">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-extrabold">Branches & locations</h1>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.branches')}</h1>
         <Button className="bg-gradient-brand text-white border-0" onClick={() => setCreating(true)}>
           <Plus className="h-4 w-4 mr-1.5" />
-          Add branch
+          {t('panel.company.sections.branches.addBranch')}
         </Button>
       </div>
 
@@ -180,23 +183,23 @@ export function DashBranches() {
         <Card className="p-5">
           <form onSubmit={onCreate} className="grid sm:grid-cols-3 gap-3">
             <div>
-              <Label>Name</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ercan Airport office" />
+              <Label>{t('auth.register.name')}</Label>
+              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('panel.company.sections.branches.namePlaceholder')} />
             </div>
             <div>
-              <Label>City</Label>
-              <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Lefkoşa" />
+              <Label>{t('common.city')}</Label>
+              <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder={t('panel.company.sections.branches.cityPlaceholder')} />
             </div>
             <div>
-              <Label>Address</Label>
-              <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Ercan Airport, arrivals" />
+              <Label>{t('panel.company.sections.branches.address')}</Label>
+              <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder={t('panel.company.sections.branches.addressPlaceholder')} />
             </div>
             <div className="sm:col-span-3 flex gap-2">
               <Button type="submit" disabled={create.isPending} className="bg-gradient-brand text-white border-0">
-                {create.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save
+                {create.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t('common.save')}
               </Button>
               <Button type="button" variant="outline" onClick={() => setCreating(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
             </div>
           </form>
@@ -212,7 +215,7 @@ export function DashBranches() {
       {!branches.isLoading && items.length === 0 && (
         <Card className="p-10 text-center text-muted-foreground">
           <MapPin className="h-10 w-10 mx-auto mb-2 opacity-50" />
-          No branches yet. Add your first pickup location.
+          {t('panel.company.sections.branches.noBranches')}
         </Card>
       )}
 
@@ -238,6 +241,7 @@ export function DashBranches() {
 
 /* ============== STAFF ============== */
 export function DashStaff() {
+  const { t } = useTranslation();
   const staff = useCompanyStaff();
   const invite = useInviteStaff();
   const remove = useRemoveStaff();
@@ -249,28 +253,28 @@ export function DashStaff() {
   async function onInvite(e: React.FormEvent) {
     e.preventDefault();
     if (!name || !email) {
-      toast.error('Name and email required');
+      toast.error(t('panel.company.sections.staff.toasts.nameEmailRequired'));
       return;
     }
     try {
       await invite.mutateAsync({ name, email, role });
-      toast.success(`${name} added — they'll receive a password reset email when SMTP is configured.`);
+      toast.success(t('panel.company.sections.staff.toasts.memberInvited', { name }));
       setInviting(false);
       setName('');
       setEmail('');
       setRole('agent');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not invite staff');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.staff.toasts.couldNotInviteStaff'));
     }
   }
 
   async function onRemove(id: number) {
-    if (!window.confirm('Remove this staff member?')) return;
+    if (!window.confirm(t('panel.company.sections.staff.confirms.removeStaffMember'))) return;
     try {
       await remove.mutateAsync(id);
-      toast.success('Staff member removed');
+      toast.success(t('panel.company.sections.staff.toasts.staffRemoved'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not remove');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.staff.toasts.couldNotRemove'));
     }
   }
 
@@ -279,9 +283,9 @@ export function DashStaff() {
   return (
     <div className="space-y-5 max-w-5xl">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-extrabold">Staff</h1>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.staff')}</h1>
         <Button className="bg-gradient-brand text-white border-0" onClick={() => setInviting(true)}>
-          <Plus className="h-4 w-4 mr-1.5" /> Invite member
+          <Plus className="h-4 w-4 mr-1.5" /> {t('panel.company.sections.staff.inviteMember')}
         </Button>
       </div>
 
@@ -289,30 +293,30 @@ export function DashStaff() {
         <Card className="p-5">
           <form onSubmit={onInvite} className="grid sm:grid-cols-3 gap-3">
             <div>
-              <Label>Name</Label>
+              <Label>{t('auth.register.name')}</Label>
               <Input value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <div>
-              <Label>Email</Label>
+              <Label>{t('auth.register.email')}</Label>
               <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div>
-              <Label>Role</Label>
+              <Label>{t('panel.company.sections.staff.role')}</Label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as 'manager' | 'agent')}
                 className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
               >
-                <option value="manager">Manager</option>
-                <option value="agent">Agent</option>
+                <option value="manager">{t('panel.company.sections.staff.roles.manager')}</option>
+                <option value="agent">{t('panel.company.sections.staff.roles.agent')}</option>
               </select>
             </div>
             <div className="sm:col-span-3 flex gap-2">
               <Button type="submit" disabled={invite.isPending} className="bg-gradient-brand text-white border-0">
-                {invite.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Send invite
+                {invite.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t('panel.company.sections.staff.sendInvite')}
               </Button>
               <Button type="button" variant="outline" onClick={() => setInviting(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
             </div>
           </form>
@@ -323,9 +327,9 @@ export function DashStaff() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 font-medium">Name</th>
-              <th className="px-4 py-3 font-medium">Email</th>
-              <th className="px-4 py-3 font-medium">Role</th>
+              <th className="px-4 py-3 font-medium">{t('auth.register.name')}</th>
+              <th className="px-4 py-3 font-medium">{t('auth.register.email')}</th>
+              <th className="px-4 py-3 font-medium">{t('panel.company.sections.staff.role')}</th>
               <th className="px-4 py-3 font-medium w-16"></th>
             </tr>
           </thead>
@@ -340,7 +344,7 @@ export function DashStaff() {
             {!staff.isLoading && items.length === 0 && (
               <tr>
                 <td colSpan={4} className="px-4 py-12 text-center text-muted-foreground">
-                  No staff yet
+                  {t('panel.company.sections.staff.noStaff')}
                 </td>
               </tr>
             )}
@@ -369,6 +373,7 @@ export function DashStaff() {
 
 /* ============== REVIEWS ============== */
 export function DashReviews() {
+  const { t } = useTranslation();
   const reviews = useCompanyReviews();
   const reply = useReplyReview();
   const [replying, setReplying] = useState<number | null>(null);
@@ -376,16 +381,16 @@ export function DashReviews() {
 
   async function onReply(id: number) {
     if (!replyText.trim()) {
-      toast.error('Reply cannot be empty');
+      toast.error(t('panel.company.sections.reviews.toasts.replyCannotBeEmpty'));
       return;
     }
     try {
       await reply.mutateAsync({ id, text: replyText });
-      toast.success('Reply posted');
+      toast.success(t('panel.company.sections.reviews.toasts.replyPosted'));
       setReplying(null);
       setReplyText('');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not post reply');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.reviews.toasts.couldNotPostReply'));
     }
   }
 
@@ -393,7 +398,7 @@ export function DashReviews() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">Reviews</h1>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.reviews')}</h1>
       {reviews.isLoading && (
         <div className="flex items-center justify-center py-12 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
@@ -401,7 +406,7 @@ export function DashReviews() {
       )}
       {!reviews.isLoading && items.length === 0 && (
         <Card className="p-10 text-center text-muted-foreground">
-          No reviews yet — they'll show up after customers complete their bookings.
+          {t('panel.company.sections.reviews.noReviews')}
         </Card>
       )}
       <div className="grid gap-4">
@@ -412,7 +417,7 @@ export function DashReviews() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold">{r.customer?.name ?? 'Guest'}</span>
+                    <span className="font-semibold">{r.customer?.name ?? t('panel.company.sections.reviews.guest')}</span>
                     {carLabel && <Badge variant="outline">{carLabel}</Badge>}
                   </div>
                   <div className="flex gap-0.5 my-1">
@@ -426,7 +431,7 @@ export function DashReviews() {
                   <p className="text-sm text-muted-foreground mt-2 whitespace-pre-line">{r.comment}</p>
                   {r.company_reply && (
                     <div className="mt-3 p-3 rounded-lg bg-muted/40 text-sm border-l-2 border-primary">
-                      <div className="font-semibold text-xs text-primary mb-1">Your reply</div>
+                      <div className="font-semibold text-xs text-primary mb-1">{t('panel.company.sections.reviews.yourReply')}</div>
                       {r.company_reply}
                     </div>
                   )}
@@ -440,7 +445,7 @@ export function DashReviews() {
                       setReplyText('');
                     }}
                   >
-                    Reply
+                    {t('panel.company.sections.reviews.reply')}
                   </Button>
                 )}
               </div>
@@ -450,14 +455,14 @@ export function DashReviews() {
                     rows={3}
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Type your response..."
+                    placeholder={t('panel.company.sections.reviews.typeResponse')}
                   />
                   <div className="flex gap-2">
                     <Button onClick={() => onReply(r.id)} disabled={reply.isPending} className="bg-gradient-brand text-white border-0">
-                      Post reply
+                      {t('panel.company.sections.reviews.postReply')}
                     </Button>
                     <Button variant="ghost" onClick={() => setReplying(null)}>
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                   </div>
                 </div>
@@ -472,6 +477,7 @@ export function DashReviews() {
 
 /* ============== PAYOUTS ============== */
 export function DashPayouts() {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const payouts = useCompanyPayouts();
   const updateBank = useUpdateBankAccount();
@@ -491,14 +497,14 @@ export function DashPayouts() {
   async function onSaveBank(e: React.FormEvent) {
     e.preventDefault();
     if (!iban || !holder) {
-      toast.error('IBAN and holder name required');
+      toast.error(t('panel.company.sections.payouts.toasts.ibanHolderRequired'));
       return;
     }
     try {
       await updateBank.mutateAsync({ iban, account_holder: holder, bank_name: bankName || undefined });
-      toast.success('Bank account saved');
+      toast.success(t('panel.company.sections.payouts.toasts.bankAccountSaved'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not save bank account');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.payouts.toasts.couldNotSaveBank'));
     }
   }
 
@@ -506,46 +512,46 @@ export function DashPayouts() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">Payouts</h1>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.payouts')}</h1>
       <Card className="p-6">
-        <h3 className="font-display font-bold mb-4">Bank account</h3>
+        <h3 className="font-display font-bold mb-4">{t('panel.company.sections.payouts.bankAccount')}</h3>
         <form onSubmit={onSaveBank} className="grid sm:grid-cols-2 gap-4">
           <div>
-            <Label>IBAN</Label>
+            <Label>{t('panel.company.sections.payouts.iban')}</Label>
             <Input value={iban} onChange={(e) => setIban(e.target.value)} placeholder="TR00 0000 0000 0000 0000 0000 00" />
           </div>
           <div>
-            <Label>Account holder</Label>
-            <Input value={holder} onChange={(e) => setHolder(e.target.value)} placeholder="Company Ltd" />
+            <Label>{t('panel.company.sections.payouts.accountHolder')}</Label>
+            <Input value={holder} onChange={(e) => setHolder(e.target.value)} placeholder={t('panel.company.sections.payouts.accountHolderPlaceholder')} />
           </div>
           <div className="sm:col-span-2">
-            <Label>Bank (optional)</Label>
+            <Label>{t('panel.company.sections.payouts.bankOptional')}</Label>
             <Input value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder="İş Bankası" />
           </div>
           <div className="sm:col-span-2">
             <Button type="submit" disabled={updateBank.isPending} className="bg-gradient-brand text-white border-0">
-              {updateBank.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save bank info
+              {updateBank.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t('panel.company.sections.payouts.saveBankInfo')}
             </Button>
           </div>
         </form>
       </Card>
 
       <Card className="overflow-hidden">
-        <div className="p-5 border-b font-display font-bold">Payout history</div>
+        <div className="p-5 border-b font-display font-bold">{t('panel.company.sections.payouts.payoutHistory')}</div>
         {payouts.isLoading ? (
           <div className="py-12 flex items-center justify-center text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
         ) : ps.length === 0 ? (
-          <div className="p-10 text-center text-muted-foreground">No payouts yet.</div>
+          <div className="p-10 text-center text-muted-foreground">{t('panel.company.sections.payouts.noPayouts')}</div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
               <tr>
-                <th className="px-4 py-3">Period</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Paid</th>
-                <th className="px-4 py-3 text-right">Amount</th>
+                <th className="px-4 py-3">{t('panel.admin.finance.period')}</th>
+                <th className="px-4 py-3">{t('panel.common.status')}</th>
+                <th className="px-4 py-3">{t('panel.company.sections.payouts.paid')}</th>
+                <th className="px-4 py-3 text-right">{t('panel.admin.finance.net')}</th>
               </tr>
             </thead>
             <tbody>
@@ -554,7 +560,7 @@ export function DashPayouts() {
                   <td className="px-4 py-3">{p.period}</td>
                   <td className="px-4 py-3">
                     <Badge variant="outline" className="capitalize">
-                      {p.status}
+                      {t(`panel.admin.finance.status.${p.status}`)}
                     </Badge>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">
@@ -573,13 +579,14 @@ export function DashPayouts() {
 
 /* ============== DOCUMENTS ============== */
 const docTypes = [
-  { value: 'trade_registry', label: 'Trade registry' },
-  { value: 'tax_certificate', label: 'Tax certificate' },
-  { value: 'operating_license', label: 'Operating license' },
-  { value: 'insurance', label: 'Insurance certificate' },
+  { value: 'trade_registry', labelKey: 'panel.company.sections.documents.docTypes.tradeRegistry' },
+  { value: 'tax_certificate', labelKey: 'panel.company.sections.documents.docTypes.taxCertificate' },
+  { value: 'operating_license', labelKey: 'panel.company.sections.documents.docTypes.operatingLicense' },
+  { value: 'insurance', labelKey: 'panel.company.sections.documents.docTypes.insuranceCertificate' },
 ] as const;
 
 export function DashDocuments() {
+  const { t } = useTranslation();
   const { locale } = useApp();
   const qc = useQueryClient();
   const docs = useCompanyDocuments();
@@ -591,18 +598,18 @@ export function DashDocuments() {
   async function onUpload(e: React.FormEvent) {
     e.preventDefault();
     if (!file) {
-      toast.error('Pick a file first');
+      toast.error(t('panel.company.sections.documents.toasts.pickFileFirst'));
       return;
     }
     setUploading(true);
     try {
       await uploadCompanyDocument({ type, file, expires_at: expires || null });
-      toast.success('Document uploaded — admin will review it');
+      toast.success(t('panel.company.sections.documents.toasts.documentUploaded'));
       setFile(null);
       setExpires('');
       qc.invalidateQueries({ queryKey: ['company', 'documents'] });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Upload failed');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.documents.toasts.uploadFailed'));
     } finally {
       setUploading(false);
     }
@@ -612,32 +619,32 @@ export function DashDocuments() {
 
   return (
     <div className="space-y-5 max-w-3xl">
-      <h1 className="font-display text-3xl font-extrabold">Documents</h1>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.documents')}</h1>
 
       <Card className="p-5">
-        <h3 className="font-display font-bold mb-4">Upload new document</h3>
+        <h3 className="font-display font-bold mb-4">{t('panel.company.sections.documents.uploadNewDocument')}</h3>
         <form onSubmit={onUpload} className="space-y-3">
           <div className="grid sm:grid-cols-3 gap-3">
             <div>
-              <Label>Type</Label>
+              <Label>{t('panel.company.sections.documents.type')}</Label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as typeof type)}
                 className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
               >
-                {docTypes.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.label}
+                {docTypes.map((docType) => (
+                  <option key={docType.value} value={docType.value}>
+                    {t(docType.labelKey)}
                   </option>
                 ))}
               </select>
             </div>
             <div>
-              <Label>Expires (optional)</Label>
+              <Label>{t('panel.company.sections.documents.expiresOptional')}</Label>
               <Input type="date" value={expires} onChange={(e) => setExpires(e.target.value)} />
             </div>
             <div>
-              <Label>File (PDF/JPG/PNG, max 10 MB)</Label>
+              <Label>{t('panel.company.sections.documents.fileLabel')}</Label>
               <Input
                 type="file"
                 accept="application/pdf,image/jpeg,image/png"
@@ -646,7 +653,7 @@ export function DashDocuments() {
             </div>
           </div>
           <Button type="submit" disabled={uploading} className="bg-gradient-brand text-white border-0">
-            {uploading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Upload
+            {uploading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t('panel.company.sections.documents.upload')}
           </Button>
         </form>
       </Card>
@@ -659,19 +666,21 @@ export function DashDocuments() {
       {!docs.isLoading && items.length === 0 && (
         <Card className="p-10 text-center text-muted-foreground">
           <FileText className="h-10 w-10 mx-auto mb-2 opacity-50" />
-          No documents uploaded yet.
+          {t('panel.company.sections.documents.noDocuments')}
         </Card>
       )}
       {items.map((d) => {
         const expiring = d.expires_at && new Date(d.expires_at) < new Date(Date.now() + 30 * 86400_000);
-        const label = docTypes.find((t) => t.value === d.type)?.label ?? d.type;
+        const label = docTypes.find((docType) => docType.value === d.type);
         return (
           <Card key={d.id} className="p-5 flex items-center gap-4">
             <FileText className="h-8 w-8 text-primary" />
             <div className="flex-1">
-              <div className="font-semibold">{label}</div>
+              <div className="font-semibold">{label ? t(label.labelKey) : d.type}</div>
               <div className="text-xs text-muted-foreground">
-                {d.expires_at ? `Expires ${formatDate(d.expires_at, locale)}` : 'No expiry'}
+                {d.expires_at
+                  ? t('panel.company.sections.documents.expiresOn', { date: formatDate(d.expires_at, locale) })
+                  : t('panel.company.sections.documents.noExpiry')}
               </div>
             </div>
             {expiring && <AlertCircle className="h-4 w-4 text-warning" />}
@@ -696,6 +705,7 @@ export function DashDocuments() {
 
 /* ============== SETTINGS ============== */
 export function DashSettings() {
+  const { t } = useTranslation();
   const settings = useCompanySettings();
   const update = useUpdateCompanySettings();
 
@@ -767,121 +777,121 @@ export function DashSettings() {
         facebook: facebook || undefined,
         website: website || undefined,
       });
-      toast.success('Settings saved');
+      toast.success(t('panel.company.sections.settings.toasts.settingsSaved'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not save');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.settings.toasts.couldNotSave'));
     }
   }
 
   if (settings.isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
-        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> Loading settings...
+        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> {t('panel.admin.settings.loading')}
       </div>
     );
   }
 
   return (
     <div className="space-y-5 max-w-3xl">
-      <h1 className="font-display text-3xl font-extrabold">Settings</h1>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.settings')}</h1>
       <form onSubmit={onSave} className="space-y-5">
         <Card className="p-6 space-y-4">
-          <h3 className="font-display font-bold">Company profile</h3>
+          <h3 className="font-display font-bold">{t('panel.company.sections.settings.companyProfile')}</h3>
           <div>
-            <Label>Company name</Label>
+            <Label>{t('auth.registerCompany.companyName')}</Label>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div>
-            <Label>Description</Label>
+            <Label>{t('auth.registerCompany.description')}</Label>
             <Textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
-              <Label>City</Label>
+              <Label>{t('common.city')}</Label>
               <Input value={city} onChange={(e) => setCity(e.target.value)} />
             </div>
             <div>
-              <Label>Phone (internal)</Label>
+              <Label>{t('panel.company.sections.settings.phoneInternal')}</Label>
               <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
           </div>
           <div>
-            <Label>Address</Label>
+            <Label>{t('panel.company.sections.settings.address')}</Label>
             <Input value={address} onChange={(e) => setAddress(e.target.value)} />
           </div>
           <div>
-            <Label>Languages spoken</Label>
-            <Input value={languages} onChange={(e) => setLanguages(e.target.value)} placeholder="Türkçe, English, Русский" />
+            <Label>{t('panel.company.sections.settings.languagesSpoken')}</Label>
+            <Input value={languages} onChange={(e) => setLanguages(e.target.value)} placeholder={t('panel.company.sections.settings.languagesPlaceholder')} />
           </div>
         </Card>
 
         <Card className="p-6 space-y-4">
-          <h3 className="font-display font-bold">Rental policy</h3>
+          <h3 className="font-display font-bold">{t('panel.company.sections.settings.rentalPolicy')}</h3>
           <div className="grid sm:grid-cols-3 gap-3">
             <div>
-              <Label>Minimum rental days</Label>
+              <Label>{t('panel.company.sections.settings.minimumRentalDays')}</Label>
               <Input type="number" min={1} max={30} value={minRentalDays} onChange={(e) => setMinRentalDays(Number(e.target.value) || 1)} />
             </div>
             <div>
-              <Label>Minimum driver age</Label>
+              <Label>{t('panel.company.sections.settings.minimumDriverAge')}</Label>
               <Input type="number" min={18} max={99} value={minAge} onChange={(e) => setMinAge(Number(e.target.value) || 21)} />
             </div>
             <div>
-              <Label>Kilometre policy</Label>
+              <Label>{t('panel.company.sections.settings.kilometrePolicy')}</Label>
               <select
                 value={kmPolicy}
                 onChange={(e) => setKmPolicy(e.target.value as typeof kmPolicy)}
                 className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
               >
-                <option value="unlimited">Unlimited</option>
-                <option value="per_day_limit">Per-day limit</option>
-                <option value="total_limit">Total limit</option>
+                <option value="unlimited">{t('panel.company.sections.settings.kmPolicy.unlimited')}</option>
+                <option value="per_day_limit">{t('panel.company.sections.settings.kmPolicy.perDayLimit')}</option>
+                <option value="total_limit">{t('panel.company.sections.settings.kmPolicy.totalLimit')}</option>
               </select>
             </div>
           </div>
           {kmPolicy !== 'unlimited' && (
             <div>
-              <Label>Kilometre limit per day (km)</Label>
+              <Label>{t('panel.company.sections.settings.kmLimitPerDay')}</Label>
               <Input type="number" min={50} max={5000} value={kmLimit} onChange={(e) => setKmLimit(e.target.value === '' ? '' : Number(e.target.value))} placeholder="200" />
             </div>
           )}
           <div className="flex items-center justify-between border-t pt-3">
             <div>
-              <div className="font-semibold text-sm">Student-friendly</div>
-              <div className="text-xs text-muted-foreground">Allow drivers younger than the standard minimum if they're enrolled students.</div>
+              <div className="font-semibold text-sm">{t('panel.company.sections.settings.studentFriendly')}</div>
+              <div className="text-xs text-muted-foreground">{t('panel.company.sections.settings.studentFriendlyHint')}</div>
             </div>
             <Switch checked={studentFriendly} onCheckedChange={setStudentFriendly} />
           </div>
           <div className="flex items-center justify-between border-t pt-3">
             <div>
-              <div className="font-semibold text-sm">24/7 roadside assistance</div>
-              <div className="text-xs text-muted-foreground">Show a 24/7 support badge on every car.</div>
+              <div className="font-semibold text-sm">{t('panel.company.sections.settings.roadside247')}</div>
+              <div className="text-xs text-muted-foreground">{t('panel.company.sections.settings.roadside247Hint')}</div>
             </div>
             <Switch checked={roadside247} onCheckedChange={setRoadside247} />
           </div>
         </Card>
 
         <Card className="p-6 space-y-4">
-          <h3 className="font-display font-bold">Public contact & social</h3>
+          <h3 className="font-display font-bold">{t('panel.company.sections.settings.publicContactSocial')}</h3>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
-              <Label>Public email</Label>
+              <Label>{t('panel.company.sections.settings.publicEmail')}</Label>
               <Input type="email" value={emailPublic} onChange={(e) => setEmailPublic(e.target.value)} placeholder="info@yourcompany.com" />
             </div>
             <div>
-              <Label>WhatsApp</Label>
+              <Label>{t('footer.whatsapp')}</Label>
               <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+90 533 ..." />
             </div>
             <div>
-              <Label>Instagram</Label>
+              <Label>{t('footer.instagram')}</Label>
               <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@yourcompany" />
             </div>
             <div>
-              <Label>Facebook</Label>
+              <Label>{t('footer.facebook')}</Label>
               <Input value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="facebook.com/yourcompany" />
             </div>
             <div className="sm:col-span-2">
-              <Label>Website</Label>
+              <Label>{t('panel.company.sections.settings.website')}</Label>
               <Input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://yourcompany.com" />
             </div>
           </div>
@@ -889,7 +899,7 @@ export function DashSettings() {
 
         <Separator className="my-2" />
         <Button type="submit" disabled={update.isPending} className="bg-gradient-brand text-white border-0">
-          {update.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save changes
+          {update.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t('common.saveChanges')}
         </Button>
       </form>
     </div>
@@ -897,17 +907,18 @@ export function DashSettings() {
 }
 
 /* ============== EXTRAS CATALOG ============== */
-const EXTRA_CODE_OPTIONS: { code: string; label: string }[] = [
-  { code: 'gps', label: 'GPS' },
-  { code: 'child_seat', label: 'Child seat' },
-  { code: 'baby_seat', label: 'Baby seat' },
-  { code: 'additional_driver', label: 'Additional driver' },
-  { code: 'wifi', label: 'Mobile WiFi' },
-  { code: 'border_crossing', label: 'Border crossing' },
-  { code: 'custom', label: 'Custom' },
+const EXTRA_CODE_OPTIONS: { code: string; labelKey: string }[] = [
+  { code: 'gps', labelKey: 'booking.gps' },
+  { code: 'child_seat', labelKey: 'booking.childSeat' },
+  { code: 'baby_seat', labelKey: 'booking.babySeat' },
+  { code: 'additional_driver', labelKey: 'booking.additionalDriver' },
+  { code: 'wifi', labelKey: 'panel.company.sections.extras.optionLabels.mobileWifi' },
+  { code: 'border_crossing', labelKey: 'panel.company.sections.extras.optionLabels.borderCrossing' },
+  { code: 'custom', labelKey: 'panel.company.sections.extras.optionLabels.custom' },
 ];
 
 export function DashExtras() {
+  const { t } = useTranslation();
   const extras = useCompanyExtras();
   const create = useCreateCompanyExtra();
   const update = useUpdateCompanyExtra();
@@ -918,7 +929,7 @@ export function DashExtras() {
   function blank(): Partial<CompanyExtra> {
     return {
       code: 'gps',
-      name: 'GPS Navigation',
+      name: t('booking.gps'),
       price_per_day: 0,
       price_per_rental: 0,
       charge_mode: 'per_day',
@@ -934,33 +945,33 @@ export function DashExtras() {
     try {
       if (draft.id) {
         await update.mutateAsync({ id: draft.id, input: draft });
-        toast.success('Extra updated');
+        toast.success(t('panel.company.sections.extras.toasts.extraUpdated'));
       } else {
         await create.mutateAsync(draft);
-        toast.success('Extra added');
+        toast.success(t('panel.company.sections.extras.toasts.extraAdded'));
       }
       setDraft(null);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not save');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.extras.toasts.couldNotSave'));
     }
   }
 
   async function onDelete(id: number) {
-    if (!window.confirm('Delete this extra?')) return;
+    if (!window.confirm(t('panel.company.sections.extras.confirms.deleteExtra'))) return;
     try {
       await remove.mutateAsync(id);
-      toast.success('Deleted');
+      toast.success(t('panel.company.sections.extras.toasts.deleted'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not delete');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.extras.toasts.couldNotDelete'));
     }
   }
 
   return (
     <div className="space-y-5 max-w-5xl">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-extrabold">Extras catalog</h1>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.extras')}</h1>
         <Button className="bg-gradient-brand text-white border-0" onClick={() => setDraft(blank())}>
-          <Plus className="h-4 w-4 mr-1.5" /> Add extra
+          <Plus className="h-4 w-4 mr-1.5" /> {t('panel.company.sections.extras.addExtra')}
         </Button>
       </div>
 
@@ -968,55 +979,55 @@ export function DashExtras() {
         <Card className="p-5">
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
-              <Label>Code</Label>
+              <Label>{t('panel.common.code')}</Label>
               <select
                 value={draft.code ?? 'custom'}
                 onChange={(e) => setDraft({ ...draft, code: e.target.value })}
                 className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
               >
                 {EXTRA_CODE_OPTIONS.map((o) => (
-                  <option key={o.code} value={o.code}>{o.label}</option>
+                  <option key={o.code} value={o.code}>{t(o.labelKey)}</option>
                 ))}
               </select>
             </div>
             <div>
-              <Label>Display name</Label>
+              <Label>{t('panel.company.sections.extras.displayName')}</Label>
               <Input value={draft.name ?? ''} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
             </div>
             <div>
-              <Label>Charge mode</Label>
+              <Label>{t('panel.company.sections.extras.chargeMode')}</Label>
               <select
                 value={draft.charge_mode ?? 'per_day'}
                 onChange={(e) => setDraft({ ...draft, charge_mode: e.target.value as CompanyExtra['charge_mode'] })}
                 className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
               >
-                <option value="per_day">Per day</option>
-                <option value="per_rental">Per rental</option>
-                <option value="free">Free</option>
+                <option value="per_day">{t('panel.company.sections.extras.chargeModes.perDay')}</option>
+                <option value="per_rental">{t('panel.company.sections.extras.chargeModes.perRental')}</option>
+                <option value="free">{t('common.free')}</option>
               </select>
             </div>
             <div>
-              <Label>Price per day (TRY)</Label>
+              <Label>{t('panel.company.sections.extras.pricePerDay')}</Label>
               <Input type="number" min={0} value={draft.price_per_day ?? 0} onChange={(e) => setDraft({ ...draft, price_per_day: Number(e.target.value) })} disabled={draft.charge_mode === 'free' || draft.charge_mode === 'per_rental'} />
             </div>
             <div>
-              <Label>Price per rental (TRY)</Label>
+              <Label>{t('panel.company.sections.extras.pricePerRental')}</Label>
               <Input type="number" min={0} value={draft.price_per_rental ?? 0} onChange={(e) => setDraft({ ...draft, price_per_rental: Number(e.target.value) })} disabled={draft.charge_mode !== 'per_rental'} />
             </div>
             <div className="sm:col-span-2 flex items-center gap-3">
               <Switch checked={!!draft.is_active} onCheckedChange={(v) => setDraft({ ...draft, is_active: v })} id="extra-active" />
-              <Label htmlFor="extra-active">Active (shown to customers)</Label>
+              <Label htmlFor="extra-active">{t('panel.company.sections.extras.activeShownToCustomers')}</Label>
             </div>
             <div className="sm:col-span-2">
-              <Label>Description (optional)</Label>
+              <Label>{t('panel.company.sections.extras.descriptionOptional')}</Label>
               <Textarea rows={2} value={draft.description ?? ''} onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
             </div>
           </div>
           <div className="flex gap-2 mt-4">
             <Button onClick={save} disabled={create.isPending || update.isPending} className="bg-gradient-brand text-white border-0">
-              {(create.isPending || update.isPending) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save
+              {(create.isPending || update.isPending) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t('common.save')}
             </Button>
-            <Button variant="outline" onClick={() => setDraft(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDraft(null)}>{t('common.cancel')}</Button>
           </div>
         </Card>
       )}
@@ -1029,7 +1040,7 @@ export function DashExtras() {
       {!extras.isLoading && items.length === 0 && (
         <Card className="p-10 text-center text-muted-foreground">
           <Sparkles className="h-10 w-10 mx-auto mb-2 opacity-50" />
-          No extras yet. Add at least GPS, Child seat and Additional driver so customers can pick them at booking.
+          {t('panel.company.sections.extras.noExtras')}
         </Card>
       )}
 
@@ -1041,16 +1052,16 @@ export function DashExtras() {
                 <h3 className="font-display font-bold">{e.name}</h3>
                 <div className="text-xs text-muted-foreground">{e.code}</div>
               </div>
-              <Badge variant={e.is_active ? 'secondary' : 'outline'}>{e.is_active ? 'Active' : 'Hidden'}</Badge>
+              <Badge variant={e.is_active ? 'secondary' : 'outline'}>{e.is_active ? t('panel.company.sections.extras.active') : t('panel.company.sections.extras.hidden')}</Badge>
             </div>
             <div className="text-sm text-muted-foreground">
-              {e.charge_mode === 'free' && 'Free'}
-              {e.charge_mode === 'per_day' && `₺${e.price_per_day} / day`}
-              {e.charge_mode === 'per_rental' && `₺${e.price_per_rental} / rental`}
+              {e.charge_mode === 'free' && t('common.free')}
+              {e.charge_mode === 'per_day' && t('panel.company.sections.extras.pricePerDayFormatted', { amount: e.price_per_day })}
+              {e.charge_mode === 'per_rental' && t('panel.company.sections.extras.pricePerRentalFormatted', { amount: e.price_per_rental })}
             </div>
             {e.description && <p className="text-xs text-muted-foreground mt-2">{e.description}</p>}
             <div className="flex gap-2 mt-3">
-              <Button variant="outline" size="sm" onClick={() => setDraft(e)}>Edit</Button>
+              <Button variant="outline" size="sm" onClick={() => setDraft(e)}>{t('common.edit')}</Button>
               <Button variant="ghost" size="icon" onClick={() => onDelete(e.id)}>
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
@@ -1063,13 +1074,14 @@ export function DashExtras() {
 }
 
 /* ============== INSURANCE PACKAGES ============== */
-const TIER_LABELS: Record<InsurancePackage['tier'], string> = {
-  mini: 'Mini Güvence (Mini)',
-  mid: 'Orta Güvence (Mid)',
-  full: 'Full Güvence (Full)',
+const TIER_LABEL_KEYS: Record<InsurancePackage['tier'], string> = {
+  mini: 'panel.company.sections.insurance.tierLabels.mini',
+  mid: 'panel.company.sections.insurance.tierLabels.mid',
+  full: 'panel.company.sections.insurance.tierLabels.full',
 };
 
 export function DashInsurance() {
+  const { t } = useTranslation();
   const packages = useInsurancePackages();
   const create = useCreateInsurancePackage();
   const update = useUpdateInsurancePackage();
@@ -1080,7 +1092,7 @@ export function DashInsurance() {
   const [draft, setDraft] = useState<Partial<InsurancePackage> | null>(null);
 
   function newPackage(): Partial<InsurancePackage> {
-    return { tier: 'mini', name: 'Mini Güvence', price_per_day: 0, is_active: true, included_features: [] };
+    return { tier: 'mini', name: t('booking.insuranceMini'), price_per_day: 0, is_active: true, included_features: [] };
   }
 
   async function save() {
@@ -1088,33 +1100,33 @@ export function DashInsurance() {
     try {
       if (draft.id) {
         await update.mutateAsync({ id: draft.id, input: draft });
-        toast.success('Package updated');
+        toast.success(t('panel.company.sections.insurance.toasts.packageUpdated'));
       } else {
         await create.mutateAsync(draft);
-        toast.success('Package added');
+        toast.success(t('panel.company.sections.insurance.toasts.packageAdded'));
       }
       setDraft(null);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not save');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.insurance.toasts.couldNotSave'));
     }
   }
 
   async function onDelete(id: number) {
-    if (!window.confirm('Delete this package?')) return;
+    if (!window.confirm(t('panel.company.sections.insurance.confirms.deletePackage'))) return;
     try {
       await remove.mutateAsync(id);
-      toast.success('Deleted');
+      toast.success(t('panel.company.sections.insurance.toasts.deleted'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not delete');
+      toast.error(err instanceof Error ? err.message : t('panel.company.sections.insurance.toasts.couldNotDelete'));
     }
   }
 
   return (
     <div className="space-y-5 max-w-5xl">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-extrabold">Insurance packages</h1>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.insurance')}</h1>
         <Button className="bg-gradient-brand text-white border-0" onClick={() => setDraft(newPackage())}>
-          <Plus className="h-4 w-4 mr-1.5" /> Add package
+          <Plus className="h-4 w-4 mr-1.5" /> {t('panel.company.sections.insurance.addPackage')}
         </Button>
       </div>
 
@@ -1122,52 +1134,52 @@ export function DashInsurance() {
         <Card className="p-5">
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
-              <Label>Tier</Label>
+              <Label>{t('panel.company.sections.insurance.tier')}</Label>
               <select
                 value={draft.tier ?? 'mini'}
                 onChange={(e) => setDraft({ ...draft, tier: e.target.value as InsurancePackage['tier'] })}
                 className="h-10 w-full rounded-lg border bg-background px-3 text-sm"
                 disabled={!!draft.id}
               >
-                <option value="mini">Mini Güvence</option>
-                <option value="mid">Orta Güvence</option>
-                <option value="full">Full Güvence</option>
+                <option value="mini">{t('booking.insuranceMini')}</option>
+                <option value="mid">{t('booking.insuranceMid')}</option>
+                <option value="full">{t('booking.insuranceFull')}</option>
               </select>
             </div>
             <div>
-              <Label>Display name</Label>
+              <Label>{t('panel.company.sections.insurance.displayName')}</Label>
               <Input value={draft.name ?? ''} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
             </div>
             <div>
-              <Label>Price per day (TRY)</Label>
+              <Label>{t('panel.company.sections.insurance.pricePerDay')}</Label>
               <Input type="number" min={0} value={draft.price_per_day ?? 0} onChange={(e) => setDraft({ ...draft, price_per_day: Number(e.target.value) })} />
             </div>
             <div>
-              <Label>Deductible amount (TRY)</Label>
-              <Input type="number" min={0} value={draft.deductible_amount ?? ''} onChange={(e) => setDraft({ ...draft, deductible_amount: e.target.value === '' ? null : Number(e.target.value) })} placeholder="e.g. 5000" />
+              <Label>{t('panel.company.sections.insurance.deductibleAmount')}</Label>
+              <Input type="number" min={0} value={draft.deductible_amount ?? ''} onChange={(e) => setDraft({ ...draft, deductible_amount: e.target.value === '' ? null : Number(e.target.value) })} placeholder={t('panel.company.sections.insurance.deductiblePlaceholder')} />
             </div>
             <div>
-              <Label>Coverage amount (TRY)</Label>
-              <Input type="number" min={0} value={draft.coverage_amount ?? ''} onChange={(e) => setDraft({ ...draft, coverage_amount: e.target.value === '' ? null : Number(e.target.value) })} placeholder="e.g. 200000" />
+              <Label>{t('panel.company.sections.insurance.coverageAmount')}</Label>
+              <Input type="number" min={0} value={draft.coverage_amount ?? ''} onChange={(e) => setDraft({ ...draft, coverage_amount: e.target.value === '' ? null : Number(e.target.value) })} placeholder={t('panel.company.sections.insurance.coveragePlaceholder')} />
             </div>
             <div className="flex items-center gap-3">
               <Switch checked={!!draft.is_active} onCheckedChange={(v) => setDraft({ ...draft, is_active: v })} id="ins-active" />
-              <Label htmlFor="ins-active">Active</Label>
+              <Label htmlFor="ins-active">{t('panel.company.sections.insurance.active')}</Label>
             </div>
             <div className="sm:col-span-2">
-              <Label>Description</Label>
-              <Textarea rows={3} value={draft.description ?? ''} onChange={(e) => setDraft({ ...draft, description: e.target.value })} placeholder="What is and isn't covered…" />
+              <Label>{t('auth.registerCompany.description')}</Label>
+              <Textarea rows={3} value={draft.description ?? ''} onChange={(e) => setDraft({ ...draft, description: e.target.value })} placeholder={t('panel.company.sections.insurance.descriptionPlaceholder')} />
             </div>
             <div className="sm:col-span-2">
-              <Label>Included features (one per line)</Label>
-              <Textarea rows={3} value={(draft.included_features ?? []).join('\n')} onChange={(e) => setDraft({ ...draft, included_features: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean) })} placeholder={'Theft\nThird party liability\nGlass damage'} />
+              <Label>{t('panel.company.sections.insurance.includedFeatures')}</Label>
+              <Textarea rows={3} value={(draft.included_features ?? []).join('\n')} onChange={(e) => setDraft({ ...draft, included_features: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean) })} placeholder={t('panel.company.sections.insurance.includedFeaturesPlaceholder')} />
             </div>
           </div>
           <div className="flex gap-2 mt-4">
             <Button onClick={save} disabled={create.isPending || update.isPending} className="bg-gradient-brand text-white border-0">
-              {(create.isPending || update.isPending) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save
+              {(create.isPending || update.isPending) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t('common.save')}
             </Button>
-            <Button variant="outline" onClick={() => setDraft(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDraft(null)}>{t('common.cancel')}</Button>
           </div>
         </Card>
       )}
@@ -1180,7 +1192,7 @@ export function DashInsurance() {
       {!packages.isLoading && items.length === 0 && (
         <Card className="p-10 text-center text-muted-foreground">
           <Shield className="h-10 w-10 mx-auto mb-2 opacity-50" />
-          No insurance packages yet. Add Mini, Orta and Full so customers can choose at booking.
+          {t('panel.company.sections.insurance.noPackages')}
         </Card>
       )}
 
@@ -1190,16 +1202,16 @@ export function DashInsurance() {
             <div className="flex items-start justify-between mb-2">
               <div>
                 <h3 className="font-display font-bold">{p.name}</h3>
-                <div className="text-xs text-muted-foreground">{TIER_LABELS[p.tier]}</div>
+                <div className="text-xs text-muted-foreground">{t(TIER_LABEL_KEYS[p.tier])}</div>
               </div>
-              <Badge variant={p.is_active ? 'secondary' : 'outline'}>{p.is_active ? 'Active' : 'Hidden'}</Badge>
+              <Badge variant={p.is_active ? 'secondary' : 'outline'}>{p.is_active ? t('panel.company.sections.insurance.active') : t('panel.company.sections.insurance.hidden')}</Badge>
             </div>
-            <div className="text-sm text-muted-foreground">₺{p.price_per_day} / day</div>
+            <div className="text-sm text-muted-foreground">{t('panel.company.sections.insurance.pricePerDayFormatted', { amount: p.price_per_day })}</div>
             {p.deductible_amount !== null && p.deductible_amount !== undefined && (
-              <div className="text-xs text-muted-foreground mt-1">Deductible: ₺{p.deductible_amount}</div>
+              <div className="text-xs text-muted-foreground mt-1">{t('panel.company.sections.insurance.deductibleFormatted', { amount: p.deductible_amount })}</div>
             )}
             {p.coverage_amount !== null && p.coverage_amount !== undefined && (
-              <div className="text-xs text-muted-foreground">Coverage: ₺{p.coverage_amount}</div>
+              <div className="text-xs text-muted-foreground">{t('panel.company.sections.insurance.coverageFormatted', { amount: p.coverage_amount })}</div>
             )}
             {p.included_features.length > 0 && (
               <ul className="text-xs text-muted-foreground mt-2 list-disc list-inside space-y-0.5">
@@ -1207,7 +1219,7 @@ export function DashInsurance() {
               </ul>
             )}
             <div className="flex gap-2 mt-3">
-              <Button variant="outline" size="sm" onClick={() => setDraft(p)}>Edit</Button>
+              <Button variant="outline" size="sm" onClick={() => setDraft(p)}>{t('common.edit')}</Button>
               <Button variant="ghost" size="icon" onClick={() => onDelete(p.id)}>
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>

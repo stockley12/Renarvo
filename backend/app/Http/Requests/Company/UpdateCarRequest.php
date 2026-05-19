@@ -18,7 +18,7 @@ class UpdateCarRequest extends FormRequest
             'model' => ['sometimes', 'string', 'max:64'],
             'year' => ['sometimes', 'integer', 'min:1990', 'max:'.(int) date('Y') + 1],
             'category' => ['sometimes', 'in:economy,compact,comfort,prestige,premium,luxury,suv,minivan,van,electric'],
-            'transmission' => ['sometimes', 'in:manual,automatic'],
+            'transmission' => ['sometimes', 'in:manual,automatic,semi_automatic'],
             'fuel' => ['sometimes', 'in:petrol,diesel,hybrid,electric'],
             'seats' => ['sometimes', 'integer', 'min:1', 'max:9'],
             'doors' => ['sometimes', 'integer', 'min:2', 'max:6'],

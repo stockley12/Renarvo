@@ -81,7 +81,7 @@ function CompanySidebar() {
     },
   ];
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar">
+    <Sidebar collapsible="icon" className="border-e border-sidebar-border bg-sidebar">
       <SidebarHeader className="px-3 py-4 border-b border-sidebar-border">
         <Logo showWordmark={!collapsed} size={32} />
       </SidebarHeader>
@@ -115,7 +115,7 @@ function CompanySidebar() {
                           )}
                         >
                           {active && !collapsed && (
-                            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-0.5 rounded-r-full bg-white/80" />
+                            <span className="absolute start-0 top-1/2 -translate-y-1/2 h-5 w-0.5 rounded-e-full bg-white/80" />
                           )}
                           <span
                             className={cn(
@@ -177,7 +177,25 @@ function Topbar() {
   const user = useSession((s) => s.user);
   const setUser = useSession((s) => s.setUser);
   const segments = location.pathname.split('/').filter(Boolean);
-  const title = segments[1] ? segments[1].replace(/-/g, ' ') : t('panel.company.nav.overview');
+  const titleBySegment: Record<string, string> = {
+    calendar: t('panel.company.nav.calendar'),
+    reservations: t('panel.company.nav.reservations'),
+    messages: t('panel.company.nav.messages'),
+    cars: t('panel.company.nav.fleet'),
+    extras: t('panel.company.nav.extras'),
+    insurance: t('panel.company.nav.insurance'),
+    pricing: t('panel.company.nav.pricingPromos'),
+    branches: t('panel.company.nav.branches'),
+    customers: t('panel.company.nav.customers'),
+    staff: t('panel.company.nav.staff'),
+    reviews: t('panel.company.nav.reviews'),
+    statistics: t('panel.company.nav.statistics'),
+    payouts: t('panel.company.nav.payouts'),
+    documents: t('panel.company.nav.documents'),
+    integrations: t('panel.company.nav.integrations'),
+    settings: t('panel.company.nav.settings'),
+  };
+  const title = segments[1] ? (titleBySegment[segments[1]] ?? t('panel.company.nav.overview')) : t('panel.company.nav.overview');
   const initials = (user?.name ?? 'U').split(/\s+/).map((s) => s[0]).slice(0, 2).join('').toUpperCase() || 'U';
 
   async function handleSignOut() {
@@ -196,9 +214,9 @@ function Topbar() {
       </div>
       <div className="flex-1 max-w-md mx-auto hidden sm:block">
         <div className="relative">
-          <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder={t('panel.company.searchPlaceholder')} className="pl-9 h-9 bg-muted/50 border-border/60 rounded-full" />
-          <kbd className="hidden lg:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 items-center rounded border bg-muted px-1.5 font-mono text-[10px] text-muted-foreground">⌘K</kbd>
+          <Search className="h-4 w-4 absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input placeholder={t('panel.company.searchPlaceholder')} className="ps-9 h-9 bg-muted/50 border-border/60 rounded-full" />
+          <kbd className="hidden lg:inline-flex absolute end-3 top-1/2 -translate-y-1/2 h-5 items-center rounded border bg-muted px-1.5 font-mono text-[10px] text-muted-foreground">⌘K</kbd>
         </div>
       </div>
       <div className="ml-auto flex items-center gap-0.5 md:gap-1">
@@ -212,7 +230,7 @@ function Topbar() {
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full" aria-label="Account">
+            <Button variant="ghost" size="icon" className="rounded-full" aria-label={t('nav.account')}>
               <Avatar className="h-8 w-8"><AvatarFallback className="bg-gradient-brand text-white text-xs">{initials}</AvatarFallback></Avatar>
             </Button>
           </DropdownMenuTrigger>

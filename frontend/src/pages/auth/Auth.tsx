@@ -1,5 +1,6 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import { useSession } from '@/store/session';
 
 export function Login() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [params] = useSearchParams();
   const setUser = useSession((s) => s.setUser);
   const [email, setEmail] = useState('');
@@ -24,7 +26,7 @@ export function Login() {
     try {
       const data = await apiLogin(email, password);
       setUser(data.user);
-      toast.success('Logged in');
+      toast.success(t('auth.loggedIn'));
       const next = params.get('next');
       const fallback =
         data.user.role === 'superadmin' ? '/admin' :
@@ -34,7 +36,7 @@ export function Login() {
       navigate(dest);
     } catch (err) {
       if (err instanceof ApiClientError) toast.error(err.message);
-      else toast.error('Login failed');
+      else toast.error(t('auth.loginFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -43,15 +45,15 @@ export function Login() {
   return (
     <div className="container py-10 md:py-16 max-w-md">
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-3 -ml-2">
-        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t('common.back')}
       </Button>
       <Card className="p-6 md:p-8">
         <Logo className="mb-6" />
-        <h1 className="font-display text-2xl font-bold mb-2">Log in</h1>
-        <p className="text-sm text-muted-foreground mb-6">Welcome back to Renarvo</p>
+        <h1 className="font-display text-2xl font-bold mb-2">{t('auth.login')}</h1>
+        <p className="text-sm text-muted-foreground mb-6">{t('auth.welcomeBack')}</p>
         <form className="space-y-4" onSubmit={onSubmit}>
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('auth.email')}</Label>
             <Input
               id="email"
               type="email"
@@ -63,7 +65,7 @@ export function Login() {
             />
           </div>
           <div>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('auth.password')}</Label>
             <Input
               id="password"
               type="password"
@@ -75,18 +77,18 @@ export function Login() {
             />
           </div>
           <Button type="submit" disabled={submitting} className="w-full bg-gradient-brand text-white border-0">
-            {submitting ? 'Signing in…' : 'Log in'}
+            {submitting ? t('auth.signingIn') : t('auth.login')}
           </Button>
           <div className="text-center text-sm">
             <Link to="/forgot-password" className="text-muted-foreground hover:text-primary">
-              Forgot password?
+              {t('auth.forgotPassword')}
             </Link>
           </div>
           <div className="text-center text-sm">
-            New here? <Link to="/register" className="text-primary font-semibold">Create an account</Link>
+            {t('auth.newHere')} <Link to="/register" className="text-primary font-semibold">{t('auth.createAccount')}</Link>
           </div>
           <div className="text-center text-xs text-muted-foreground">
-            Are you a rental company? <Link to="/register-company" className="text-primary font-semibold">Register your fleet</Link>
+            {t('auth.areYouCompany')} <Link to="/register-company" className="text-primary font-semibold">{t('auth.registerFleet')}</Link>
           </div>
         </form>
       </Card>
@@ -95,6 +97,7 @@ export function Login() {
 }
 
 export function ForgotPassword() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
@@ -105,10 +108,10 @@ export function ForgotPassword() {
     try {
       await api.post('/auth/forgot-password', { email });
       setSent(true);
-      toast.success('Reset link sent (check your email)');
+      toast.success(t('auth.resetLinkSent'));
     } catch (err) {
       if (err instanceof ApiClientError) toast.error(err.message);
-      else toast.error('Failed to send reset link');
+      else toast.error(t('auth.resetLinkFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -117,18 +120,18 @@ export function ForgotPassword() {
   return (
     <div className="container py-16 max-w-md">
       <Card className="p-8">
-        <h1 className="font-display text-2xl font-bold mb-2">Reset password</h1>
-        <p className="text-sm text-muted-foreground mb-6">Enter your email to receive a reset link</p>
+        <h1 className="font-display text-2xl font-bold mb-2">{t('auth.resetPassword')}</h1>
+        <p className="text-sm text-muted-foreground mb-6">{t('auth.enterEmailForReset')}</p>
         {sent ? (
-          <p className="text-sm">If the email is registered, you'll receive a reset link within a minute.</p>
+          <p className="text-sm">{t('auth.resetLinkSentDesc')}</p>
         ) : (
           <form className="space-y-4" onSubmit={onSubmit}>
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('auth.email')}</Label>
               <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <Button disabled={submitting} type="submit" className="w-full bg-gradient-brand text-white border-0">
-              {submitting ? 'Sending…' : 'Send link'}
+              {submitting ? t('auth.sending') : t('auth.sendLink')}
             </Button>
           </form>
         )}
@@ -139,6 +142,7 @@ export function ForgotPassword() {
 
 export function ResetPassword() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [pw1, setPw1] = useState('');
   const [pw2, setPw2] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -146,24 +150,24 @@ export function ResetPassword() {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (pw1 !== pw2) {
-      toast.error('Passwords do not match');
+      toast.error(t('auth.passwordsNotMatch'));
       return;
     }
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const email = params.get('email');
     if (!token || !email) {
-      toast.error('Invalid reset link');
+      toast.error(t('auth.invalidResetLink'));
       return;
     }
     setSubmitting(true);
     try {
       await api.post('/auth/reset-password', { token, email, password: pw1 });
-      toast.success('Password updated');
+      toast.success(t('auth.passwordUpdated'));
       navigate('/login');
     } catch (err) {
       if (err instanceof ApiClientError) toast.error(err.message);
-      else toast.error('Reset failed');
+      else toast.error(t('auth.resetFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -172,18 +176,18 @@ export function ResetPassword() {
   return (
     <div className="container py-16 max-w-md">
       <Card className="p-8">
-        <h1 className="font-display text-2xl font-bold mb-2">New password</h1>
+        <h1 className="font-display text-2xl font-bold mb-2">{t('auth.newPassword')}</h1>
         <form className="space-y-4 mt-6" onSubmit={onSubmit}>
           <div>
-            <Label htmlFor="pw1">New password</Label>
+            <Label htmlFor="pw1">{t('auth.newPassword')}</Label>
             <Input id="pw1" type="password" required minLength={8} value={pw1} onChange={(e) => setPw1(e.target.value)} />
           </div>
           <div>
-            <Label htmlFor="pw2">Confirm</Label>
+            <Label htmlFor="pw2">{t('auth.confirm')}</Label>
             <Input id="pw2" type="password" required value={pw2} onChange={(e) => setPw2(e.target.value)} />
           </div>
           <Button disabled={submitting} type="submit" className="w-full bg-gradient-brand text-white border-0">
-            {submitting ? 'Updating…' : 'Update'}
+            {submitting ? t('auth.updating') : t('auth.update')}
           </Button>
         </form>
       </Card>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +26,7 @@ const statusBadge: Record<ReservationStatus, string> = {
 };
 
 function ReservationDetail({ r, onChanged }: { r: ApiReservation; onChanged: () => void }) {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const transition = useReservationTransition();
   const [reason, setReason] = useState('');
@@ -32,23 +34,23 @@ function ReservationDetail({ r, onChanged }: { r: ApiReservation; onChanged: () 
   async function go(action: 'confirm' | 'reject' | 'pickup' | 'return') {
     try {
       if (action === 'reject' && !reason.trim()) {
-        toast.error('Rejection reason required');
+        toast.error(t('panel.company.reservations.rejectionReasonRequired'));
         return;
       }
       await transition.mutateAsync({ id: r.id, action, reason: action === 'reject' ? reason : undefined });
-      toast.success(`Reservation ${action === 'reject' ? 'rejected' : action === 'return' ? 'completed' : action + 'ed'}`);
+      toast.success(t(`panel.company.reservations.toast.${action}`));
       onChanged();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not update reservation');
+      toast.error(err instanceof Error ? err.message : t('panel.company.reservations.updateFailed'));
     }
   }
 
-  const carLabel = r.car ? `${r.car.brand} ${r.car.model}` : `Car #${r.car_id}`;
+  const carLabel = r.car ? `${r.car.brand} ${r.car.model}` : `${t('panel.common.car')} #${r.car_id}`;
 
   return (
     <div className="space-y-5 mt-6 text-sm">
       <div>
-        <h4 className="font-semibold mb-2">Customer</h4>
+        <h4 className="font-semibold mb-2">{t('panel.common.customer')}</h4>
         <p>
           {r.customer?.name ?? '—'}
           {r.customer?.email && <><br />{r.customer.email}</>}
@@ -57,7 +59,7 @@ function ReservationDetail({ r, onChanged }: { r: ApiReservation; onChanged: () 
       </div>
       <Separator />
       <div>
-        <h4 className="font-semibold mb-2">Booking</h4>
+        <h4 className="font-semibold mb-2">{t('panel.company.reservations.booking')}</h4>
         <p>
           {carLabel}
           <br />
@@ -65,55 +67,84 @@ function ReservationDetail({ r, onChanged }: { r: ApiReservation; onChanged: () 
           <br />
           {r.pickup_location}
         </p>
-        {r.flight_number && <p className="text-xs text-muted-foreground mt-1">Flight: {r.flight_number}</p>}
-        {r.notes && <p className="text-xs text-muted-foreground mt-1">Note: {r.notes}</p>}
+        {r.flight_number && <p className="text-xs text-muted-foreground mt-1">{t('panel.company.reservations.flight')}: {r.flight_number}</p>}
+        {r.notes && <p className="text-xs text-muted-foreground mt-1">{t('panel.company.reservations.note')}: {r.notes}</p>}
       </div>
+      {(r.driving_license_number || r.id_number || r.date_of_birth || (r.documents && r.documents.length > 0)) && (
+        <>
+          <Separator />
+          <div>
+            <h4 className="font-semibold mb-2">{t('panel.company.reservations.driverDocuments')}</h4>
+            <div className="space-y-1.5 text-xs">
+              {r.driving_license_number && (
+                <p><span className="text-muted-foreground">{t('booking.drivingLicense')}:</span> <span className="font-mono">{r.driving_license_number}</span></p>
+              )}
+              {r.id_number && (
+                <p><span className="text-muted-foreground">{t('booking.idNumber')}:</span> <span className="font-mono">{r.id_number}</span></p>
+              )}
+              {r.date_of_birth && (
+                <p><span className="text-muted-foreground">{t('booking.dateOfBirth')}:</span> {r.date_of_birth}</p>
+              )}
+            </div>
+            {r.documents && r.documents.length > 0 && (
+              <div className="grid grid-cols-2 gap-2 mt-3">
+                {r.documents.map((doc, i) => (
+                  <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer" className="block rounded-lg border overflow-hidden hover:border-primary transition-colors">
+                    <img src={doc.url} alt={doc.type} className="w-full h-24 object-cover" />
+                    <div className="p-1.5 text-[11px] text-center text-muted-foreground capitalize">{doc.type.replace('_', ' ')}</div>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
       <Separator />
       <div>
-        <h4 className="font-semibold mb-2">Pricing</h4>
+        <h4 className="font-semibold mb-2">{t('panel.company.reservations.pricing')}</h4>
         <div className="space-y-1">
-          <div className="flex justify-between"><span>Base ({r.days} days)</span><span>{formatPrice(r.price.base, currency, locale)}</span></div>
-          {r.price.extras > 0 && <div className="flex justify-between text-muted-foreground"><span>Extras</span><span>{formatPrice(r.price.extras, currency, locale)}</span></div>}
-          {r.price.discount > 0 && <div className="flex justify-between text-success"><span>Discount</span><span>−{formatPrice(r.price.discount, currency, locale)}</span></div>}
-          {r.price.service_fee > 0 && <div className="flex justify-between text-muted-foreground"><span>Service fee</span><span>{formatPrice(r.price.service_fee, currency, locale)}</span></div>}
-          {r.price.tax > 0 && <div className="flex justify-between text-muted-foreground"><span>Tax</span><span>{formatPrice(r.price.tax, currency, locale)}</span></div>}
+          <div className="flex justify-between"><span>{t('panel.company.reservations.baseDays', { days: r.days })}</span><span>{formatPrice(r.price.base, currency, locale)}</span></div>
+          {r.price.extras > 0 && <div className="flex justify-between text-muted-foreground"><span>{t('booking.extras')}</span><span>{formatPrice(r.price.extras, currency, locale)}</span></div>}
+          {r.price.discount > 0 && <div className="flex justify-between text-success"><span>{t('panel.company.reservations.discount')}</span><span>−{formatPrice(r.price.discount, currency, locale)}</span></div>}
+          {r.price.service_fee > 0 && <div className="flex justify-between text-muted-foreground"><span>{t('carDetail.serviceFee')}</span><span>{formatPrice(r.price.service_fee, currency, locale)}</span></div>}
+          {r.price.tax > 0 && <div className="flex justify-between text-muted-foreground"><span>{t('carDetail.taxKdv')}</span><span>{formatPrice(r.price.tax, currency, locale)}</span></div>}
           <div className="flex justify-between font-bold pt-2 border-t mt-2">
-            <span>Total</span>
+            <span>{t('common.total')}</span>
             <span>{formatPrice(r.price.total, currency, locale)}</span>
           </div>
         </div>
       </div>
       {r.cancellation_reason && (
         <div className="rounded-lg bg-destructive/5 border border-destructive/20 p-3 text-xs">
-          <strong>Cancellation reason:</strong> {r.cancellation_reason}
+          <strong>{t('panel.company.reservations.cancellationReason')}:</strong> {r.cancellation_reason}
         </div>
       )}
       <div className="flex flex-wrap gap-2 pt-3">
         {r.status === 'pending' && (
           <>
             <Button onClick={() => go('confirm')} disabled={transition.isPending} className="bg-success text-success-foreground">
-              Confirm
+              {t('panel.company.reservations.confirm')}
             </Button>
             <Button variant="destructive" onClick={() => go('reject')} disabled={transition.isPending}>
-              Reject
+              {t('panel.company.reservations.reject')}
             </Button>
           </>
         )}
         {r.status === 'confirmed' && (
           <Button onClick={() => go('pickup')} disabled={transition.isPending}>
-            Mark picked up
+            {t('panel.company.reservations.markPickedUp')}
           </Button>
         )}
         {r.status === 'active' && (
           <Button onClick={() => go('return')} disabled={transition.isPending}>
-            Mark returned
+            {t('panel.company.reservations.markReturned')}
           </Button>
         )}
       </div>
       {r.status === 'pending' && (
         <div>
           <Textarea
-            placeholder="Reason (required for rejection)"
+            placeholder={t('panel.company.reservations.rejectionReasonPlaceholder')}
             rows={2}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
@@ -125,6 +156,7 @@ function ReservationDetail({ r, onChanged }: { r: ApiReservation; onChanged: () 
 }
 
 export default function DashReservations() {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const [tab, setTab] = useState<ReservationStatus>('pending');
   const [openId, setOpenId] = useState<number | null>(null);
@@ -143,15 +175,15 @@ export default function DashReservations() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">Reservations</h1>
-        <p className="text-muted-foreground mt-1">Manage all your bookings</p>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.reservations')}</h1>
+        <p className="text-muted-foreground mt-1">{t('panel.company.reservations.subtitle')}</p>
       </div>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as ReservationStatus)}>
         <TabsList className="flex-wrap h-auto">
           {STATUSES.map((s) => (
             <TabsTrigger key={s} value={s} className="capitalize">
-              {s}
+              {t(`panel.company.reservations.status.${s}`)}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -161,13 +193,13 @@ export default function DashReservations() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/40">
                   <tr className="text-left text-xs text-muted-foreground">
-                    <th className="px-4 py-3 font-medium">Code</th>
-                    <th className="px-4 py-3 font-medium">Customer</th>
-                    <th className="px-4 py-3 font-medium">Car</th>
-                    <th className="px-4 py-3 font-medium">Dates</th>
-                    <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium">Payment</th>
-                    <th className="px-4 py-3 font-medium text-right">Total</th>
+                    <th className="px-4 py-3 font-medium">{t('panel.common.code')}</th>
+                    <th className="px-4 py-3 font-medium">{t('panel.common.customer')}</th>
+                    <th className="px-4 py-3 font-medium">{t('panel.common.car')}</th>
+                    <th className="px-4 py-3 font-medium">{t('panel.company.reservations.dates')}</th>
+                    <th className="px-4 py-3 font-medium">{t('panel.common.status')}</th>
+                    <th className="px-4 py-3 font-medium">{t('panel.company.reservations.payment')}</th>
+                    <th className="px-4 py-3 font-medium text-right">{t('common.total')}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -182,12 +214,12 @@ export default function DashReservations() {
                   {!reservations.isLoading && items.length === 0 && (
                     <tr>
                       <td colSpan={8} className="px-4 py-12 text-center text-muted-foreground">
-                        No {tab} reservations
+                        {t('panel.company.reservations.noneForStatus', { status: t(`panel.company.reservations.status.${tab}`) })}
                       </td>
                     </tr>
                   )}
                   {items.map((r) => {
-                    const carLabel = r.car ? `${r.car.brand} ${r.car.model}` : `Car #${r.car_id}`;
+                    const carLabel = r.car ? `${r.car.brand} ${r.car.model}` : `${t('panel.common.car')} #${r.car_id}`;
                     const ps = r.payment_status ?? 'unpaid';
                     const psColor =
                       ps === 'paid' ? 'bg-success/15 text-success border-success/30'
@@ -214,17 +246,17 @@ export default function DashReservations() {
                         </td>
                         <td className="px-4 py-3">
                           <Badge variant="outline" className={statusBadge[r.status as ReservationStatus]}>
-                            {r.status}
+                            {t(`panel.company.reservations.status.${r.status}`)}
                           </Badge>
                         </td>
                         <td className="px-4 py-3">
-                          <Badge variant="outline" className={`capitalize ${psColor}`}>{ps}</Badge>
+                          <Badge variant="outline" className={`capitalize ${psColor}`}>{t(`panel.company.reservations.paymentStatus.${ps}`)}</Badge>
                         </td>
                         <td className="px-4 py-3 text-right font-semibold">
                           {formatPrice(r.price.total, currency, locale)}
                           {r.current_payment?.amount_try ? (
                             <div className="text-[11px] text-muted-foreground font-normal">
-                              ₺{r.current_payment.amount_try.toLocaleString()} via TIKO
+                              ₺{r.current_payment.amount_try.toLocaleString()} {t('panel.company.reservations.viaTiko')}
                             </div>
                           ) : null}
                         </td>
@@ -232,12 +264,12 @@ export default function DashReservations() {
                           <Sheet open={openId === r.id} onOpenChange={(o) => setOpenId(o ? r.id : null)}>
                             <SheetTrigger asChild>
                               <Button size="sm" variant="outline">
-                                View
+                                {t('common.view')}
                               </Button>
                             </SheetTrigger>
                             <SheetContent className="overflow-auto">
                               <SheetHeader>
-                                <SheetTitle>Reservation {r.code}</SheetTitle>
+                                <SheetTitle>{t('panel.company.reservations.reservationCode', { code: r.code })}</SheetTitle>
                               </SheetHeader>
                               <ReservationDetail r={r} onChanged={() => setOpenId(null)} />
                             </SheetContent>

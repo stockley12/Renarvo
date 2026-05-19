@@ -18,7 +18,7 @@ class RegisterRequest extends FormRequest
             'password' => ['required', 'string', 'min:8', 'max:191'],
             'name' => ['required', 'string', 'max:191'],
             'phone' => ['nullable', 'string', 'max:32'],
-            'locale' => ['nullable', 'in:tr,en,ru'],
+            'locale' => ['nullable', 'in:tr,en,ru,fa'],
         ];
     }
 }

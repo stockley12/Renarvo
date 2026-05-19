@@ -27,7 +27,7 @@ class CustomerProfileController extends Controller
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:191'],
             'phone' => ['nullable', 'string', 'max:32'],
-            'locale' => ['nullable', 'in:tr,en,ru'],
+            'locale' => ['nullable', 'in:tr,en,ru,fa'],
         ]);
 
         $user = $request->user();

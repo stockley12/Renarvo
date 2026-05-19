@@ -38,8 +38,16 @@ class ReservationResource extends JsonResource
             'current_payment_id' => $this->current_payment_id,
             'promo_code' => $this->promo_code,
             'flight_number' => $this->flight_number,
+            'driving_license_number' => $this->driving_license_number,
+            'id_number' => $this->id_number,
+            'date_of_birth' => $this->date_of_birth?->format('Y-m-d'),
             'notes' => $this->notes,
             'cancellation_reason' => $this->cancellation_reason,
+            'documents' => $this->whenLoaded('documents', fn () => $this->documents->map(fn ($doc) => [
+                'type' => $doc->type,
+                'url' => asset('storage/' . $doc->path),
+                'uploaded_at' => $doc->created_at?->toIso8601String(),
+            ])),
             'extras' => $this->whenLoaded('extras', fn () => $this->extras->map(fn ($e) => [
                 'type' => $e->type,
                 'label' => $e->label,

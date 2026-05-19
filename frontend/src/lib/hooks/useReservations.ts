@@ -9,11 +9,14 @@ type CreateReservationInput = {
   return_location?: string;
   flight_number?: string;
   driving_license_number?: string;
+  id_number?: string;
   date_of_birth?: string;
   notes?: string;
   promo_code?: string;
   insurance_package_id?: number | null;
   extra_ids?: number[];
+  driving_license_photo?: File | null;
+  id_photo?: File | null;
   extras?: Array<{
     type: string;
     price_per_day: number;
@@ -39,10 +42,30 @@ export function useReservation(id: number | string | undefined) {
 export function useCreateReservation() {
   const qc = useQueryClient();
   return useMutation<ApiReservation, Error, CreateReservationInput>({
-    mutationFn: (input) =>
-      api.post<ApiReservation>('/me/reservations', input, {
+    mutationFn: (input) => {
+      const { driving_license_photo, id_photo, extra_ids, extras, ...fields } = input;
+      const hasFiles = !!(driving_license_photo || id_photo);
+
+      if (hasFiles) {
+        const formData = new FormData();
+        Object.entries(fields).forEach(([key, val]) => {
+          if (val !== undefined && val !== null) formData.append(key, String(val));
+        });
+        if (extra_ids && extra_ids.length > 0) {
+          extra_ids.forEach((id) => formData.append('extra_ids[]', String(id)));
+        }
+        if (driving_license_photo) formData.append('driving_license_photo', driving_license_photo);
+        if (id_photo) formData.append('id_photo', id_photo);
+        return api.post<ApiReservation>('/me/reservations', undefined, {
+          body: formData,
+          idempotencyKey: cryptoRandomKey(),
+        });
+      }
+
+      return api.post<ApiReservation>('/me/reservations', { ...fields, extra_ids, extras }, {
         idempotencyKey: cryptoRandomKey(),
-      }),
+      });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['my-reservations'] });
     },

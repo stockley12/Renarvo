@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { StatCard } from '@/components/dashboard/StatCard';
 import {
   Building2, Car, BadgeDollarSign, Star, Check, X, Flag, FileText,
@@ -55,13 +56,13 @@ export function AdminOverview() {
   if (overview.isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
-        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> Loading platform metrics...
+        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> {t('panel.admin.overview.loading')}
       </div>
     );
   }
 
   if (!o) {
-    return <div className="text-muted-foreground">Overview unavailable.</div>;
+    return <div className="text-muted-foreground">{t('panel.admin.overview.unavailable')}</div>;
   }
 
   return (
@@ -90,6 +91,7 @@ export function AdminOverview() {
 
 /* ============== COMPANIES ============== */
 export function AdminCompanies() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<CompanyStatus>('approved');
   const companies = useAdminCompanies({ status: tab, limit: 100 });
   const action = useCompanyAction();
@@ -97,14 +99,14 @@ export function AdminCompanies() {
   async function go(id: number, type: 'approve' | 'suspend' | 'reject') {
     let reason: string | undefined;
     if (type === 'reject' || type === 'suspend') {
-      reason = window.prompt(`${type === 'reject' ? 'Rejection' : 'Suspension'} reason?`) ?? '';
+      reason = window.prompt(type === 'reject' ? t('panel.admin.companies.rejectionReason') : t('panel.admin.companies.suspensionReason')) ?? '';
       if (!reason.trim()) return;
     }
     try {
       await action.mutateAsync({ id, action: type, reason });
-      toast.success(`Company ${type}${type === 'approve' ? 'd' : 'ed'}`);
+      toast.success(t(`panel.admin.companies.toast.${type}`));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
+      toast.error(err instanceof Error ? err.message : t('common.actionFailed'));
     }
   }
 
@@ -112,12 +114,12 @@ export function AdminCompanies() {
 
   return (
     <div className="space-y-5 max-w-7xl">
-      <h1 className="font-display text-3xl font-extrabold">Companies</h1>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.companies')}</h1>
       <Tabs value={tab} onValueChange={(v) => setTab(v as CompanyStatus)}>
         <TabsList className="flex-wrap h-auto">
           {(['approved', 'pending', 'suspended', 'rejected'] as CompanyStatus[]).map((s) => (
             <TabsTrigger key={s} value={s} className="capitalize">
-              {s}
+              {t(`panel.admin.companies.status.${s}`)}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -126,10 +128,10 @@ export function AdminCompanies() {
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3">Company</th>
-                  <th className="px-4 py-3">City</th>
-                  <th className="px-4 py-3">Owner</th>
-                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">{t('panel.admin.companies.company')}</th>
+                  <th className="px-4 py-3">{t('common.city')}</th>
+                  <th className="px-4 py-3">{t('panel.admin.companies.owner')}</th>
+                  <th className="px-4 py-3">{t('panel.common.status')}</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
@@ -144,7 +146,7 @@ export function AdminCompanies() {
                 {!companies.isLoading && items.length === 0 && (
                   <tr>
                     <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
-                      No {tab} companies
+                      {t('panel.admin.companies.noneForStatus', { status: t(`panel.admin.companies.status.${tab}`) })}
                     </td>
                   </tr>
                 )}
@@ -169,7 +171,7 @@ export function AdminCompanies() {
                       <td className="px-4 py-3 text-xs text-muted-foreground">{owner?.email ?? '—'}</td>
                       <td className="px-4 py-3">
                         <Badge variant="outline" className={statusBadge[co.status as CompanyStatus]}>
-                          {co.status}
+                          {t(`panel.admin.companies.status.${co.status}`)}
                         </Badge>
                       </td>
                       <td className="px-4 py-3">
@@ -191,12 +193,12 @@ export function AdminCompanies() {
                           )}
                           {co.status === 'approved' && (
                             <Button size="sm" variant="outline" onClick={() => go(co.id, 'suspend')} disabled={action.isPending}>
-                              Suspend
+                              {t('panel.admin.companies.suspend')}
                             </Button>
                           )}
                           {co.status === 'suspended' && (
                             <Button size="sm" variant="outline" onClick={() => go(co.id, 'approve')} disabled={action.isPending}>
-                              Reinstate
+                              {t('panel.admin.companies.reinstate')}
                             </Button>
                           )}
                         </div>
@@ -224,18 +226,18 @@ export function AdminApprovals() {
       await action.mutateAsync({ id, action: 'approve' });
       toast.success(t('panel.admin.approvals.approvedToast'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
+      toast.error(err instanceof Error ? err.message : t('common.actionFailed'));
     }
   }
 
   async function reject(id: number) {
-    const reason = window.prompt('Rejection reason?') ?? '';
+    const reason = window.prompt(t('panel.admin.approvals.rejectionReasonPrompt')) ?? '';
     if (!reason.trim()) return;
     try {
       await action.mutateAsync({ id, action: 'reject', reason });
       toast.success(t('panel.admin.approvals.rejectedToast'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
+      toast.error(err instanceof Error ? err.message : t('common.actionFailed'));
     }
   }
 
@@ -298,29 +300,30 @@ export function AdminApprovals() {
 
 /* ============== CATALOG ============== */
 export function AdminCatalog() {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const [q, setQ] = useState('');
   const cars = useAdminCatalog({ search: q || undefined, limit: 100 });
   const action = useCatalogAction();
 
   async function hide(id: number) {
-    const reason = window.prompt('Reason for hiding (optional)?') ?? undefined;
+    const reason = window.prompt(t('panel.admin.catalog.reasonHideOptional')) ?? undefined;
     try {
       await action.mutateAsync({ id, action: 'hide', reason });
-      toast.success('Car hidden from public catalog');
+      toast.success(t('panel.admin.catalog.hiddenToast'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
+      toast.error(err instanceof Error ? err.message : t('common.actionFailed'));
     }
   }
 
   async function flag(id: number) {
-    const reason = window.prompt('Reason for flagging?') ?? '';
+    const reason = window.prompt(t('panel.admin.catalog.reasonFlag')) ?? '';
     if (!reason.trim()) return;
     try {
       await action.mutateAsync({ id, action: 'flag', reason });
-      toast.success('Car flagged');
+      toast.success(t('panel.admin.catalog.flaggedToast'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
+      toast.error(err instanceof Error ? err.message : t('common.actionFailed'));
     }
   }
 
@@ -329,10 +332,10 @@ export function AdminCatalog() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-display text-3xl font-extrabold">Catalog moderation</h1>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.catalog.title')}</h1>
         <div className="relative w-full max-w-xs">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search cars..." className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('panel.admin.catalog.searchPlaceholder')} className="pl-9" />
         </div>
       </div>
 
@@ -340,11 +343,11 @@ export function AdminCatalog() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
-              <th className="px-4 py-3">Car</th>
-              <th className="px-4 py-3">Company</th>
-              <th className="px-4 py-3">City</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Price/day</th>
+              <th className="px-4 py-3">{t('panel.common.car')}</th>
+              <th className="px-4 py-3">{t('panel.admin.companies.company')}</th>
+              <th className="px-4 py-3">{t('common.city')}</th>
+              <th className="px-4 py-3">{t('panel.common.status')}</th>
+              <th className="px-4 py-3 text-right">{t('panel.admin.catalog.pricePerDay')}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -359,7 +362,7 @@ export function AdminCatalog() {
             {!cars.isLoading && items.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
-                  No cars in catalog
+                  {t('panel.admin.catalog.noCars')}
                 </td>
               </tr>
             )}
@@ -372,7 +375,7 @@ export function AdminCatalog() {
                 <td className="px-4 py-3">{c.city}</td>
                 <td className="px-4 py-3">
                   <Badge variant="outline" className="capitalize">
-                    {c.status}
+                    {t(`panel.admin.catalog.status.${c.status}`)}
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-right font-semibold">
@@ -380,7 +383,7 @@ export function AdminCatalog() {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-1 justify-end">
-                    <Button size="sm" variant="ghost" onClick={() => flag(c.id)} title="Flag">
+                    <Button size="sm" variant="ghost" onClick={() => flag(c.id)} title={t('panel.admin.catalog.flag')}>
                       <Flag className="h-3.5 w-3.5" />
                     </Button>
                     <Button
@@ -388,7 +391,7 @@ export function AdminCatalog() {
                       variant="ghost"
                       onClick={() => hide(c.id)}
                       className="text-destructive"
-                      title="Hide"
+                      title={t('panel.admin.catalog.hide')}
                     >
                       <EyeOff className="h-3.5 w-3.5" />
                     </Button>
@@ -415,9 +418,11 @@ const PAYMENT_STATUS_COLORS: Record<string, string> = {
 };
 
 export function AdminReservations() {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const [q, setQ] = useState('');
   const [paymentStatus, setPaymentStatus] = useState<string>('');
+  const [openId, setOpenId] = useState<number | null>(null);
   const reservations = useAdminReservations({
     search: q || undefined,
     payment_status: paymentStatus || undefined,
@@ -428,23 +433,23 @@ export function AdminReservations() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-display text-3xl font-extrabold">All reservations</h1>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.reservations.title')}</h1>
         <div className="flex items-center gap-3 flex-wrap">
           <select
             value={paymentStatus}
             onChange={(e) => setPaymentStatus(e.target.value)}
             className="h-9 rounded-lg border bg-background px-3 text-sm"
           >
-            <option value="">Any payment</option>
-            <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
-            <option value="unpaid">Unpaid</option>
-            <option value="failed">Failed</option>
-            <option value="refunded">Refunded</option>
+            <option value="">{t('panel.admin.reservations.anyPayment')}</option>
+            <option value="paid">{t('panel.admin.reservations.paymentStatus.paid')}</option>
+            <option value="pending">{t('panel.admin.reservations.paymentStatus.pending')}</option>
+            <option value="unpaid">{t('panel.admin.reservations.paymentStatus.unpaid')}</option>
+            <option value="failed">{t('panel.admin.reservations.paymentStatus.failed')}</option>
+            <option value="refunded">{t('panel.admin.reservations.paymentStatus.refunded')}</option>
           </select>
           <div className="relative w-full max-w-xs">
             <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Code, email, company, TIKO ref..." className="pl-9" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('panel.admin.reservations.searchPlaceholder')} className="pl-9" />
           </div>
         </div>
       </div>
@@ -454,29 +459,30 @@ export function AdminReservations() {
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
               <tr>
-                <th className="px-4 py-3">Code</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Company</th>
-                <th className="px-4 py-3">Pickup</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Payment</th>
+                <th className="px-4 py-3">{t('panel.common.code')}</th>
+                <th className="px-4 py-3">{t('panel.common.customer')}</th>
+                <th className="px-4 py-3">{t('panel.admin.companies.company')}</th>
+                <th className="px-4 py-3">{t('panel.common.pickup')}</th>
+                <th className="px-4 py-3">{t('panel.common.status')}</th>
+                <th className="px-4 py-3">{t('panel.admin.reservations.payment')}</th>
                 <th className="px-4 py-3">TIKO refs</th>
-                <th className="px-4 py-3 text-right">Total</th>
-                <th className="px-4 py-3 text-right">Paid (TRY)</th>
+                <th className="px-4 py-3 text-right">{t('common.total')}</th>
+                <th className="px-4 py-3 text-right">{t('panel.admin.reservations.paidTry')}</th>
+                <th className="px-4 py-3"></th>
               </tr>
             </thead>
             <tbody>
               {reservations.isLoading && (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">
+                  <td colSpan={10} className="px-4 py-12 text-center text-muted-foreground">
                     <Loader2 className="h-5 w-5 mx-auto animate-spin" />
                   </td>
                 </tr>
               )}
               {!reservations.isLoading && items.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">
-                    No reservations
+                  <td colSpan={10} className="px-4 py-12 text-center text-muted-foreground">
+                    {t('panel.admin.reservations.noReservations')}
                   </td>
                 </tr>
               )}
@@ -494,12 +500,12 @@ export function AdminReservations() {
                     <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(r.pickup_at, locale)}</td>
                     <td className="px-4 py-3">
                       <Badge variant="outline" className="capitalize">
-                        {r.status}
+                        {t(`panel.admin.reservations.status.${r.status}`)}
                       </Badge>
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant="outline" className={`capitalize ${PAYMENT_STATUS_COLORS[ps] ?? ''}`}>
-                        {ps}
+                        {t(`panel.admin.reservations.paymentStatus.${ps}`)}
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-xs">
@@ -516,6 +522,107 @@ export function AdminReservations() {
                     <td className="px-4 py-3 text-right text-xs">
                       {cp?.amount_try ? `₺${cp.amount_try.toLocaleString()}` : <span className="text-muted-foreground">—</span>}
                     </td>
+                    <td className="px-4 py-3">
+                      <Sheet open={openId === r.id} onOpenChange={(o) => setOpenId(o ? r.id : null)}>
+                        <SheetTrigger asChild>
+                          <Button size="sm" variant="outline">
+                            <Eye className="h-3.5 w-3.5 me-1" />{t('common.view')}
+                          </Button>
+                        </SheetTrigger>
+                        <SheetContent className="overflow-auto sm:max-w-lg">
+                          <SheetHeader>
+                            <SheetTitle>{t('panel.admin.reservations.detail')} #{r.code}</SheetTitle>
+                          </SheetHeader>
+                          <div className="space-y-5 mt-6 text-sm">
+                            <div>
+                              <h4 className="font-semibold mb-2">{t('panel.common.customer')}</h4>
+                              <p>
+                                {r.customer?.name ?? '—'}
+                                {r.customer?.email && <><br />{r.customer.email}</>}
+                                {r.customer?.phone && <><br />{r.customer.phone}</>}
+                              </p>
+                            </div>
+                            <Separator />
+                            <div>
+                              <h4 className="font-semibold mb-2">{t('panel.company.reservations.booking')}</h4>
+                              <p>
+                                {r.car ? `${r.car.brand} ${r.car.model}` : `Car #${r.car_id}`}
+                                <br />
+                                {formatDate(r.pickup_at, locale)} → {formatDate(r.return_at, locale)}
+                                <br />
+                                {r.pickup_location}
+                              </p>
+                              {r.flight_number && <p className="text-xs text-muted-foreground mt-1">{t('panel.company.reservations.flight')}: {r.flight_number}</p>}
+                              {r.notes && <p className="text-xs text-muted-foreground mt-1">{t('panel.company.reservations.note')}: {r.notes}</p>}
+                            </div>
+                            {(r.driving_license_number || r.id_number || r.date_of_birth || (r.documents && r.documents.length > 0)) && (
+                              <>
+                                <Separator />
+                                <div>
+                                  <h4 className="font-semibold mb-2">{t('panel.company.reservations.driverDocuments')}</h4>
+                                  <div className="space-y-1.5 text-xs">
+                                    {r.driving_license_number && (
+                                      <p><span className="text-muted-foreground">{t('booking.drivingLicense')}:</span> <span className="font-mono">{r.driving_license_number}</span></p>
+                                    )}
+                                    {r.id_number && (
+                                      <p><span className="text-muted-foreground">{t('booking.idNumber')}:</span> <span className="font-mono">{r.id_number}</span></p>
+                                    )}
+                                    {r.date_of_birth && (
+                                      <p><span className="text-muted-foreground">{t('booking.dateOfBirth')}:</span> {r.date_of_birth}</p>
+                                    )}
+                                  </div>
+                                  {r.documents && r.documents.length > 0 && (
+                                    <div className="grid grid-cols-2 gap-2 mt-3">
+                                      {r.documents.map((doc, i) => (
+                                        <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer" className="block rounded-lg border overflow-hidden hover:border-primary transition-colors">
+                                          <img src={doc.url} alt={doc.type} className="w-full h-24 object-cover" />
+                                          <div className="p-1.5 text-[11px] text-center text-muted-foreground capitalize">{doc.type.replace('_', ' ')}</div>
+                                        </a>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            )}
+                            <Separator />
+                            <div>
+                              <h4 className="font-semibold mb-2">{t('panel.company.reservations.pricing')}</h4>
+                              <div className="space-y-1">
+                                <div className="flex justify-between"><span>{t('panel.company.reservations.baseDays', { days: r.days })}</span><span>{formatPrice(r.price.base, currency, locale)}</span></div>
+                                {r.price.extras > 0 && <div className="flex justify-between text-muted-foreground"><span>{t('booking.extras')}</span><span>{formatPrice(r.price.extras, currency, locale)}</span></div>}
+                                {r.price.discount > 0 && <div className="flex justify-between text-success"><span>{t('panel.company.reservations.discount')}</span><span>−{formatPrice(r.price.discount, currency, locale)}</span></div>}
+                                {r.price.service_fee > 0 && <div className="flex justify-between text-muted-foreground"><span>{t('carDetail.serviceFee')}</span><span>{formatPrice(r.price.service_fee, currency, locale)}</span></div>}
+                                {r.price.tax > 0 && <div className="flex justify-between text-muted-foreground"><span>{t('carDetail.taxKdv')}</span><span>{formatPrice(r.price.tax, currency, locale)}</span></div>}
+                                <div className="flex justify-between font-bold pt-2 border-t mt-2">
+                                  <span>{t('common.total')}</span>
+                                  <span>{formatPrice(r.price.total, currency, locale)}</span>
+                                </div>
+                              </div>
+                            </div>
+                            {r.current_payment && (
+                              <>
+                                <Separator />
+                                <div>
+                                  <h4 className="font-semibold mb-2">{t('panel.admin.reservations.payment')}</h4>
+                                  <div className="space-y-1 text-xs">
+                                    <p><span className="text-muted-foreground">Provider:</span> {r.current_payment.provider}</p>
+                                    <p><span className="text-muted-foreground">Status:</span> <Badge variant="outline" className="capitalize">{r.current_payment.status}</Badge></p>
+                                    {r.current_payment.order_id && <p><span className="text-muted-foreground">Order ID:</span> <span className="font-mono">{r.current_payment.order_id}</span></p>}
+                                    {r.current_payment.trans_id && <p><span className="text-muted-foreground">Trans ID:</span> <span className="font-mono">{r.current_payment.trans_id}</span></p>}
+                                    <p><span className="text-muted-foreground">Amount:</span> ₺{r.current_payment.amount_try.toLocaleString()}</p>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                            {r.cancellation_reason && (
+                              <div className="rounded-lg bg-destructive/5 border border-destructive/20 p-3 text-xs">
+                                <strong>{t('panel.company.reservations.cancellationReason')}:</strong> {r.cancellation_reason}
+                              </div>
+                            )}
+                          </div>
+                        </SheetContent>
+                      </Sheet>
+                    </td>
                   </tr>
                 );
               })}
@@ -529,6 +636,7 @@ export function AdminReservations() {
 
 /* ============== PAYMENTS ============== */
 export function AdminPayments() {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const [q, setQ] = useState('');
   const [status, setStatus] = useState('');
@@ -544,24 +652,24 @@ export function AdminPayments() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-display text-3xl font-extrabold">Payments</h1>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.payments')}</h1>
         <div className="flex items-center gap-3 flex-wrap">
           <select value={provider} onChange={(e) => setProvider(e.target.value)} className="h-9 rounded-lg border bg-background px-3 text-sm">
-            <option value="">Any provider</option>
+            <option value="">{t('panel.admin.payments.anyProvider')}</option>
             <option value="tiko">TIKO</option>
           </select>
           <select value={status} onChange={(e) => setStatus(e.target.value)} className="h-9 rounded-lg border bg-background px-3 text-sm">
-            <option value="">Any status</option>
-            <option value="pending">Pending</option>
-            <option value="authorized">Authorized</option>
-            <option value="captured">Captured</option>
-            <option value="failed">Failed</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="refunded">Refunded</option>
+            <option value="">{t('panel.admin.payments.anyStatus')}</option>
+            <option value="pending">{t('panel.admin.payments.status.pending')}</option>
+            <option value="authorized">{t('panel.admin.payments.status.authorized')}</option>
+            <option value="captured">{t('panel.admin.payments.status.captured')}</option>
+            <option value="failed">{t('panel.admin.payments.status.failed')}</option>
+            <option value="cancelled">{t('panel.admin.payments.status.cancelled')}</option>
+            <option value="refunded">{t('panel.admin.payments.status.refunded')}</option>
           </select>
           <div className="relative w-full max-w-xs">
             <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Order, trans, code, email..." className="pl-9" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('panel.admin.payments.searchPlaceholder')} className="pl-9" />
           </div>
         </div>
       </div>
@@ -571,15 +679,15 @@ export function AdminPayments() {
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
               <tr>
-                <th className="px-4 py-3">Reservation</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Company</th>
-                <th className="px-4 py-3">Provider</th>
-                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">{t('panel.admin.payments.reservation')}</th>
+                <th className="px-4 py-3">{t('panel.common.customer')}</th>
+                <th className="px-4 py-3">{t('panel.admin.companies.company')}</th>
+                <th className="px-4 py-3">{t('panel.admin.payments.provider')}</th>
+                <th className="px-4 py-3">{t('panel.common.status')}</th>
                 <th className="px-4 py-3">Order ID</th>
                 <th className="px-4 py-3">Trans ID</th>
-                <th className="px-4 py-3 text-right">Amount (TRY)</th>
-                <th className="px-4 py-3">Captured</th>
+                <th className="px-4 py-3 text-right">{t('panel.admin.payments.amountTry')}</th>
+                <th className="px-4 py-3">{t('panel.admin.payments.captured')}</th>
               </tr>
             </thead>
             <tbody>
@@ -593,7 +701,7 @@ export function AdminPayments() {
               {!payments.isLoading && items.length === 0 && (
                 <tr>
                   <td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">
-                    No payments
+                    {t('panel.admin.payments.none')}
                   </td>
                 </tr>
               )}
@@ -608,7 +716,7 @@ export function AdminPayments() {
                   <td className="px-4 py-3 capitalize">{p.provider}</td>
                   <td className="px-4 py-3">
                     <Badge variant="outline" className={`capitalize ${PAYMENT_STATUS_COLORS[p.status] ?? ''}`}>
-                      {p.status}
+                      {t(`panel.admin.payments.status.${p.status}`)}
                     </Badge>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs">{p.order_id ?? '—'}</td>
@@ -639,13 +747,13 @@ export function AdminUsers() {
   const ban = useUserBan();
 
   async function toggle(id: number, banned: boolean) {
-    const reason = banned ? window.prompt('Reason for ban?') ?? '' : undefined;
+    const reason = banned ? window.prompt(t('panel.admin.users.reasonForBan')) ?? '' : undefined;
     if (banned && !reason?.trim()) return;
     try {
       await ban.mutateAsync({ id, banned, reason });
-      toast.success(banned ? 'User banned' : 'User unbanned');
+      toast.success(banned ? t('panel.admin.users.bannedToast') : t('panel.admin.users.unbannedToast'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
+      toast.error(err instanceof Error ? err.message : t('common.actionFailed'));
     }
   }
 
@@ -655,12 +763,12 @@ export function AdminUsers() {
     if (roleValue === 'company_owner') return t('panel.admin.users.roleCompanyOwner');
     if (roleValue === 'company_staff') return t('panel.admin.users.roleCompanyStaff');
     if (roleValue === 'superadmin') return t('panel.admin.users.roleSuperadmin');
-    return roleValue.replace('_', ' ');
+    return t('panel.admin.users.roleUnknown', { role: roleValue.replace('_', ' ') });
   };
   const statusLabel = (statusValue: string) => {
     if (statusValue === 'active') return t('panel.admin.users.statusActive');
     if (statusValue === 'banned') return t('panel.admin.users.statusBanned');
-    return statusValue;
+    return t('panel.admin.users.statusUnknown', { status: statusValue });
   };
 
   return (
@@ -769,15 +877,16 @@ export function AdminUsers() {
 
 /* ============== REVIEWS ============== */
 export function AdminReviews() {
+  const { t } = useTranslation();
   const reviews = useAdminReviews({ limit: 100 });
   const action = useReviewAction();
 
   async function toggle(id: number, hide: boolean) {
     try {
       await action.mutateAsync({ id, action: hide ? 'hide' : 'restore' });
-      toast.success(hide ? 'Review hidden' : 'Review restored');
+      toast.success(hide ? t('panel.admin.reviews.hiddenToast') : t('panel.admin.reviews.restoredToast'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
+      toast.error(err instanceof Error ? err.message : t('common.actionFailed'));
     }
   }
 
@@ -785,25 +894,25 @@ export function AdminReviews() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">Reviews moderation</h1>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.reviews.title')}</h1>
       {reviews.isLoading && (
         <div className="flex items-center justify-center py-12 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
         </div>
       )}
       {!reviews.isLoading && items.length === 0 && (
-        <Card className="p-10 text-center text-muted-foreground">No reviews on the platform yet.</Card>
+        <Card className="p-10 text-center text-muted-foreground">{t('panel.admin.reviews.none')}</Card>
       )}
       {items.map((r) => (
         <Card key={r.id} className="p-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold">{r.customer?.name ?? 'Anonymous'}</span>
+                <span className="font-semibold">{r.customer?.name ?? t('panel.admin.reviews.anonymous')}</span>
                 {r.car && <Badge variant="outline">{r.car.brand} {r.car.model}</Badge>}
                 {r.company && <Badge variant="outline">{r.company.name}</Badge>}
                 <Badge variant={r.status === 'visible' ? 'secondary' : 'outline'} className="capitalize">
-                  {r.status}
+                  {t(`panel.admin.reviews.status.${r.status}`)}
                 </Badge>
               </div>
               <div className="flex gap-0.5 my-1">
@@ -816,11 +925,11 @@ export function AdminReviews() {
             <div className="flex gap-2">
               {r.status === 'visible' ? (
                 <Button size="sm" variant="outline" onClick={() => toggle(r.id, true)} disabled={action.isPending}>
-                  <EyeOff className="h-3.5 w-3.5 mr-1" /> Hide
+                  <EyeOff className="h-3.5 w-3.5 mr-1" /> {t('panel.admin.reviews.hide')}
                 </Button>
               ) : (
                 <Button size="sm" variant="ghost" onClick={() => toggle(r.id, false)} disabled={action.isPending}>
-                  <Eye className="h-3.5 w-3.5 mr-1" /> Restore
+                  <Eye className="h-3.5 w-3.5 mr-1" /> {t('panel.admin.reviews.restore')}
                 </Button>
               )}
             </div>
@@ -833,11 +942,12 @@ export function AdminReviews() {
 
 /* ============== CONTENT (placeholder, future) ============== */
 export function AdminContent() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">Content</h1>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.content')}</h1>
       <Card className="p-10 text-center text-muted-foreground">
-        Content management (banners, blog, FAQ) is on the roadmap. Use Settings to control headline copy for now.
+        {t('panel.admin.content.placeholder')}
       </Card>
     </div>
   );
@@ -845,19 +955,20 @@ export function AdminContent() {
 
 /* ============== FINANCE ============== */
 export function AdminFinance() {
+  const { t } = useTranslation();
   const { currency, locale } = useApp();
   const overview = useAdminFinanceOverview();
   const payouts = useAdminPayouts({ limit: 50 });
   const process = useProcessPayout();
 
   async function pay(id: number) {
-    const reference = window.prompt('Bank transfer reference?') ?? '';
+    const reference = window.prompt(t('panel.admin.finance.bankTransferReference')) ?? '';
     if (!reference.trim()) return;
     try {
       await process.mutateAsync({ id, reference });
-      toast.success('Payout marked as paid');
+      toast.success(t('panel.admin.finance.payoutMarkedPaid'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
+      toast.error(err instanceof Error ? err.message : t('common.actionFailed'));
     }
   }
 
@@ -866,36 +977,36 @@ export function AdminFinance() {
 
   return (
     <div className="space-y-5 max-w-7xl">
-      <h1 className="font-display text-3xl font-extrabold">Finance</h1>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.finance')}</h1>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          label="GMV (this month)"
+          label={t('panel.admin.finance.gmvThisMonth')}
           value={o ? formatPrice(o.gmv_this_month, currency, locale) : '—'}
           icon={BadgeDollarSign}
           accent="success"
         />
         <StatCard
-          label="Commission (this month)"
+          label={t('panel.admin.finance.commissionThisMonth')}
           value={o ? formatPrice(o.commission_this_month, currency, locale) : '—'}
           icon={BadgeDollarSign}
           accent="brand"
         />
-        <StatCard label="Pending payouts" value={o?.pending_payouts ?? '—'} icon={BadgeDollarSign} accent="warning" />
-        <StatCard label="Paid payouts" value={o?.paid_payouts ?? '—'} icon={CheckCircle2} accent="navy" />
+        <StatCard label={t('panel.admin.finance.pendingPayouts')} value={o?.pending_payouts ?? '—'} icon={BadgeDollarSign} accent="warning" />
+        <StatCard label={t('panel.admin.finance.paidPayouts')} value={o?.paid_payouts ?? '—'} icon={CheckCircle2} accent="navy" />
       </div>
 
       <Card className="overflow-hidden">
-        <div className="p-5 border-b font-display font-bold">Company payouts</div>
+        <div className="p-5 border-b font-display font-bold">{t('panel.admin.finance.companyPayouts')}</div>
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
-              <th className="px-4 py-3">Company</th>
-              <th className="px-4 py-3">Period</th>
-              <th className="px-4 py-3 text-right">Gross</th>
-              <th className="px-4 py-3 text-right">Commission</th>
-              <th className="px-4 py-3 text-right">Net</th>
-              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">{t('panel.admin.companies.company')}</th>
+              <th className="px-4 py-3">{t('panel.admin.finance.period')}</th>
+              <th className="px-4 py-3 text-right">{t('panel.admin.finance.gross')}</th>
+              <th className="px-4 py-3 text-right">{t('panel.admin.finance.commission')}</th>
+              <th className="px-4 py-3 text-right">{t('panel.admin.finance.net')}</th>
+              <th className="px-4 py-3">{t('panel.common.status')}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -910,26 +1021,26 @@ export function AdminFinance() {
             {!payouts.isLoading && items.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
-                  No payouts yet
+                  {t('panel.admin.finance.noPayouts')}
                 </td>
               </tr>
             )}
             {items.map((p) => (
               <tr key={p.id} className="border-t">
-                <td className="px-4 py-3 font-semibold">{p.company?.name ?? `Company #${p.company_id}`}</td>
+                <td className="px-4 py-3 font-semibold">{p.company?.name ?? `${t('panel.admin.companies.company')} #${p.company_id}`}</td>
                 <td className="px-4 py-3 text-muted-foreground text-xs">{p.period}</td>
                 <td className="px-4 py-3 text-right">{formatPrice(p.gross, currency, locale)}</td>
                 <td className="px-4 py-3 text-right text-warning">−{formatPrice(p.commission, currency, locale)}</td>
                 <td className="px-4 py-3 text-right font-semibold">{formatPrice(p.net, currency, locale)}</td>
                 <td className="px-4 py-3">
                   <Badge variant="outline" className="capitalize">
-                    {p.status}
+                    {t(`panel.admin.finance.status.${p.status}`)}
                   </Badge>
                 </td>
                 <td className="px-4 py-3">
                   {p.status === 'pending' && (
                     <Button size="sm" variant="outline" onClick={() => pay(p.id)} disabled={process.isPending}>
-                      Mark paid
+                      {t('panel.admin.finance.markPaid')}
                     </Button>
                   )}
                 </td>
@@ -944,6 +1055,7 @@ export function AdminFinance() {
 
 /* ============== SETTINGS ============== */
 export function AdminSettings() {
+  const { t } = useTranslation();
   const settings = useAdminSettings();
   const update = useUpdateAdminSettings();
   const [draft, setDraft] = useState<Record<string, string>>({});
@@ -967,16 +1079,16 @@ export function AdminSettings() {
         parsed[k] = !isNaN(numeric) && v.trim() !== '' && /^[\d.,-]+$/.test(v) ? numeric : v;
       });
       await update.mutateAsync(parsed);
-      toast.success('Settings saved');
+      toast.success(t('panel.admin.settings.saved'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not save');
+      toast.error(err instanceof Error ? err.message : t('panel.admin.settings.saveFailed'));
     }
   }
 
   if (settings.isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
-        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> Loading settings...
+        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> {t('panel.admin.settings.loading')}
       </div>
     );
   }
@@ -985,10 +1097,10 @@ export function AdminSettings() {
 
   return (
     <div className="space-y-5 max-w-3xl">
-      <h1 className="font-display text-3xl font-extrabold">Platform settings</h1>
+      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.settings.title')}</h1>
       <form onSubmit={onSave}>
         <Card className="p-6 space-y-4">
-          {keys.length === 0 && <p className="text-sm text-muted-foreground">No settings configured yet.</p>}
+          {keys.length === 0 && <p className="text-sm text-muted-foreground">{t('panel.admin.settings.none')}</p>}
           {keys.map((k) => (
             <div key={k}>
               <Label className="font-mono text-xs">{k}</Label>
@@ -1006,7 +1118,7 @@ export function AdminSettings() {
         </Card>
         <Separator className="my-5" />
         <Button type="submit" disabled={update.isPending} className="bg-gradient-brand text-white border-0">
-          {update.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Save changes
+          {update.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t('common.saveChanges')}
         </Button>
       </form>
     </div>

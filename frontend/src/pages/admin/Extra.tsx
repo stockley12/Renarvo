@@ -25,6 +25,7 @@ import { useApp } from '@/store/app';
 
 /* ============== AUDIT LOG ============== */
 export function AdminAuditLog() {
+  const { t } = useTranslation();
   const { locale } = useApp();
   const [search, setSearch] = useState('');
   const [severity, setSeverity] = useState('');
@@ -39,8 +40,8 @@ export function AdminAuditLog() {
     <div className="space-y-5 max-w-6xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-display text-3xl font-extrabold">Audit log</h1>
-          <p className="text-muted-foreground mt-1">Every privileged action is recorded here</p>
+          <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.auditLog')}</h1>
+          <p className="text-muted-foreground mt-1">{t('panel.admin.audit.subtitle')}</p>
         </div>
         <div className="flex gap-2 flex-wrap items-center">
           <select
@@ -48,13 +49,13 @@ export function AdminAuditLog() {
             onChange={(e) => setSeverity(e.target.value)}
             className="h-10 rounded-lg border bg-background px-3 text-sm"
           >
-            <option value="">All severities</option>
-            <option value="info">Info</option>
-            <option value="warning">Warning</option>
-            <option value="critical">Critical</option>
+            <option value="">{t('panel.admin.audit.allSeverities')}</option>
+            <option value="info">{t('panel.admin.audit.severity.info')}</option>
+            <option value="warning">{t('panel.admin.audit.severity.warning')}</option>
+            <option value="critical">{t('panel.admin.audit.severity.critical')}</option>
           </select>
           <Input
-            placeholder="Filter by action..."
+            placeholder={t('panel.admin.audit.filterPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-64"
@@ -66,12 +67,12 @@ export function AdminAuditLog() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
-              <th className="px-4 py-3">When</th>
-              <th className="px-4 py-3">Actor</th>
-              <th className="px-4 py-3">Action</th>
-              <th className="px-4 py-3">Target</th>
+              <th className="px-4 py-3">{t('panel.admin.audit.when')}</th>
+              <th className="px-4 py-3">{t('panel.admin.audit.actor')}</th>
+              <th className="px-4 py-3">{t('panel.admin.audit.action')}</th>
+              <th className="px-4 py-3">{t('panel.admin.audit.target')}</th>
               <th className="px-4 py-3">IP</th>
-              <th className="px-4 py-3">Severity</th>
+              <th className="px-4 py-3">{t('panel.admin.audit.severityLabel')}</th>
             </tr>
           </thead>
           <tbody>
@@ -86,7 +87,7 @@ export function AdminAuditLog() {
               <tr>
                 <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
                   <FileSearch className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                  No audit events match your filter
+                  {t('panel.admin.audit.none')}
                 </td>
               </tr>
             )}
@@ -96,7 +97,7 @@ export function AdminAuditLog() {
                   <Clock className="h-3 w-3 inline mr-1.5" />
                   {formatDate(e.created_at, locale)}
                 </td>
-                <td className="px-4 py-3 font-mono text-xs">{e.actor_email ?? `system`}</td>
+                <td className="px-4 py-3 font-mono text-xs">{e.actor_email ?? t('panel.admin.audit.system')}</td>
                 <td className="px-4 py-3">{e.action}</td>
                 <td className="px-4 py-3 text-muted-foreground text-xs">
                   {e.target_type ? `${e.target_type} #${e.target_id}` : '—'}
@@ -113,7 +114,7 @@ export function AdminAuditLog() {
                           : 'border-success/40 text-success'
                     }
                   >
-                    {e.severity}
+                    {t(`panel.admin.audit.severity.${e.severity}`)}
                   </Badge>
                 </td>
               </tr>
@@ -284,71 +285,72 @@ export function AdminNotifications() {
 
 /* ============== SYSTEM HEALTH ============== */
 export function AdminSystem() {
+  const { t } = useTranslation();
   const health = useAdminSystemHealth();
   const h = health.data;
 
   if (health.isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
-        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> Loading system telemetry...
+        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> {t('panel.admin.system.loading')}
       </div>
     );
   }
 
   if (!h) {
-    return <div className="text-muted-foreground">System health unavailable.</div>;
+    return <div className="text-muted-foreground">{t('panel.admin.system.unavailable')}</div>;
   }
 
   const ok = h.database.ok && h.fx.fresh && h.jobs.failed_7d === 0;
   const services = [
     {
-      name: 'Database',
+      name: t('panel.admin.system.serviceDatabase'),
       icon: Database,
       ok: h.database.ok,
-      info: h.database.latency_ms !== null ? `Latency · ${h.database.latency_ms}ms` : 'Connection failed',
+      info: h.database.latency_ms !== null ? t('panel.admin.system.latency', { ms: h.database.latency_ms }) : t('panel.admin.system.connectionFailed'),
     },
     {
-      name: 'Disk',
+      name: t('panel.admin.system.serviceDisk'),
       icon: Server,
       ok: h.disk.used_pct !== null && h.disk.used_pct < 90,
       info:
         h.disk.used_pct !== null
-          ? `Used · ${h.disk.used_pct}% of ${(h.disk.total_bytes / 1024 ** 3).toFixed(1)} GB`
-          : 'Unknown',
+          ? t('panel.admin.system.diskUsed', { used: h.disk.used_pct, total: (h.disk.total_bytes / 1024 ** 3).toFixed(1) })
+          : t('panel.admin.system.unknown'),
     },
     {
-      name: 'FX rates',
+      name: t('panel.admin.system.serviceFx'),
       icon: Globe,
       ok: h.fx.fresh,
-      info: h.fx.last_refresh ? `Last refresh · ${h.fx.last_refresh}` : 'Never refreshed',
+      info: h.fx.last_refresh ? t('panel.admin.system.lastRefresh', { value: h.fx.last_refresh }) : t('panel.admin.system.neverRefreshed'),
     },
     {
-      name: 'Jobs queue',
+      name: t('panel.admin.system.serviceQueue'),
       icon: Cpu,
       ok: h.jobs.failed_7d === 0,
-      info: `${h.jobs.pending} pending · ${h.jobs.failed_7d} failed (7d)`,
+      info: t('panel.admin.system.queueInfo', { pending: h.jobs.pending, failed: h.jobs.failed_7d }),
     },
     {
-      name: 'PHP runtime',
+      name: t('panel.admin.system.servicePhp'),
       icon: Activity,
       ok: true,
-      info: `v${h.php.version} · OPcache ${h.php.opcache_enabled ? 'on' : 'off'} · ${h.php.memory_peak_mb}MB peak`,
+      info: t('panel.admin.system.phpInfo', { version: h.php.version, opcache: h.php.opcache_enabled ? t('common.on') : t('common.off'), memory: h.php.memory_peak_mb }),
     },
     {
-      name: 'Email (mailer)',
+      name: t('panel.admin.system.serviceMailer'),
       icon: Mail,
       ok: h.mail.configured,
       info: h.mail.configured
-        ? `${h.mail.mailer.toUpperCase()} · ${h.mail.host}:${h.mail.port}`
-        : `${h.mail.mailer.toUpperCase()} mode (SMTP not configured)`,
+        ? t('panel.admin.system.mailerInfoConfigured', { mailer: h.mail.mailer.toUpperCase(), host: h.mail.host, port: h.mail.port })
+        : t('panel.admin.system.mailerInfoNotConfigured', { mailer: h.mail.mailer.toUpperCase() }),
     },
   ];
 
   return (
     <div className="space-y-5 max-w-6xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">System health</h1>
-        <p className="text-muted-foreground mt-1">Real-time status of platform services</p>
+        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.systemHealth')}</h1>
+        <p className="text-muted-foreground mt-1">{t('panel.admin.system.subtitle')}</p>
       </div>
 
       <Card className={`p-5 flex items-center gap-4 ${ok ? 'border-success/40 bg-success/5' : 'border-warning/40 bg-warning/5'}`}>
@@ -356,8 +358,8 @@ export function AdminSystem() {
           {ok ? <CheckCircle2 className="h-6 w-6" /> : <AlertTriangle className="h-6 w-6" />}
         </div>
         <div className="flex-1">
-          <div className="font-display font-bold">{ok ? 'All systems operational' : 'Some checks need attention'}</div>
-          <div className="text-sm text-muted-foreground">Auto-refreshing every 30s</div>
+          <div className="font-display font-bold">{ok ? t('panel.admin.system.allOperational') : t('panel.admin.system.needsAttention')}</div>
+          <div className="text-sm text-muted-foreground">{t('panel.admin.system.autoRefresh')}</div>
         </div>
       </Card>
 
@@ -375,7 +377,7 @@ export function AdminSystem() {
                 <div className="text-xs text-muted-foreground">{s.info}</div>
               </div>
               <Badge variant="outline" className={colors}>
-                {s.ok ? 'operational' : 'attention'}
+                {s.ok ? t('panel.admin.system.operational') : t('panel.admin.system.attention')}
               </Badge>
             </Card>
           );
@@ -383,15 +385,18 @@ export function AdminSystem() {
       </div>
 
       <Card className="p-5">
-        <h3 className="font-display font-bold mb-3">Notes</h3>
+        <h3 className="font-display font-bold mb-3">{t('panel.admin.system.notes')}</h3>
         <ScrollArea className="h-32">
           <div className="space-y-2 pr-4 text-sm text-muted-foreground">
-            <p>Database: {h.database.ok ? `Connected, ${h.database.latency_ms}ms latency.` : 'Connection failed.'}</p>
-            {h.jobs.last_run_at && <p>Last queue run: {h.jobs.last_run_at}.</p>}
+            <p>{t('panel.admin.system.databaseLine', { status: h.database.ok ? t('panel.admin.system.databaseConnected', { ms: h.database.latency_ms ?? 0 }) : t('panel.admin.system.connectionFailed') })}</p>
+            {h.jobs.last_run_at && <p>{t('panel.admin.system.lastQueueRun', { value: h.jobs.last_run_at })}</p>}
             <p>
-              Mailer: {h.mail.mailer}. {h.mail.configured
-                ? `SMTP is configured for ${h.mail.from_address}.`
-                : 'SMTP is not configured yet.'}
+              {t('panel.admin.system.mailerLine', {
+                mailer: h.mail.mailer,
+                configured: h.mail.configured
+                  ? t('panel.admin.system.smtpConfigured', { address: h.mail.from_address })
+                  : t('panel.admin.system.smtpNotConfigured'),
+              })}
             </p>
           </div>
         </ScrollArea>

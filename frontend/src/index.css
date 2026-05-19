@@ -145,6 +145,19 @@
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
     @apply tracking-tight;
   }
+
+  [dir="rtl"] html,
+  [dir="rtl"] {
+    font-family: 'Vazirmatn', 'Inter', system-ui, sans-serif;
+  }
+
+  [dir="rtl"] h1,
+  [dir="rtl"] h2,
+  [dir="rtl"] h3,
+  [dir="rtl"] h4,
+  [dir="rtl"] h5 {
+    font-family: 'Vazirmatn', 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
 }
 
 @layer utilities {
@@ -181,7 +194,7 @@
 
   input[type="date"]::-webkit-calendar-picker-indicator,
   input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-    margin-left: 0.35rem;
+    margin-inline-start: 0.35rem;
     opacity: 0.85;
   }
 }

@@ -77,7 +77,7 @@
       },
       "cancel": {
         "q": "Can I cancel for free?",
-        "a": "Most bookings can be cancelled free of charge up to 48 hours before pickup."
+        "a": "Most bookings can be cancelled free of charge up to 24 hours before pickup."
       },
       "documents": {
         "q": "What documents do I bring on pickup day?",
@@ -98,7 +98,7 @@
     "support": "Local 24/7 support",
     "supportDesc": "WhatsApp & phone, in 3 languages",
     "freeCancel": "Free cancellation",
-    "freeCancelDesc": "Up to 48 hours before pickup",
+    "freeCancelDesc": "Up to 24 hours before pickup",
     "verified": "Verified companies",
     "verifiedDesc": "Licensed local operators only"
   },
@@ -125,6 +125,7 @@
       "map": "Map"
     },
     "instantOnly": "Instant book only",
+    "instantBook": "Instant book",
     "viewDetails": "View details",
     "bookNow": "Book now",
     "noResults": "No cars match these filters",
@@ -166,7 +167,7 @@
     "serviceFee": "Service fee",
     "taxKdv": "Tax (KDV)",
     "total": "Total",
-    "freeCancellation": "Free cancellation up to 48h before pickup",
+    "freeCancellation": "Free cancellation up to 24h before pickup",
     "similarCars": "Similar cars"
   },
   "booking": {
@@ -195,7 +196,39 @@
     "continueToPayment": "Continue to payment",
     "payWithCard": "Pay with credit card",
     "paymentDisabled": "Online payment isn't active yet. Coming soon!",
-    "success": "Reservation confirmed"
+    "success": "Reservation confirmed",
+    "roleGateTitle": "Bookings are for customer accounts",
+    "signedInAs": "You're signed in as",
+    "roleGateBody": "Please sign out and use a customer account, or create a new one.",
+    "backHome": "Back home",
+    "createAccount": "Create customer account",
+    "validationName": "Enter your first and last name",
+    "validationEmail": "Enter a valid email",
+    "validationPhone": "Enter a phone number",
+    "createFailed": "Could not create reservation",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "drivingLicense": "Driving license #",
+    "dateOfBirth": "Date of birth",
+    "flightNumber": "Flight number (optional)",
+    "reservationCode": "Reservation code:",
+    "confirmationEmail": "A confirmation will be sent to your email shortly.",
+    "browseMoreCars": "Browse more cars",
+    "perDay": "/day",
+    "daysCount_one": "{{count}} day",
+    "daysCount_other": "{{count}} days",
+    "reservationConfirmed": "Reservation {{code}} confirmed.",
+    "defaultPickupAirport": "{{city}} Airport",
+    "idNumber": "ID / Passport number",
+    "documentUploads": "Required documents",
+    "licensePhoto": "Driving license photo (front)",
+    "idPhoto": "ID / Passport photo",
+    "validationLicense": "Driving license number is required",
+    "validationId": "ID / Passport number is required",
+    "validationLicensePhoto": "Please upload your driving license photo",
+    "validationIdPhoto": "Please upload your ID / Passport photo"
   },
   "payment": {
     "result": {
@@ -211,6 +244,33 @@
     }
   },
   "auth": {
+    "login": "Log in",
+    "loggedIn": "Logged in",
+    "loginFailed": "Login failed",
+    "welcomeBack": "Welcome back to Renarvo",
+    "email": "Email",
+    "password": "Password",
+    "signingIn": "Signing in…",
+    "forgotPassword": "Forgot password?",
+    "newHere": "New here?",
+    "createAccount": "Create an account",
+    "areYouCompany": "Are you a rental company?",
+    "registerFleet": "Register your fleet",
+    "resetPassword": "Reset password",
+    "enterEmailForReset": "Enter your email to receive a reset link",
+    "resetLinkSent": "Reset link sent (check your email)",
+    "resetLinkSentDesc": "If the email is registered, you'll receive a reset link within a minute.",
+    "resetLinkFailed": "Failed to send reset link",
+    "sending": "Sending…",
+    "sendLink": "Send link",
+    "newPassword": "New password",
+    "confirm": "Confirm",
+    "passwordsNotMatch": "Passwords do not match",
+    "invalidResetLink": "Invalid reset link",
+    "passwordUpdated": "Password updated",
+    "resetFailed": "Reset failed",
+    "updating": "Updating…",
+    "update": "Update",
     "register": {
       "title": "Create your account",
       "subtitle": "Book cars across North Cyprus in a few clicks.",
@@ -297,7 +357,12 @@
     "yes": "Yes",
     "no": "No",
     "total": "Total",
-    "free": "Free"
+    "free": "Free",
+    "city": "City",
+    "on": "on",
+    "off": "off",
+    "saveChanges": "Save changes",
+    "actionFailed": "Action failed"
   },
   "footer": {
     "rights": "All rights reserved.",
@@ -317,6 +382,60 @@
     "email": "Email",
     "instagram": "Instagram",
     "facebook": "Facebook"
+  },
+  "static": {
+    "about": {
+      "title": "About Renarvo",
+      "body": "Renarvo connects travellers visiting North Cyprus with local, licensed rental companies — from family-run agencies in Girne to large fleets at Ercan Airport. We started in 2024 because booking a car in KKTC still meant phone calls, WhatsApp messages and price guessing. We changed that."
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "body": "Tell us where you're landing (Ercan, Larnaca or anywhere on the island), pick your dates, and compare cars from real local companies. Pay online or on pickup, cancel free up to 24 hours before. The company you book with — not Renarvo — hands you the keys."
+    },
+    "forCompanies": {
+      "title": "For rental companies",
+      "body": "If you operate a rental fleet anywhere from Lefkoşa to Karpaz, list it on Renarvo. No setup fee. You only pay commission on confirmed bookings. We handle the website, payments, and multilingual customer support; you keep your fleet on the road."
+    },
+    "help": {
+      "title": "Help center",
+      "body": "Need a hand with a booking, a refund, or a license question for KKTC? Search our knowledge base or message our team — we reply in Turkish, English and Russian."
+    },
+    "contact": {
+      "title": "Contact us",
+      "body": "Renarvo Ltd · Girne, North Cyprus · hello@renarvo.com · +90 533 000 00 00. We reply within one business day."
+    },
+    "terms": {
+      "title": "Terms of service",
+      "body": "By using Renarvo you agree to these terms. Bookings are contracts between you and the rental company you choose. Renarvo facilitates the booking and payment but is not the vehicle operator. Full text available on request."
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "body": "We collect only what's needed to confirm your booking and we don't sell your data. Driver license details are shared with the rental company you book with, and nobody else. Full policy on request."
+    }
+  },
+  "companies": {
+    "title": "Local rental companies",
+    "subtitle": "Licensed operators across North Cyprus — from Girne to Karpaz",
+    "searchPlaceholder": "Search companies...",
+    "loading": "Loading companies…",
+    "empty": "No companies yet",
+    "emptyDesc": "Be the first rental company on Renarvo. Verification is fast and free.",
+    "registerFleet": "Register your fleet",
+    "since": "Since",
+    "cars": "cars"
+  },
+  "companyDetail": {
+    "notFound": "Company not found.",
+    "browseCompanies": "Browse companies",
+    "since": "Since",
+    "carsCount": "{{count}} cars",
+    "reviewsCount": "{{count}} reviews",
+    "about": "About",
+    "noDescription": "This company has not added a description yet.",
+    "fleet": "Fleet",
+    "loadingFleet": "Loading fleet…",
+    "noCars": "No cars listed yet.",
+    "browseAll": "Browse all"
   },
   "panel": {
     "common": {
@@ -358,6 +477,8 @@
       "overview": {
         "unavailable": "Overview unavailable",
         "loadFailed": "Could not load overview.",
+        "loading": "Loading overview...",
+        "welcomeBack": "Welcome back",
         "subtitle": "Here's how your business looks today",
         "revenueThisMonth": "Revenue this month",
         "activeRentals": "Active rentals",
@@ -374,6 +495,607 @@
         "allClear": "All clear. No pending tasks.",
         "recentReservations": "Recent reservations",
         "noReservations": "No reservations yet."
+      },
+      "reservations": {
+        "subtitle": "Manage all your bookings",
+        "booking": "Booking",
+        "flight": "Flight",
+        "note": "Note",
+        "pricing": "Pricing",
+        "baseDays": "Base ({{days}} days)",
+        "discount": "Discount",
+        "cancellationReason": "Cancellation reason",
+        "driverDocuments": "Driver documents",
+        "confirm": "Confirm",
+        "reject": "Reject",
+        "markPickedUp": "Mark picked up",
+        "markReturned": "Mark returned",
+        "rejectionReasonRequired": "Rejection reason required",
+        "rejectionReasonPlaceholder": "Reason (required for rejection)",
+        "updateFailed": "Could not update reservation",
+        "dates": "Dates",
+        "payment": "Payment",
+        "noneForStatus": "No {{status}} reservations",
+        "reservationCode": "Reservation {{code}}",
+        "viaTiko": "via TIKO",
+        "status": {
+          "pending": "Pending",
+          "confirmed": "Confirmed",
+          "active": "Active",
+          "completed": "Completed",
+          "cancelled": "Cancelled"
+        },
+        "paymentStatus": {
+          "paid": "Paid",
+          "pending": "Pending",
+          "unpaid": "Unpaid",
+          "failed": "Failed",
+          "refunded": "Refunded",
+          "authorized": "Authorized",
+          "captured": "Captured",
+          "cancelled": "Cancelled"
+        },
+        "toast": {
+          "confirm": "Reservation confirmed",
+          "reject": "Reservation rejected",
+          "pickup": "Reservation picked up",
+          "return": "Reservation completed"
+        }
+      },
+      "stats": {
+        "loading": "Loading statistics...",
+        "subtitle": "Performance insights from real bookings",
+        "totalBookings12m": "Total bookings (12 mo)",
+        "totalRevenue12m": "Total revenue (12 mo)",
+        "avgBookingValue": "Avg booking value",
+        "cancellationRate": "Cancellation rate",
+        "revenueByMonth": "Revenue by month",
+        "bookingsByMonth": "Bookings per month",
+        "statusBreakdown90d": "Reservations by status (last 90 days)",
+        "topCars90d": "Top performing cars (last 90 days)",
+        "carId": "Car ID",
+        "bookings": "Bookings",
+        "revenue": "Revenue",
+        "noData": "No data yet.",
+        "noDataWithHint": "No data yet — completed reservations will appear here."
+      },
+      "sections": {
+        "customers": {
+          "searchPlaceholder": "Search by name or email...",
+          "totalSpent": "Total spent",
+          "lastBooking": "Last booking",
+          "noCustomers": "No customers yet"
+        },
+        "branches": {
+          "addBranch": "Add branch",
+          "namePlaceholder": "Ercan Airport office",
+          "cityPlaceholder": "Nicosia",
+          "address": "Address",
+          "addressPlaceholder": "Ercan Airport, arrivals",
+          "noBranches": "No branches yet. Add your first pickup location.",
+          "confirms": {
+            "deleteBranch": "Delete this branch?"
+          },
+          "toasts": {
+            "nameAddressRequired": "Name and address required",
+            "branchAdded": "Branch added",
+            "couldNotAddBranch": "Could not add branch",
+            "branchDeleted": "Branch deleted",
+            "couldNotDelete": "Could not delete"
+          }
+        },
+        "staff": {
+          "inviteMember": "Invite member",
+          "role": "Role",
+          "sendInvite": "Send invite",
+          "noStaff": "No staff yet",
+          "roles": {
+            "manager": "Manager",
+            "agent": "Agent"
+          },
+          "confirms": {
+            "removeStaffMember": "Remove this staff member?"
+          },
+          "toasts": {
+            "nameEmailRequired": "Name and email required",
+            "memberInvited": "{{name}} added — they'll receive a password reset email when SMTP is configured.",
+            "couldNotInviteStaff": "Could not invite staff",
+            "staffRemoved": "Staff member removed",
+            "couldNotRemove": "Could not remove"
+          }
+        },
+        "reviews": {
+          "noReviews": "No reviews yet — they'll show up after customers complete their bookings.",
+          "guest": "Guest",
+          "yourReply": "Your reply",
+          "reply": "Reply",
+          "typeResponse": "Type your response...",
+          "postReply": "Post reply",
+          "toasts": {
+            "replyCannotBeEmpty": "Reply cannot be empty",
+            "replyPosted": "Reply posted",
+            "couldNotPostReply": "Could not post reply"
+          }
+        },
+        "payouts": {
+          "bankAccount": "Bank account",
+          "iban": "IBAN",
+          "accountHolder": "Account holder",
+          "accountHolderPlaceholder": "Company Ltd",
+          "bankOptional": "Bank (optional)",
+          "saveBankInfo": "Save bank info",
+          "payoutHistory": "Payout history",
+          "noPayouts": "No payouts yet.",
+          "paid": "Paid",
+          "toasts": {
+            "ibanHolderRequired": "IBAN and holder name required",
+            "bankAccountSaved": "Bank account saved",
+            "couldNotSaveBank": "Could not save bank account"
+          }
+        },
+        "documents": {
+          "uploadNewDocument": "Upload new document",
+          "type": "Type",
+          "expiresOptional": "Expires (optional)",
+          "fileLabel": "File (PDF/JPG/PNG, max 10 MB)",
+          "upload": "Upload",
+          "noDocuments": "No documents uploaded yet.",
+          "expiresOn": "Expires {{date}}",
+          "noExpiry": "No expiry",
+          "docTypes": {
+            "tradeRegistry": "Trade registry",
+            "taxCertificate": "Tax certificate",
+            "operatingLicense": "Operating license",
+            "insuranceCertificate": "Insurance certificate"
+          },
+          "toasts": {
+            "pickFileFirst": "Pick a file first",
+            "documentUploaded": "Document uploaded — admin will review it",
+            "uploadFailed": "Upload failed"
+          }
+        },
+        "settings": {
+          "companyProfile": "Company profile",
+          "phoneInternal": "Phone (internal)",
+          "address": "Address",
+          "languagesSpoken": "Languages spoken",
+          "languagesPlaceholder": "Turkish, English, Russian",
+          "rentalPolicy": "Rental policy",
+          "minimumRentalDays": "Minimum rental days",
+          "minimumDriverAge": "Minimum driver age",
+          "kilometrePolicy": "Kilometre policy",
+          "kmLimitPerDay": "Kilometre limit per day (km)",
+          "studentFriendly": "Student-friendly",
+          "studentFriendlyHint": "Allow drivers younger than the standard minimum if they're enrolled students.",
+          "roadside247": "24/7 roadside assistance",
+          "roadside247Hint": "Show a 24/7 support badge on every car.",
+          "publicContactSocial": "Public contact & social",
+          "publicEmail": "Public email",
+          "website": "Website",
+          "kmPolicy": {
+            "unlimited": "Unlimited",
+            "perDayLimit": "Per-day limit",
+            "totalLimit": "Total limit"
+          },
+          "toasts": {
+            "settingsSaved": "Settings saved",
+            "couldNotSave": "Could not save"
+          }
+        },
+        "extras": {
+          "addExtra": "Add extra",
+          "displayName": "Display name",
+          "chargeMode": "Charge mode",
+          "pricePerDay": "Price per day (TRY)",
+          "pricePerRental": "Price per rental (TRY)",
+          "activeShownToCustomers": "Active (shown to customers)",
+          "descriptionOptional": "Description (optional)",
+          "noExtras": "No extras yet. Add at least GPS, Child seat and Additional driver so customers can pick them at booking.",
+          "active": "Active",
+          "hidden": "Hidden",
+          "pricePerDayFormatted": "₺{{amount}} / day",
+          "pricePerRentalFormatted": "₺{{amount}} / rental",
+          "chargeModes": {
+            "perDay": "Per day",
+            "perRental": "Per rental"
+          },
+          "optionLabels": {
+            "mobileWifi": "Mobile WiFi",
+            "borderCrossing": "Border crossing",
+            "custom": "Custom"
+          },
+          "confirms": {
+            "deleteExtra": "Delete this extra?"
+          },
+          "toasts": {
+            "extraUpdated": "Extra updated",
+            "extraAdded": "Extra added",
+            "couldNotSave": "Could not save",
+            "deleted": "Deleted",
+            "couldNotDelete": "Could not delete"
+          }
+        },
+        "insurance": {
+          "addPackage": "Add package",
+          "tier": "Tier",
+          "displayName": "Display name",
+          "pricePerDay": "Price per day (TRY)",
+          "deductibleAmount": "Deductible amount (TRY)",
+          "deductiblePlaceholder": "e.g. 5000",
+          "coverageAmount": "Coverage amount (TRY)",
+          "coveragePlaceholder": "e.g. 200000",
+          "active": "Active",
+          "hidden": "Hidden",
+          "descriptionPlaceholder": "What is and isn't covered…",
+          "includedFeatures": "Included features (one per line)",
+          "includedFeaturesPlaceholder": "Theft\nThird party liability\nGlass damage",
+          "noPackages": "No insurance packages yet. Add Mini, Mid and Full so customers can choose at booking.",
+          "pricePerDayFormatted": "₺{{amount}} / day",
+          "deductibleFormatted": "Deductible: ₺{{amount}}",
+          "coverageFormatted": "Coverage: ₺{{amount}}",
+          "tierLabels": {
+            "mini": "Mini protection (Mini)",
+            "mid": "Standard protection (Mid)",
+            "full": "Full protection (Full)"
+          },
+          "confirms": {
+            "deletePackage": "Delete this package?"
+          },
+          "toasts": {
+            "packageUpdated": "Package updated",
+            "packageAdded": "Package added",
+            "couldNotSave": "Could not save",
+            "deleted": "Deleted",
+            "couldNotDelete": "Could not delete"
+          }
+        }
+      },
+      "fleet": {
+        "vehicles_one": "{{count}} vehicle",
+        "vehicles_other": "{{count}} vehicles",
+        "searchPlaceholder": "Search by brand, model or plate...",
+        "titles": {
+          "addNewCar": "Add new car",
+          "editCar": "Edit car"
+        },
+        "actions": {
+          "addCar": "Add car",
+          "addFirstCar": "Add your first car",
+          "createCar": "Create car"
+        },
+        "table": {
+          "plate": "Plate",
+          "pricePerDay": "Price/day",
+          "noCars": "No cars yet"
+        },
+        "status": {
+          "active": "Active",
+          "draft": "Draft",
+          "maintenance": "Maintenance",
+          "hidden": "Hidden"
+        },
+        "transmission": {
+          "automatic": "Automatic",
+          "manual": "Manual",
+          "semi_automatic": "Semi-automatic (Triptronic)"
+        },
+        "fuel": {
+          "petrol": "Petrol",
+          "diesel": "Diesel",
+          "hybrid": "Hybrid",
+          "electric": "Electric"
+        },
+        "confirms": {
+          "removeImage": "Remove this image?",
+          "deleteCar": "Delete this car? This cannot be undone."
+        },
+        "toasts": {
+          "brandModelPriceRequired": "Brand, model and price per day are required",
+          "imagesFailed_one": "Car saved, but {{count}} image failed to upload",
+          "imagesFailed_other": "Car saved, but {{count}} images failed to upload",
+          "carUpdated": "Car updated",
+          "carCreated": "Car created",
+          "couldNotSaveCar": "Could not save car",
+          "imageRemoved": "Image removed",
+          "couldNotRemoveImage": "Could not remove image",
+          "fileTooLarge": "{{name}} is too large (max 5 MB)",
+          "carDeleted": "Car deleted",
+          "couldNotDeleteCar": "Could not delete car"
+        },
+        "form": {
+          "brand": "Brand",
+          "brandPlaceholder": "Toyota",
+          "model": "Model",
+          "modelPlaceholder": "Corolla",
+          "year": "Year",
+          "plate": "Plate",
+          "platePlaceholder": "34 AB 1234",
+          "vin": "VIN",
+          "doors": "Doors",
+          "cityPlaceholder": "Girne",
+          "dailyPrice": "Daily price (₺)",
+          "weeklyPrice": "Weekly price (₺)",
+          "deposit": "Deposit (₺)",
+          "minDriverAgeDefault": "Min driver age (default)",
+          "minDriverAgeOverride": "Min driver age (override)",
+          "useCompanyDefault": "Use company default",
+          "enginePower": "Engine power (HP)",
+          "enginePowerPlaceholder": "e.g. 130",
+          "engineSize": "Engine size (cc)",
+          "engineSizePlaceholder": "e.g. 1600",
+          "dailyKmLimit": "Daily km limit (this car)",
+          "mileagePolicy": "Mileage policy",
+          "mileagePolicyPlaceholder": "300 km/day included, ₺2/km after",
+          "photoGallery": "Photo gallery (interior + exterior)",
+          "deleteImageAria": "Delete image",
+          "pendingImages_one": "{{count}} new image ready to upload:",
+          "pendingImages_other": "{{count}} new images ready to upload:",
+          "uploadHelp": "Click or drop multiple JPG / PNG / WEBP (max 5 MB each)"
+        }
+      },
+      "extra": {
+        "calendar": {
+          "subtitle": "Reservations across your fleet",
+          "weekdays": {
+            "mon": "Mon",
+            "tue": "Tue",
+            "wed": "Wed",
+            "thu": "Thu",
+            "fri": "Fri",
+            "sat": "Sat",
+            "sun": "Sun"
+          },
+          "activeRental": "Active rental",
+          "allBookingsThisMonth": "All bookings this month",
+          "noBookingsInMonth": "No bookings in this month."
+        },
+        "pricing": {
+          "subtitle": "Length discounts and promo codes",
+          "tabs": {
+            "lengthDiscounts": "Length discounts",
+            "promoCodes": "Promo codes"
+          },
+          "weeklyMonthlyDiscounts": "Weekly & monthly discounts",
+          "weeklyDiscount": "Weekly discount (7+ days)",
+          "monthlyDiscount": "Monthly discount (28+ days)",
+          "createPromoCode": "Create promo code",
+          "type": "Type",
+          "value": "Value",
+          "maxUses": "Max uses",
+          "expires": "Expires",
+          "existingCodes": "Existing codes",
+          "noPromoCodes": "No promo codes yet.",
+          "discountType": {
+            "percent": "Percent",
+            "fixed": "Fixed (₺)"
+          },
+          "actions": {
+            "createCode": "Create code"
+          },
+          "table": {
+            "discount": "Discount",
+            "used": "Used",
+            "active": "Active"
+          },
+          "confirms": {
+            "deletePromoCode": "Delete this promo code?"
+          },
+          "toasts": {
+            "promoCodeRequired": "Promo code required",
+            "promoCodeCreated": "Promo code created",
+            "couldNotCreatePromo": "Could not create promo",
+            "couldNotUpdatePromo": "Could not update",
+            "promoDeleted": "Promo deleted",
+            "couldNotDeletePromo": "Could not delete",
+            "lengthDiscountsSaved": "Length discounts saved",
+            "couldNotSaveDiscounts": "Could not save"
+          }
+        },
+        "messages": {
+          "subtitle": "Customer chat and pre-booking inquiries",
+          "loadingMessages": "Loading messages...",
+          "noConversations": "No conversations yet.",
+          "customer": "Customer",
+          "conversation": "Conversation",
+          "typeMessage": "Type a message...",
+          "toasts": {
+            "couldNotSendMessage": "Could not send message"
+          }
+        },
+        "integrations": {
+          "subtitle": "Connect Renarvo with your tools",
+          "comingSoon": "Integrations are coming soon. TIKO payment extensions, WhatsApp Business, Google Calendar, and webhook subscriptions will be configurable here once enabled by your platform admin."
+        }
+      },
+      "sections": {
+        "customers": {
+          "searchPlaceholder": "Search by name or email...",
+          "totalSpent": "Total spent",
+          "lastBooking": "Last booking",
+          "noCustomers": "No customers yet"
+        },
+        "branches": {
+          "addBranch": "Add branch",
+          "address": "Address",
+          "namePlaceholder": "Ercan Airport office",
+          "cityPlaceholder": "Lefkosa",
+          "addressPlaceholder": "Ercan Airport, arrivals",
+          "noBranches": "No branches yet. Add your first pickup location.",
+          "confirms": {
+            "deleteBranch": "Delete this branch?"
+          },
+          "toasts": {
+            "nameAddressRequired": "Name and address required",
+            "branchAdded": "Branch added",
+            "couldNotAddBranch": "Could not add branch",
+            "branchDeleted": "Branch deleted",
+            "couldNotDelete": "Could not delete"
+          }
+        },
+        "staff": {
+          "inviteMember": "Invite member",
+          "role": "Role",
+          "sendInvite": "Send invite",
+          "noStaff": "No staff yet",
+          "roles": {
+            "manager": "Manager",
+            "agent": "Agent"
+          },
+          "confirms": {
+            "removeStaffMember": "Remove this staff member?"
+          },
+          "toasts": {
+            "nameEmailRequired": "Name and email required",
+            "memberInvited": "{{name}} added — they'll receive a password reset email when SMTP is configured.",
+            "couldNotInviteStaff": "Could not invite staff",
+            "staffRemoved": "Staff member removed",
+            "couldNotRemove": "Could not remove"
+          }
+        },
+        "reviews": {
+          "noReviews": "No reviews yet — they'll show up after customers complete their bookings.",
+          "guest": "Guest",
+          "yourReply": "Your reply",
+          "reply": "Reply",
+          "typeResponse": "Type your response...",
+          "postReply": "Post reply",
+          "toasts": {
+            "replyCannotBeEmpty": "Reply cannot be empty",
+            "replyPosted": "Reply posted",
+            "couldNotPostReply": "Could not post reply"
+          }
+        },
+        "payouts": {
+          "bankAccount": "Bank account",
+          "accountHolder": "Account holder",
+          "accountHolderPlaceholder": "Company Ltd",
+          "bankOptional": "Bank (optional)",
+          "saveBankInfo": "Save bank info",
+          "payoutHistory": "Payout history",
+          "noPayouts": "No payouts yet.",
+          "paid": "Paid",
+          "toasts": {
+            "ibanHolderRequired": "IBAN and holder name required",
+            "bankAccountSaved": "Bank account saved",
+            "couldNotSaveBank": "Could not save bank account"
+          }
+        },
+        "documents": {
+          "uploadNewDocument": "Upload new document",
+          "type": "Type",
+          "expiresOptional": "Expires (optional)",
+          "fileLabel": "File (PDF/JPG/PNG, max 10 MB)",
+          "upload": "Upload",
+          "noDocuments": "No documents uploaded yet.",
+          "expiresOn": "Expires {{date}}",
+          "noExpiry": "No expiry",
+          "docTypes": {
+            "tradeRegistry": "Trade registry",
+            "taxCertificate": "Tax certificate",
+            "operatingLicense": "Operating license",
+            "insuranceCertificate": "Insurance certificate"
+          },
+          "toasts": {
+            "pickFileFirst": "Pick a file first",
+            "documentUploaded": "Document uploaded — admin will review it",
+            "uploadFailed": "Upload failed"
+          }
+        },
+        "settings": {
+          "companyProfile": "Company profile",
+          "phoneInternal": "Phone (internal)",
+          "address": "Address",
+          "languagesSpoken": "Languages spoken",
+          "languagesPlaceholder": "Turkce, English, Russkiy",
+          "rentalPolicy": "Rental policy",
+          "minimumRentalDays": "Minimum rental days",
+          "minimumDriverAge": "Minimum driver age",
+          "kilometrePolicy": "Kilometre policy",
+          "kmLimitPerDay": "Kilometre limit per day (km)",
+          "studentFriendly": "Student-friendly",
+          "studentFriendlyHint": "Allow drivers younger than the standard minimum if they're enrolled students.",
+          "roadside247": "24/7 roadside assistance",
+          "roadside247Hint": "Show a 24/7 support badge on every car.",
+          "publicContactSocial": "Public contact & social",
+          "publicEmail": "Public email",
+          "website": "Website",
+          "kmPolicy": {
+            "unlimited": "Unlimited",
+            "perDayLimit": "Per-day limit",
+            "totalLimit": "Total limit"
+          },
+          "toasts": {
+            "settingsSaved": "Settings saved",
+            "couldNotSave": "Could not save"
+          }
+        },
+        "extras": {
+          "addExtra": "Add extra",
+          "displayName": "Display name",
+          "chargeMode": "Charge mode",
+          "pricePerDay": "Price per day (TRY)",
+          "pricePerRental": "Price per rental (TRY)",
+          "activeShownToCustomers": "Active (shown to customers)",
+          "descriptionOptional": "Description (optional)",
+          "noExtras": "No extras yet. Add at least GPS, Child seat and Additional driver so customers can pick them at booking.",
+          "active": "Active",
+          "hidden": "Hidden",
+          "pricePerDayFormatted": "₺{{amount}} / day",
+          "pricePerRentalFormatted": "₺{{amount}} / rental",
+          "chargeModes": {
+            "perDay": "Per day",
+            "perRental": "Per rental"
+          },
+          "optionLabels": {
+            "mobileWifi": "Mobile WiFi",
+            "borderCrossing": "Border crossing",
+            "custom": "Custom"
+          },
+          "confirms": {
+            "deleteExtra": "Delete this extra?"
+          },
+          "toasts": {
+            "extraUpdated": "Extra updated",
+            "extraAdded": "Extra added",
+            "couldNotSave": "Could not save",
+            "deleted": "Deleted",
+            "couldNotDelete": "Could not delete"
+          }
+        },
+        "insurance": {
+          "addPackage": "Add package",
+          "tier": "Tier",
+          "displayName": "Display name",
+          "pricePerDay": "Price per day (TRY)",
+          "deductibleAmount": "Deductible amount (TRY)",
+          "deductiblePlaceholder": "e.g. 5000",
+          "coverageAmount": "Coverage amount (TRY)",
+          "coveragePlaceholder": "e.g. 200000",
+          "active": "Active",
+          "hidden": "Hidden",
+          "descriptionPlaceholder": "What is and isn't covered...",
+          "includedFeatures": "Included features (one per line)",
+          "includedFeaturesPlaceholder": "Theft\nThird party liability\nGlass damage",
+          "noPackages": "No insurance packages yet. Add Mini, Orta and Full so customers can choose at booking.",
+          "pricePerDayFormatted": "₺{{amount}} / day",
+          "deductibleFormatted": "Deductible: ₺{{amount}}",
+          "coverageFormatted": "Coverage: ₺{{amount}}",
+          "tierLabels": {
+            "mini": "Mini protection (Mini)",
+            "mid": "Standard protection (Mid)",
+            "full": "Full protection (Full)"
+          },
+          "confirms": {
+            "deletePackage": "Delete this package?"
+          },
+          "toasts": {
+            "packageUpdated": "Package updated",
+            "packageAdded": "Package added",
+            "couldNotSave": "Could not save",
+            "deleted": "Deleted",
+            "couldNotDelete": "Could not delete"
+          }
+        }
       },
       "pro": {
         "title": "Upgrade to Pro",
@@ -411,6 +1133,8 @@
       "overview": {
         "title": "Platform overview",
         "subtitle": "Renarvo at a glance",
+        "loading": "Loading platform metrics...",
+        "unavailable": "Overview unavailable.",
         "gmvThisMonth": "GMV (this month)",
         "activeCompanies": "Active companies",
         "pendingCompanies": "Pending companies",
@@ -419,6 +1143,26 @@
         "reservationsTotal": "Reservations total",
         "reservationsThisMonth": "Reservations this month",
         "openApprovals": "Open approvals"
+      },
+      "companies": {
+        "company": "Company",
+        "owner": "Owner",
+        "noneForStatus": "No {{status}} companies",
+        "suspend": "Suspend",
+        "reinstate": "Reinstate",
+        "rejectionReason": "Rejection reason?",
+        "suspensionReason": "Suspension reason?",
+        "status": {
+          "approved": "Approved",
+          "pending": "Pending",
+          "suspended": "Suspended",
+          "rejected": "Rejected"
+        },
+        "toast": {
+          "approve": "Company approved",
+          "suspend": "Company suspended",
+          "reject": "Company rejected"
+        }
       },
       "approvals": {
         "title": "Approvals queue",
@@ -430,7 +1174,70 @@
         "approve": "Approve",
         "reject": "Reject",
         "approvedToast": "Company approved — they can now list cars",
-        "rejectedToast": "Company rejected"
+        "rejectedToast": "Company rejected",
+        "rejectionReasonPrompt": "Rejection reason?"
+      },
+      "catalog": {
+        "title": "Catalog moderation",
+        "searchPlaceholder": "Search cars...",
+        "pricePerDay": "Price/day",
+        "noCars": "No cars in catalog",
+        "flag": "Flag",
+        "hide": "Hide",
+        "reasonHideOptional": "Reason for hiding (optional)?",
+        "reasonFlag": "Reason for flagging?",
+        "hiddenToast": "Car hidden from public catalog",
+        "flaggedToast": "Car flagged",
+        "status": {
+          "active": "Active",
+          "draft": "Draft",
+          "maintenance": "Maintenance",
+          "hidden": "Hidden"
+        }
+      },
+      "reservations": {
+        "title": "All reservations",
+        "detail": "Reservation",
+        "anyPayment": "Any payment",
+        "searchPlaceholder": "Code, email, company, TIKO ref...",
+        "payment": "Payment",
+        "paidTry": "Paid (TRY)",
+        "noReservations": "No reservations",
+        "status": {
+          "pending": "Pending",
+          "confirmed": "Confirmed",
+          "active": "Active",
+          "completed": "Completed",
+          "cancelled": "Cancelled"
+        },
+        "paymentStatus": {
+          "paid": "Paid",
+          "pending": "Pending",
+          "unpaid": "Unpaid",
+          "failed": "Failed",
+          "refunded": "Refunded",
+          "authorized": "Authorized",
+          "captured": "Captured",
+          "cancelled": "Cancelled"
+        }
+      },
+      "payments": {
+        "anyProvider": "Any provider",
+        "anyStatus": "Any status",
+        "searchPlaceholder": "Order, trans, code, email...",
+        "reservation": "Reservation",
+        "provider": "Provider",
+        "amountTry": "Amount (TRY)",
+        "captured": "Captured",
+        "none": "No payments",
+        "status": {
+          "pending": "Pending",
+          "authorized": "Authorized",
+          "captured": "Captured",
+          "failed": "Failed",
+          "cancelled": "Cancelled",
+          "refunded": "Refunded"
+        }
       },
       "users": {
         "title": "Users",
@@ -450,7 +1257,104 @@
         "statusBanned": "Banned",
         "noUsers": "No users found",
         "ban": "Ban",
-        "unban": "Unban"
+        "unban": "Unban",
+        "reasonForBan": "Reason for ban?",
+        "bannedToast": "User banned",
+        "unbannedToast": "User unbanned",
+        "roleUnknown": "{{role}}",
+        "statusUnknown": "{{status}}"
+      },
+      "reviews": {
+        "title": "Reviews moderation",
+        "none": "No reviews on the platform yet.",
+        "anonymous": "Anonymous",
+        "hide": "Hide",
+        "restore": "Restore",
+        "hiddenToast": "Review hidden",
+        "restoredToast": "Review restored",
+        "status": {
+          "visible": "Visible",
+          "hidden": "Hidden"
+        }
+      },
+      "content": {
+        "placeholder": "Content management (banners, blog, FAQ) is on the roadmap. Use Settings to control headline copy for now."
+      },
+      "finance": {
+        "gmvThisMonth": "GMV (this month)",
+        "commissionThisMonth": "Commission (this month)",
+        "pendingPayouts": "Pending payouts",
+        "paidPayouts": "Paid payouts",
+        "companyPayouts": "Company payouts",
+        "period": "Period",
+        "gross": "Gross",
+        "commission": "Commission",
+        "net": "Net",
+        "noPayouts": "No payouts yet",
+        "markPaid": "Mark paid",
+        "bankTransferReference": "Bank transfer reference?",
+        "payoutMarkedPaid": "Payout marked as paid",
+        "status": {
+          "pending": "Pending",
+          "paid": "Paid",
+          "failed": "Failed",
+          "cancelled": "Cancelled"
+        }
+      },
+      "settings": {
+        "title": "Platform settings",
+        "loading": "Loading settings...",
+        "none": "No settings configured yet.",
+        "saved": "Settings saved",
+        "saveFailed": "Could not save"
+      },
+      "audit": {
+        "subtitle": "Every privileged action is recorded here",
+        "allSeverities": "All severities",
+        "filterPlaceholder": "Filter by action...",
+        "when": "When",
+        "actor": "Actor",
+        "action": "Action",
+        "target": "Target",
+        "severityLabel": "Severity",
+        "none": "No audit events match your filter",
+        "system": "system",
+        "severity": {
+          "info": "Info",
+          "warning": "Warning",
+          "critical": "Critical"
+        }
+      },
+      "system": {
+        "loading": "Loading system telemetry...",
+        "unavailable": "System health unavailable.",
+        "subtitle": "Real-time status of platform services",
+        "serviceDatabase": "Database",
+        "serviceDisk": "Disk",
+        "serviceFx": "FX rates",
+        "serviceQueue": "Jobs queue",
+        "servicePhp": "PHP runtime",
+        "serviceMailer": "Email (mailer)",
+        "latency": "Latency · {{ms}}ms",
+        "connectionFailed": "Connection failed",
+        "diskUsed": "Used · {{used}}% of {{total}} GB",
+        "unknown": "Unknown",
+        "lastRefresh": "Last refresh · {{value}}",
+        "neverRefreshed": "Never refreshed",
+        "queueInfo": "{{pending}} pending · {{failed}} failed (7d)",
+        "phpInfo": "v{{version}} · OPcache {{opcache}} · {{memory}}MB peak",
+        "mailerInfoConfigured": "{{mailer}} · {{host}}:{{port}}",
+        "mailerInfoNotConfigured": "{{mailer}} mode (SMTP not configured)",
+        "allOperational": "All systems operational",
+        "needsAttention": "Some checks need attention",
+        "autoRefresh": "Auto-refreshing every 30s",
+        "operational": "operational",
+        "attention": "attention",
+        "notes": "Notes",
+        "databaseLine": "Database: {{status}}",
+        "databaseConnected": "Connected, {{ms}}ms latency.",
+        "lastQueueRun": "Last queue run: {{value}}.",
+        "mailerLine": "Mailer: {{mailer}}. {{configured}}"
       },
       "notifications": {
         "title": "Notifications",
@@ -484,6 +1388,45 @@
         "desc": "Platform anomalies are surfaced here.",
         "cta": "Review"
       }
+    }
+  },
+  "enums": {
+    "transmission": {
+      "automatic": "Automatic",
+      "manual": "Manual",
+      "semi_automatic": "Semi-automatic (Triptronic)"
+    },
+    "fuel": {
+      "petrol": "Petrol",
+      "diesel": "Diesel",
+      "hybrid": "Hybrid",
+      "electric": "Electric",
+      "lpg": "LPG"
+    },
+    "category": {
+      "economy": "Economy",
+      "compact": "Compact",
+      "comfort": "Comfort",
+      "prestige": "Prestige",
+      "premium": "Premium",
+      "luxury": "Luxury",
+      "suv": "SUV",
+      "minivan": "Minivan",
+      "van": "Van",
+      "electric": "Electric"
+    },
+    "feature": {
+      "Air conditioning": "Air conditioning",
+      "GPS navigation": "GPS navigation",
+      "Bluetooth": "Bluetooth",
+      "USB charger": "USB charger",
+      "Backup camera": "Backup camera",
+      "Cruise control": "Cruise control",
+      "Heated seats": "Heated seats",
+      "Sunroof": "Sunroof",
+      "Keyless entry": "Keyless entry",
+      "Apple CarPlay": "Apple CarPlay",
+      "Android Auto": "Android Auto"
     }
   }
 }

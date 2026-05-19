@@ -10,6 +10,7 @@ const langs: { code: Locale; label: string }[] = [
   { code: 'tr', label: 'Türkçe' },
   { code: 'en', label: 'English' },
   { code: 'ru', label: 'Русский' },
+  { code: 'fa', label: 'فارسی' },
 ];
 
 export function LanguageSwitcher() {

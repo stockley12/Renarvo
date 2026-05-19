@@ -137,7 +137,7 @@ export function PublicHeader() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="hidden md:inline-flex gap-2 pl-1.5 pr-3">
+                <Button variant="ghost" size="sm" className="hidden md:inline-flex gap-2 ps-1.5 pe-3">
                   <Avatar className="h-7 w-7">
                     <AvatarFallback className="bg-gradient-brand text-white text-[11px]">
                       {initialsOf(user.name)}
@@ -168,10 +168,10 @@ export function PublicHeader() {
           ) : (
             <>
               <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
-                <Link to="/login"><LogIn className="h-4 w-4 mr-1.5" />{t('nav.login')}</Link>
+                <Link to="/login"><LogIn className="h-4 w-4 me-1.5" />{t('nav.login')}</Link>
               </Button>
                 <Button asChild size="sm" className="hidden md:inline-flex bg-gradient-brand text-white border-0 hover:opacity-90">
-                <Link to="/register"><UserIcon className="h-4 w-4 mr-1.5" />{t('nav.signUp')}</Link>
+                <Link to="/register"><UserIcon className="h-4 w-4 me-1.5" />{t('nav.signUp')}</Link>
               </Button>
             </>
           )}
@@ -196,7 +196,7 @@ export function PublicHeader() {
                     <span>{t('nav.cars')}</span>
                     <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
                   </summary>
-                  <div className="ml-3 mt-1 mb-2 border-l border-border/60 pl-3 flex flex-col gap-0.5">
+                  <div className="ms-3 mt-1 mb-2 border-s border-border/60 ps-3 flex flex-col gap-0.5">
                     {carCategories.map((c) => (
                       <Link
                         key={c.key}

@@ -77,7 +77,7 @@
       },
       "cancel": {
         "q": "Ücretsiz iptal edebilir miyim?",
-        "a": "Çoğu rezervasyon, alış zamanından 48 saat öncesine kadar ücretsiz iptal edilebilir."
+        "a": "Çoğu rezervasyon, alış zamanından 24 saat öncesine kadar ücretsiz iptal edilebilir."
       },
       "documents": {
         "q": "Alış günü hangi belgeleri getirmeliyim?",
@@ -98,13 +98,13 @@
     "support": "Yerel 7/24 destek",
     "supportDesc": "WhatsApp & telefon, 3 dilde",
     "freeCancel": "Ücretsiz İptal",
-    "freeCancelDesc": "Alıştan 48 saat öncesine kadar",
+    "freeCancelDesc": "Alıştan 24 saat öncesine kadar",
     "verified": "Doğrulanmış firmalar",
     "verifiedDesc": "Sadece lisanslı yerel firmalar"
   },
   "cars": {
     "perDay": "/ gün",
-    "priceUnit": "fiyat aralığı (₺/gün)",
+    "priceUnit": "Fiyat aralığı (₺/gün)",
     "filters": "Filtreler",
     "category": "Kategori",
     "brand": "Marka",
@@ -125,6 +125,7 @@
       "map": "Harita"
     },
     "instantOnly": "Sadece anında onay",
+    "instantBook": "Anında rezervasyon",
     "viewDetails": "Detay",
     "bookNow": "Hemen Kirala",
     "noResults": "Bu filtrelere uygun araç yok",
@@ -166,7 +167,7 @@
     "serviceFee": "Hizmet bedeli",
     "taxKdv": "KDV",
     "total": "Toplam",
-    "freeCancellation": "Alıştan 48 saat öncesine kadar ücretsiz iptal",
+    "freeCancellation": "Alıştan 24 saat öncesine kadar ücretsiz iptal",
     "similarCars": "Benzer araçlar"
   },
   "booking": {
@@ -195,7 +196,39 @@
     "continueToPayment": "Ödemeye Devam Et",
     "payWithCard": "Kredi Kartı ile Öde",
     "paymentDisabled": "Ödeme sistemi henüz aktif değil. Yakında!",
-    "success": "Rezervasyon onaylandı"
+    "success": "Rezervasyon onaylandı",
+    "roleGateTitle": "Rezervasyonlar müşteri hesapları içindir",
+    "signedInAs": "Şu anda giriş yapan:",
+    "roleGateBody": "Lütfen çıkış yapıp bir müşteri hesabı kullanın veya yeni bir hesap oluşturun.",
+    "backHome": "Ana sayfa",
+    "createAccount": "Müşteri hesabı oluştur",
+    "validationName": "Adınızı ve soyadınızı girin",
+    "validationEmail": "Geçerli bir e-posta girin",
+    "validationPhone": "Telefon numarası girin",
+    "createFailed": "Rezervasyon oluşturulamadı",
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "email": "E-posta",
+    "phone": "Telefon",
+    "drivingLicense": "Ehliyet numarası",
+    "dateOfBirth": "Doğum tarihi",
+    "flightNumber": "Uçuş numarası (isteğe bağlı)",
+    "reservationCode": "Rezervasyon kodu:",
+    "confirmationEmail": "Onay e-postanıza kısa sürede gönderilecektir.",
+    "browseMoreCars": "Daha fazla araç gör",
+    "perDay": "/gün",
+    "daysCount_one": "{{count}} gün",
+    "daysCount_other": "{{count}} gün",
+    "reservationConfirmed": "Rezervasyon {{code}} onaylandı.",
+    "defaultPickupAirport": "{{city}} Havalimanı",
+    "idNumber": "Kimlik / Pasaport numarası",
+    "documentUploads": "Gerekli belgeler",
+    "licensePhoto": "Ehliyet fotoğrafı (ön yüz)",
+    "idPhoto": "Kimlik / Pasaport fotoğrafı",
+    "validationLicense": "Ehliyet numarası zorunludur",
+    "validationId": "Kimlik / Pasaport numarası zorunludur",
+    "validationLicensePhoto": "Lütfen ehliyet fotoğrafınızı yükleyin",
+    "validationIdPhoto": "Lütfen kimlik / pasaport fotoğrafınızı yükleyin"
   },
   "payment": {
     "result": {
@@ -277,7 +310,34 @@
       "failed": "Başvuru başarısız",
       "passwordTooShort": "Şifre en az 8 karakter olmalı"
     },
-    "signedOut": "Çıkış yapıldı"
+    "signedOut": "Çıkış yapıldı",
+    "login": "Giriş yap",
+    "loggedIn": "Giriş yapıldı",
+    "loginFailed": "Giriş başarısız",
+    "welcomeBack": "Renarvo'ya tekrar hoş geldiniz",
+    "email": "E-posta",
+    "password": "Şifre",
+    "signingIn": "Giriş yapılıyor…",
+    "forgotPassword": "Şifremi unuttum?",
+    "newHere": "Yeni misiniz?",
+    "createAccount": "Hesap oluşturun",
+    "areYouCompany": "Kiralık araç firması mısınız?",
+    "registerFleet": "Filonuzu kaydedin",
+    "resetPassword": "Şifre sıfırla",
+    "enterEmailForReset": "Sıfırlama bağlantısı almak için e-postanızı girin",
+    "resetLinkSent": "Sıfırlama bağlantısı gönderildi (e-postanızı kontrol edin)",
+    "resetLinkSentDesc": "E-posta kayıtlıysa bir dakika içinde sıfırlama bağlantısı alacaksınız.",
+    "resetLinkFailed": "Sıfırlama bağlantısı gönderilemedi",
+    "sending": "Gönderiliyor…",
+    "sendLink": "Bağlantı gönder",
+    "newPassword": "Yeni şifre",
+    "confirm": "Onayla",
+    "passwordsNotMatch": "Şifreler eşleşmiyor",
+    "invalidResetLink": "Geçersiz sıfırlama bağlantısı",
+    "passwordUpdated": "Şifre güncellendi",
+    "resetFailed": "Sıfırlama başarısız",
+    "updating": "Güncelleniyor…",
+    "update": "Güncelle"
   },
   "common": {
     "viewAll": "Tümünü Gör",
@@ -297,7 +357,12 @@
     "yes": "Evet",
     "no": "Hayır",
     "total": "Toplam",
-    "free": "Ücretsiz"
+    "free": "Ücretsiz",
+    "city": "Şehir",
+    "on": "açık",
+    "off": "kapalı",
+    "saveChanges": "Değişiklikleri kaydet",
+    "actionFailed": "İşlem başarısız"
   },
   "footer": {
     "rights": "Tüm hakları saklıdır.",
@@ -317,6 +382,60 @@
     "email": "E-posta",
     "instagram": "Instagram",
     "facebook": "Facebook"
+  },
+  "static": {
+    "about": {
+      "title": "Renarvo hakkında",
+      "body": "Renarvo, Kuzey Kıbrıs'ı ziyaret eden gezginleri yerel, lisanslı kiralık araç firmalarıyla buluşturur — Girne'deki aile işletmelerinden Ercan Havalimanı'ndaki büyük filolara kadar. 2024'te başladık çünkü KKTC'de araç kiralamak hâlâ telefon, WhatsApp mesajları ve fiyat tahmini demekti. Bunu değiştirdik."
+    },
+    "howItWorks": {
+      "title": "Nasıl çalışır",
+      "body": "Ercan, Larnaca veya adanın herhangi bir yerinden iniş yapacağınız yeri söyleyin, tarihlerinizi seçin ve gerçek yerel firmalardan araçları karşılaştırın. Online veya teslim alırken ödeme yapın, alıştan 24 saat öncesine kadar ücretsiz iptal edin. Aracı teslim eden Renarvo değil, sizin seçtiğiniz firmadır."
+    },
+    "forCompanies": {
+      "title": "Firmalar için",
+      "body": "Lefkoşa'dan Karpaz'a kadar herhangi bir yerde kiralık araç filonuz varsa, Renarvo'da listeleyin. Kurulum ücreti yok. Sadece onaylanan rezervasyonlardan komisyon ödersiniz. Web sitesini, ödemeleri ve çok dilli müşteri desteğini biz yönetiyoruz; siz filonuzu yolda tutun."
+    },
+    "help": {
+      "title": "Yardım merkezi",
+      "body": "Bir rezervasyon, iade veya KKTC ehliyet sorunuyla ilgili yardıma mı ihtiyacınız var? Bilgi bankamızda arayın veya ekibimize yazın — Türkçe, İngilizce ve Rusça yanıt veriyoruz."
+    },
+    "contact": {
+      "title": "Bize ulaşın",
+      "body": "Renarvo Ltd · Girne, Kuzey Kıbrıs · hello@renarvo.com · +90 533 000 00 00. Bir iş günü içinde yanıt veriyoruz."
+    },
+    "terms": {
+      "title": "Kullanım şartları",
+      "body": "Renarvo'yu kullanarak bu şartları kabul etmiş olursunuz. Rezervasyonlar sizinle seçtiğiniz kiralama firması arasındaki sözleşmelerdir. Renarvo rezervasyonu ve ödemeyi kolaylaştırır ancak araç işletmecisi değildir. Tam metin talep üzerine sunulabilir."
+    },
+    "privacy": {
+      "title": "Gizlilik politikası",
+      "body": "Sadece rezervasyonunuzu onaylamak için gereken bilgileri toplarız ve verilerinizi satmayız. Ehliyet bilgileriniz yalnızca rezervasyon yaptığınız kiralık araç firmasıyla paylaşılır, başka kimseyle değil. Tam politika talep üzerine sunulabilir."
+    }
+  },
+  "companies": {
+    "title": "Yerel kiralık araç firmaları",
+    "subtitle": "Kuzey Kıbrıs genelinde lisanslı operatörler — Girne'den Karpaz'a",
+    "searchPlaceholder": "Firma ara...",
+    "loading": "Firmalar yükleniyor…",
+    "empty": "Henüz firma yok",
+    "emptyDesc": "Renarvo'da ilk kiralık araç firması siz olun. Doğrulama hızlı ve ücretsiz.",
+    "registerFleet": "Filonuzu kaydedin",
+    "since": "Kuruluş",
+    "cars": "araç"
+  },
+  "companyDetail": {
+    "notFound": "Firma bulunamadı.",
+    "browseCompanies": "Firmalara göz at",
+    "since": "Kuruluş",
+    "carsCount": "{{count}} araç",
+    "reviewsCount": "{{count}} yorum",
+    "about": "Hakkında",
+    "noDescription": "Bu firma henüz bir açıklama eklememiş.",
+    "fleet": "Filo",
+    "loadingFleet": "Filo yükleniyor…",
+    "noCars": "Henüz araç listelenmemiş.",
+    "browseAll": "Tümüne göz at"
   },
   "panel": {
     "common": {
@@ -358,6 +477,8 @@
       "overview": {
         "unavailable": "Genel bakış kullanılamıyor",
         "loadFailed": "Genel bakış yüklenemedi.",
+        "loading": "Genel bakış yükleniyor...",
+        "welcomeBack": "Tekrar hoş geldiniz",
         "subtitle": "İşletmenizin bugünkü görünümü",
         "revenueThisMonth": "Bu ay gelir",
         "activeRentals": "Aktif kiralamalar",
@@ -374,6 +495,607 @@
         "allClear": "Her şey yolunda. Bekleyen görev yok.",
         "recentReservations": "Son rezervasyonlar",
         "noReservations": "Henüz rezervasyon yok."
+      },
+      "reservations": {
+        "subtitle": "Tüm rezervasyonlarınızı yönetin",
+        "booking": "Rezervasyon",
+        "flight": "Uçuş",
+        "note": "Not",
+        "pricing": "Fiyatlandırma",
+        "baseDays": "Temel ({{days}} gün)",
+        "discount": "İndirim",
+        "cancellationReason": "İptal nedeni",
+        "driverDocuments": "Sürücü belgeleri",
+        "confirm": "Onayla",
+        "reject": "Reddet",
+        "markPickedUp": "Teslim alındı işaretle",
+        "markReturned": "Teslim edildi işaretle",
+        "rejectionReasonRequired": "Ret nedeni zorunlu",
+        "rejectionReasonPlaceholder": "Neden (ret için zorunlu)",
+        "updateFailed": "Rezervasyon güncellenemedi",
+        "dates": "Tarihler",
+        "payment": "Ödeme",
+        "noneForStatus": "{{status}} durumunda rezervasyon yok",
+        "reservationCode": "Rezervasyon {{code}}",
+        "viaTiko": "TIKO ile",
+        "status": {
+          "pending": "Beklemede",
+          "confirmed": "Onaylandı",
+          "active": "Aktif",
+          "completed": "Tamamlandı",
+          "cancelled": "İptal edildi"
+        },
+        "paymentStatus": {
+          "paid": "Ödendi",
+          "pending": "Beklemede",
+          "unpaid": "Ödenmedi",
+          "failed": "Başarısız",
+          "refunded": "İade edildi",
+          "authorized": "Provizyon",
+          "captured": "Tahsil edildi",
+          "cancelled": "İptal edildi"
+        },
+        "toast": {
+          "confirm": "Rezervasyon onaylandı",
+          "reject": "Rezervasyon reddedildi",
+          "pickup": "Teslim alındı",
+          "return": "Rezervasyon tamamlandı"
+        }
+      },
+      "stats": {
+        "loading": "İstatistikler yükleniyor...",
+        "subtitle": "Gerçek rezervasyonlardan performans içgörüleri",
+        "totalBookings12m": "Toplam rezervasyon (12 ay)",
+        "totalRevenue12m": "Toplam gelir (12 ay)",
+        "avgBookingValue": "Ortalama rezervasyon değeri",
+        "cancellationRate": "İptal oranı",
+        "revenueByMonth": "Aylık gelir",
+        "bookingsByMonth": "Aylık rezervasyon",
+        "statusBreakdown90d": "Duruma göre rezervasyonlar (son 90 gün)",
+        "topCars90d": "En iyi araçlar (son 90 gün)",
+        "carId": "Araç ID",
+        "bookings": "Rezervasyon",
+        "revenue": "Gelir",
+        "noData": "Henüz veri yok.",
+        "noDataWithHint": "Henüz veri yok — tamamlanan rezervasyonlar burada görünecek."
+      },
+      "sections": {
+        "customers": {
+          "searchPlaceholder": "İsim veya e-posta ile ara...",
+          "totalSpent": "Toplam harcama",
+          "lastBooking": "Son rezervasyon",
+          "noCustomers": "Henüz müşteri yok"
+        },
+        "branches": {
+          "addBranch": "Şube ekle",
+          "namePlaceholder": "Ercan Havalimanı ofisi",
+          "cityPlaceholder": "Lefkoşa",
+          "address": "Adres",
+          "addressPlaceholder": "Ercan Havalimanı, geliş terminali",
+          "noBranches": "Henüz şube yok. İlk teslim noktanızı ekleyin.",
+          "confirms": {
+            "deleteBranch": "Bu şube silinsin mi?"
+          },
+          "toasts": {
+            "nameAddressRequired": "İsim ve adres gerekli",
+            "branchAdded": "Şube eklendi",
+            "couldNotAddBranch": "Şube eklenemedi",
+            "branchDeleted": "Şube silindi",
+            "couldNotDelete": "Silinemedi"
+          }
+        },
+        "staff": {
+          "inviteMember": "Üye davet et",
+          "role": "Rol",
+          "sendInvite": "Davet gönder",
+          "noStaff": "Henüz personel yok",
+          "roles": {
+            "manager": "Yönetici",
+            "agent": "Temsilci"
+          },
+          "confirms": {
+            "removeStaffMember": "Bu personel üyesi kaldırılsın mı?"
+          },
+          "toasts": {
+            "nameEmailRequired": "İsim ve e-posta gerekli",
+            "memberInvited": "{{name}} eklendi — SMTP yapılandırıldığında şifre sıfırlama e-postası alacak.",
+            "couldNotInviteStaff": "Personel davet edilemedi",
+            "staffRemoved": "Personel kaldırıldı",
+            "couldNotRemove": "Kaldırılamadı"
+          }
+        },
+        "reviews": {
+          "noReviews": "Henüz yorum yok — müşteriler rezervasyonlarını tamamladığında burada görünecek.",
+          "guest": "Misafir",
+          "yourReply": "Cevabınız",
+          "reply": "Cevapla",
+          "typeResponse": "Cevabınızı yazın...",
+          "postReply": "Cevabı gönder",
+          "toasts": {
+            "replyCannotBeEmpty": "Cevap boş olamaz",
+            "replyPosted": "Cevap gönderildi",
+            "couldNotPostReply": "Cevap gönderilemedi"
+          }
+        },
+        "payouts": {
+          "bankAccount": "Banka hesabı",
+          "iban": "IBAN",
+          "accountHolder": "Hesap sahibi",
+          "accountHolderPlaceholder": "Şirket Ltd",
+          "bankOptional": "Banka (isteğe bağlı)",
+          "saveBankInfo": "Banka bilgisini kaydet",
+          "payoutHistory": "Ödeme geçmişi",
+          "noPayouts": "Henüz ödeme yok.",
+          "paid": "Ödenen",
+          "toasts": {
+            "ibanHolderRequired": "IBAN ve hesap sahibi adı gerekli",
+            "bankAccountSaved": "Banka hesabı kaydedildi",
+            "couldNotSaveBank": "Banka hesabı kaydedilemedi"
+          }
+        },
+        "documents": {
+          "uploadNewDocument": "Yeni belge yükle",
+          "type": "Tür",
+          "expiresOptional": "Son geçerlilik (isteğe bağlı)",
+          "fileLabel": "Dosya (PDF/JPG/PNG, en fazla 10 MB)",
+          "upload": "Yükle",
+          "noDocuments": "Henüz belge yüklenmedi.",
+          "expiresOn": "Bitiş: {{date}}",
+          "noExpiry": "Süresiz",
+          "docTypes": {
+            "tradeRegistry": "Ticaret sicili",
+            "taxCertificate": "Vergi belgesi",
+            "operatingLicense": "Faaliyet ruhsatı",
+            "insuranceCertificate": "Sigorta belgesi"
+          },
+          "toasts": {
+            "pickFileFirst": "Önce bir dosya seçin",
+            "documentUploaded": "Belge yüklendi — yönetici inceleyecek",
+            "uploadFailed": "Yükleme başarısız"
+          }
+        },
+        "settings": {
+          "companyProfile": "Şirket profili",
+          "phoneInternal": "Telefon (iç kullanım)",
+          "address": "Adres",
+          "languagesSpoken": "Konuşulan diller",
+          "languagesPlaceholder": "Türkçe, English, Русский",
+          "rentalPolicy": "Kiralama politikası",
+          "minimumRentalDays": "Minimum kiralama günü",
+          "minimumDriverAge": "Minimum sürücü yaşı",
+          "kilometrePolicy": "Kilometre politikası",
+          "kmLimitPerDay": "Günlük kilometre limiti (km)",
+          "studentFriendly": "Öğrenci dostu",
+          "studentFriendlyHint": "Kayıtlı öğrenci olan sürücüler için standart yaş sınırından daha düşük yaşa izin verin.",
+          "roadside247": "7/24 yol yardımı",
+          "roadside247Hint": "Her araçta 7/24 destek rozeti göster.",
+          "publicContactSocial": "Genel iletişim ve sosyal",
+          "publicEmail": "Genel e-posta",
+          "website": "Web sitesi",
+          "kmPolicy": {
+            "unlimited": "Sınırsız",
+            "perDayLimit": "Günlük limit",
+            "totalLimit": "Toplam limit"
+          },
+          "toasts": {
+            "settingsSaved": "Ayarlar kaydedildi",
+            "couldNotSave": "Kaydedilemedi"
+          }
+        },
+        "extras": {
+          "addExtra": "Ekstra ekle",
+          "displayName": "Görünen ad",
+          "chargeMode": "Ücretlendirme tipi",
+          "pricePerDay": "Günlük fiyat (TRY)",
+          "pricePerRental": "Kiralama başına fiyat (TRY)",
+          "activeShownToCustomers": "Aktif (müşterilere görünür)",
+          "descriptionOptional": "Açıklama (isteğe bağlı)",
+          "noExtras": "Henüz ekstra yok. Müşterilerin rezervasyonda seçebilmesi için en az GPS, çocuk koltuğu ve ek sürücü ekleyin.",
+          "active": "Aktif",
+          "hidden": "Gizli",
+          "pricePerDayFormatted": "₺{{amount}} / gün",
+          "pricePerRentalFormatted": "₺{{amount}} / kiralama",
+          "chargeModes": {
+            "perDay": "Günlük",
+            "perRental": "Kiralama başına"
+          },
+          "optionLabels": {
+            "mobileWifi": "Mobil WiFi",
+            "borderCrossing": "Sınır geçişi",
+            "custom": "Özel"
+          },
+          "confirms": {
+            "deleteExtra": "Bu ekstra silinsin mi?"
+          },
+          "toasts": {
+            "extraUpdated": "Ekstra güncellendi",
+            "extraAdded": "Ekstra eklendi",
+            "couldNotSave": "Kaydedilemedi",
+            "deleted": "Silindi",
+            "couldNotDelete": "Silinemedi"
+          }
+        },
+        "insurance": {
+          "addPackage": "Paket ekle",
+          "tier": "Seviye",
+          "displayName": "Görünen ad",
+          "pricePerDay": "Günlük fiyat (TRY)",
+          "deductibleAmount": "Muafiyet tutarı (TRY)",
+          "deductiblePlaceholder": "örn. 5000",
+          "coverageAmount": "Teminat tutarı (TRY)",
+          "coveragePlaceholder": "örn. 200000",
+          "active": "Aktif",
+          "hidden": "Gizli",
+          "descriptionPlaceholder": "Nelerin dahil olup olmadığını yazın…",
+          "includedFeatures": "Dahil olan özellikler (satır başına bir tane)",
+          "includedFeaturesPlaceholder": "Hırsızlık\nÜçüncü şahıs sorumluluk\nCam hasarı",
+          "noPackages": "Henüz sigorta paketi yok. Müşterilerin rezervasyonda seçebilmesi için Mini, Orta ve Full paketleri ekleyin.",
+          "pricePerDayFormatted": "₺{{amount}} / gün",
+          "deductibleFormatted": "Muafiyet: ₺{{amount}}",
+          "coverageFormatted": "Teminat: ₺{{amount}}",
+          "tierLabels": {
+            "mini": "Mini Güvence (Mini)",
+            "mid": "Orta Güvence (Mid)",
+            "full": "Full Güvence (Full)"
+          },
+          "confirms": {
+            "deletePackage": "Bu paket silinsin mi?"
+          },
+          "toasts": {
+            "packageUpdated": "Paket güncellendi",
+            "packageAdded": "Paket eklendi",
+            "couldNotSave": "Kaydedilemedi",
+            "deleted": "Silindi",
+            "couldNotDelete": "Silinemedi"
+          }
+        }
+      },
+      "fleet": {
+        "vehicles_one": "{{count}} araç",
+        "vehicles_other": "{{count}} araç",
+        "searchPlaceholder": "Marka, model veya plakaya göre ara...",
+        "titles": {
+          "addNewCar": "Yeni araç ekle",
+          "editCar": "Aracı düzenle"
+        },
+        "actions": {
+          "addCar": "Araç ekle",
+          "addFirstCar": "İlk aracını ekle",
+          "createCar": "Araç oluştur"
+        },
+        "table": {
+          "plate": "Plaka",
+          "pricePerDay": "Günlük fiyat",
+          "noCars": "Henüz araç yok"
+        },
+        "status": {
+          "active": "Aktif",
+          "draft": "Taslak",
+          "maintenance": "Bakım",
+          "hidden": "Gizli"
+        },
+        "transmission": {
+          "automatic": "Otomatik",
+          "manual": "Manuel",
+          "semi_automatic": "Yarı-otomatik (Triptronic)"
+        },
+        "fuel": {
+          "petrol": "Benzin",
+          "diesel": "Dizel",
+          "hybrid": "Hibrit",
+          "electric": "Elektrik"
+        },
+        "confirms": {
+          "removeImage": "Bu görsel kaldırılsın mı?",
+          "deleteCar": "Bu araç silinsin mi? Bu işlem geri alınamaz."
+        },
+        "toasts": {
+          "brandModelPriceRequired": "Marka, model ve günlük fiyat zorunludur",
+          "imagesFailed_one": "Araç kaydedildi ama {{count}} görsel yüklenemedi",
+          "imagesFailed_other": "Araç kaydedildi ama {{count}} görsel yüklenemedi",
+          "carUpdated": "Araç güncellendi",
+          "carCreated": "Araç oluşturuldu",
+          "couldNotSaveCar": "Araç kaydedilemedi",
+          "imageRemoved": "Görsel kaldırıldı",
+          "couldNotRemoveImage": "Görsel kaldırılamadı",
+          "fileTooLarge": "{{name}} çok büyük (maks 5 MB)",
+          "carDeleted": "Araç silindi",
+          "couldNotDeleteCar": "Araç silinemedi"
+        },
+        "form": {
+          "brand": "Marka",
+          "brandPlaceholder": "Toyota",
+          "model": "Model",
+          "modelPlaceholder": "Corolla",
+          "year": "Yıl",
+          "plate": "Plaka",
+          "platePlaceholder": "34 AB 1234",
+          "vin": "VIN",
+          "doors": "Kapı",
+          "cityPlaceholder": "Girne",
+          "dailyPrice": "Günlük fiyat (₺)",
+          "weeklyPrice": "Haftalık fiyat (₺)",
+          "deposit": "Depozito (₺)",
+          "minDriverAgeDefault": "Min sürücü yaşı (varsayılan)",
+          "minDriverAgeOverride": "Min sürücü yaşı (özel)",
+          "useCompanyDefault": "Firma varsayılanını kullan",
+          "enginePower": "Motor gücü (HP)",
+          "enginePowerPlaceholder": "örn. 130",
+          "engineSize": "Motor hacmi (cc)",
+          "engineSizePlaceholder": "örn. 1600",
+          "dailyKmLimit": "Günlük km limiti (bu araç)",
+          "mileagePolicy": "Kilometre politikası",
+          "mileagePolicyPlaceholder": "Günde 300 km dahil, sonrası ₺2/km",
+          "photoGallery": "Fotoğraf galerisi (iç + dış)",
+          "deleteImageAria": "Görsel sil",
+          "pendingImages_one": "Yüklemeye hazır {{count}} yeni görsel:",
+          "pendingImages_other": "Yüklemeye hazır {{count}} yeni görsel:",
+          "uploadHelp": "Birden çok JPG / PNG / WEBP yükleyin (maks 5 MB her biri)"
+        }
+      },
+      "extra": {
+        "calendar": {
+          "subtitle": "Filonuzdaki rezervasyonlar",
+          "weekdays": {
+            "mon": "Pzt",
+            "tue": "Sal",
+            "wed": "Çar",
+            "thu": "Per",
+            "fri": "Cum",
+            "sat": "Cmt",
+            "sun": "Paz"
+          },
+          "activeRental": "Aktif kiralama",
+          "allBookingsThisMonth": "Bu ayki tüm rezervasyonlar",
+          "noBookingsInMonth": "Bu ay rezervasyon yok."
+        },
+        "pricing": {
+          "subtitle": "Süre indirimleri ve promosyon kodları",
+          "tabs": {
+            "lengthDiscounts": "Süre indirimleri",
+            "promoCodes": "Promosyon kodları"
+          },
+          "weeklyMonthlyDiscounts": "Haftalık ve aylık indirimler",
+          "weeklyDiscount": "Haftalık indirim (7+ gün)",
+          "monthlyDiscount": "Aylık indirim (28+ gün)",
+          "createPromoCode": "Promosyon kodu oluştur",
+          "type": "Tür",
+          "value": "Değer",
+          "maxUses": "Maks kullanım",
+          "expires": "Bitiş",
+          "existingCodes": "Mevcut kodlar",
+          "noPromoCodes": "Henüz promosyon kodu yok.",
+          "discountType": {
+            "percent": "Yüzde",
+            "fixed": "Sabit (₺)"
+          },
+          "actions": {
+            "createCode": "Kod oluştur"
+          },
+          "table": {
+            "discount": "İndirim",
+            "used": "Kullanım",
+            "active": "Aktif"
+          },
+          "confirms": {
+            "deletePromoCode": "Bu promosyon kodu silinsin mi?"
+          },
+          "toasts": {
+            "promoCodeRequired": "Promosyon kodu gerekli",
+            "promoCodeCreated": "Promosyon kodu oluşturuldu",
+            "couldNotCreatePromo": "Promosyon oluşturulamadı",
+            "couldNotUpdatePromo": "Güncellenemedi",
+            "promoDeleted": "Promosyon silindi",
+            "couldNotDeletePromo": "Silinemedi",
+            "lengthDiscountsSaved": "Süre indirimleri kaydedildi",
+            "couldNotSaveDiscounts": "Kaydedilemedi"
+          }
+        },
+        "messages": {
+          "subtitle": "Müşteri sohbeti ve ön rezervasyon talepleri",
+          "loadingMessages": "Mesajlar yükleniyor...",
+          "noConversations": "Henüz konuşma yok.",
+          "customer": "Müşteri",
+          "conversation": "Konuşma",
+          "typeMessage": "Mesaj yaz...",
+          "toasts": {
+            "couldNotSendMessage": "Mesaj gönderilemedi"
+          }
+        },
+        "integrations": {
+          "subtitle": "Renarvo'yu araçlarınızla bağlayın",
+          "comingSoon": "Entegrasyonlar yakında geliyor. TIKO ödeme eklentileri, WhatsApp Business, Google Calendar ve webhook abonelikleri platform yöneticiniz etkinleştirdiğinde burada yapılandırılacak."
+        }
+      },
+      "sections": {
+        "customers": {
+          "searchPlaceholder": "İsim veya e-postaya göre ara...",
+          "totalSpent": "Toplam harcama",
+          "lastBooking": "Son rezervasyon",
+          "noCustomers": "Henüz müşteri yok"
+        },
+        "branches": {
+          "addBranch": "Şube ekle",
+          "address": "Adres",
+          "namePlaceholder": "Ercan Havalimanı ofisi",
+          "cityPlaceholder": "Lefkoşa",
+          "addressPlaceholder": "Ercan Havalimanı, geliş",
+          "noBranches": "Henüz şube yok. İlk teslim noktanızı ekleyin.",
+          "confirms": {
+            "deleteBranch": "Bu şube silinsin mi?"
+          },
+          "toasts": {
+            "nameAddressRequired": "İsim ve adres gerekli",
+            "branchAdded": "Şube eklendi",
+            "couldNotAddBranch": "Şube eklenemedi",
+            "branchDeleted": "Şube silindi",
+            "couldNotDelete": "Silinemedi"
+          }
+        },
+        "staff": {
+          "inviteMember": "Üye davet et",
+          "role": "Rol",
+          "sendInvite": "Davet gönder",
+          "noStaff": "Henüz personel yok",
+          "roles": {
+            "manager": "Yönetici",
+            "agent": "Temsilci"
+          },
+          "confirms": {
+            "removeStaffMember": "Bu personel kaldırılsın mı?"
+          },
+          "toasts": {
+            "nameEmailRequired": "İsim ve e-posta gerekli",
+            "memberInvited": "{{name}} eklendi — SMTP yapılandırıldığında şifre sıfırlama e-postası alacak.",
+            "couldNotInviteStaff": "Personel davet edilemedi",
+            "staffRemoved": "Personel kaldırıldı",
+            "couldNotRemove": "Kaldırılamadı"
+          }
+        },
+        "reviews": {
+          "noReviews": "Henüz yorum yok — müşteriler rezervasyonlarını tamamladıktan sonra görünecek.",
+          "guest": "Misafir",
+          "yourReply": "Yanıtınız",
+          "reply": "Yanıtla",
+          "typeResponse": "Yanıtınızı yazın...",
+          "postReply": "Yanıtı gönder",
+          "toasts": {
+            "replyCannotBeEmpty": "Yanıt boş olamaz",
+            "replyPosted": "Yanıt gönderildi",
+            "couldNotPostReply": "Yanıt gönderilemedi"
+          }
+        },
+        "payouts": {
+          "bankAccount": "Banka hesabı",
+          "accountHolder": "Hesap sahibi",
+          "accountHolderPlaceholder": "Company Ltd",
+          "bankOptional": "Banka (opsiyonel)",
+          "saveBankInfo": "Banka bilgisini kaydet",
+          "payoutHistory": "Ödeme geçmişi",
+          "noPayouts": "Henüz ödeme yok.",
+          "paid": "Ödendi",
+          "toasts": {
+            "ibanHolderRequired": "IBAN ve hesap sahibi adı gerekli",
+            "bankAccountSaved": "Banka hesabı kaydedildi",
+            "couldNotSaveBank": "Banka hesabı kaydedilemedi"
+          }
+        },
+        "documents": {
+          "uploadNewDocument": "Yeni belge yükle",
+          "type": "Tür",
+          "expiresOptional": "Bitiş (opsiyonel)",
+          "fileLabel": "Dosya (PDF/JPG/PNG, maks 10 MB)",
+          "upload": "Yükle",
+          "noDocuments": "Henüz belge yüklenmedi.",
+          "expiresOn": "Bitiş {{date}}",
+          "noExpiry": "Süresiz",
+          "docTypes": {
+            "tradeRegistry": "Ticaret sicili",
+            "taxCertificate": "Vergi belgesi",
+            "operatingLicense": "Faaliyet ruhsatı",
+            "insuranceCertificate": "Sigorta belgesi"
+          },
+          "toasts": {
+            "pickFileFirst": "Önce bir dosya seçin",
+            "documentUploaded": "Belge yüklendi — yönetici inceleyecek",
+            "uploadFailed": "Yükleme başarısız"
+          }
+        },
+        "settings": {
+          "companyProfile": "Firma profili",
+          "phoneInternal": "Telefon (iç)",
+          "address": "Adres",
+          "languagesSpoken": "Konuşulan diller",
+          "languagesPlaceholder": "Türkçe, English, Русский",
+          "rentalPolicy": "Kiralama politikası",
+          "minimumRentalDays": "Minimum kiralama günü",
+          "minimumDriverAge": "Minimum sürücü yaşı",
+          "kilometrePolicy": "Kilometre politikası",
+          "kmLimitPerDay": "Günlük kilometre limiti (km)",
+          "studentFriendly": "Öğrenci dostu",
+          "studentFriendlyHint": "Kayıtlı öğrencilere standart minimumdan daha düşük yaşta sürücüye izin ver.",
+          "roadside247": "7/24 yol yardımı",
+          "roadside247Hint": "Her araçta 7/24 destek rozeti göster.",
+          "publicContactSocial": "Genel iletişim ve sosyal",
+          "publicEmail": "Genel e-posta",
+          "website": "Web sitesi",
+          "kmPolicy": {
+            "unlimited": "Sınırsız",
+            "perDayLimit": "Günlük limit",
+            "totalLimit": "Toplam limit"
+          },
+          "toasts": {
+            "settingsSaved": "Ayarlar kaydedildi",
+            "couldNotSave": "Kaydedilemedi"
+          }
+        },
+        "extras": {
+          "addExtra": "Ekstra ekle",
+          "displayName": "Görünen ad",
+          "chargeMode": "Ücretlendirme modu",
+          "pricePerDay": "Günlük fiyat (TRY)",
+          "pricePerRental": "Kiralama başı fiyat (TRY)",
+          "activeShownToCustomers": "Aktif (müşterilere görünür)",
+          "descriptionOptional": "Açıklama (opsiyonel)",
+          "noExtras": "Henüz ekstra yok. Müşterilerin rezervasyonda seçebilmesi için en az GPS, çocuk koltuğu ve ek sürücü ekleyin.",
+          "active": "Aktif",
+          "hidden": "Gizli",
+          "pricePerDayFormatted": "₺{{amount}} / gün",
+          "pricePerRentalFormatted": "₺{{amount}} / kiralama",
+          "chargeModes": {
+            "perDay": "Günlük",
+            "perRental": "Kiralama başı"
+          },
+          "optionLabels": {
+            "mobileWifi": "Mobil WiFi",
+            "borderCrossing": "Sınır geçişi",
+            "custom": "Özel"
+          },
+          "confirms": {
+            "deleteExtra": "Bu ekstra silinsin mi?"
+          },
+          "toasts": {
+            "extraUpdated": "Ekstra güncellendi",
+            "extraAdded": "Ekstra eklendi",
+            "couldNotSave": "Kaydedilemedi",
+            "deleted": "Silindi",
+            "couldNotDelete": "Silinemedi"
+          }
+        },
+        "insurance": {
+          "addPackage": "Paket ekle",
+          "tier": "Seviye",
+          "displayName": "Görünen ad",
+          "pricePerDay": "Günlük fiyat (TRY)",
+          "deductibleAmount": "Muafiyet tutarı (TRY)",
+          "deductiblePlaceholder": "örn. 5000",
+          "coverageAmount": "Kapsam tutarı (TRY)",
+          "coveragePlaceholder": "örn. 200000",
+          "active": "Aktif",
+          "hidden": "Gizli",
+          "descriptionPlaceholder": "Neler dahil / hariç açıklayın...",
+          "includedFeatures": "Dahil özellikler (satır başı)",
+          "includedFeaturesPlaceholder": "Hırsızlık\nÜçüncü taraf sorumluluk\nCam hasarı",
+          "noPackages": "Henüz sigorta paketi yok. Müşterilerin rezervasyonda seçebilmesi için Mini, Orta ve Full ekleyin.",
+          "pricePerDayFormatted": "₺{{amount}} / gün",
+          "deductibleFormatted": "Muafiyet: ₺{{amount}}",
+          "coverageFormatted": "Kapsam: ₺{{amount}}",
+          "tierLabels": {
+            "mini": "Mini güvence (Mini)",
+            "mid": "Orta güvence (Mid)",
+            "full": "Tam güvence (Full)"
+          },
+          "confirms": {
+            "deletePackage": "Bu paket silinsin mi?"
+          },
+          "toasts": {
+            "packageUpdated": "Paket güncellendi",
+            "packageAdded": "Paket eklendi",
+            "couldNotSave": "Kaydedilemedi",
+            "deleted": "Silindi",
+            "couldNotDelete": "Silinemedi"
+          }
+        }
       },
       "pro": {
         "title": "Pro'ya yükselt",
@@ -411,6 +1133,8 @@
       "overview": {
         "title": "Platform özeti",
         "subtitle": "Renarvo genel görünüm",
+        "loading": "Platform metrikleri yükleniyor...",
+        "unavailable": "Özet kullanılamıyor.",
         "gmvThisMonth": "Bu ay GMV",
         "activeCompanies": "Aktif firmalar",
         "pendingCompanies": "Bekleyen firmalar",
@@ -419,6 +1143,26 @@
         "reservationsTotal": "Toplam rezervasyon",
         "reservationsThisMonth": "Bu ay rezervasyon",
         "openApprovals": "Açık onaylar"
+      },
+      "companies": {
+        "company": "Firma",
+        "owner": "Sahip",
+        "noneForStatus": "{{status}} durumda firma yok",
+        "suspend": "Askıya al",
+        "reinstate": "Yeniden etkinleştir",
+        "rejectionReason": "Ret nedeni?",
+        "suspensionReason": "Askıya alma nedeni?",
+        "status": {
+          "approved": "Onaylandı",
+          "pending": "Beklemede",
+          "suspended": "Askıda",
+          "rejected": "Reddedildi"
+        },
+        "toast": {
+          "approve": "Firma onaylandı",
+          "suspend": "Firma askıya alındı",
+          "reject": "Firma reddedildi"
+        }
       },
       "approvals": {
         "title": "Onay kuyruğu",
@@ -430,7 +1174,70 @@
         "approve": "Onayla",
         "reject": "Reddet",
         "approvedToast": "Firma onaylandı — artık araç listeleyebilir",
-        "rejectedToast": "Firma reddedildi"
+        "rejectedToast": "Firma reddedildi",
+        "rejectionReasonPrompt": "Ret nedeni?"
+      },
+      "catalog": {
+        "title": "Katalog moderasyonu",
+        "searchPlaceholder": "Araç ara...",
+        "pricePerDay": "Günlük fiyat",
+        "noCars": "Katalogda araç yok",
+        "flag": "İşaretle",
+        "hide": "Gizle",
+        "reasonHideOptional": "Gizleme nedeni (isteğe bağlı)?",
+        "reasonFlag": "İşaretleme nedeni?",
+        "hiddenToast": "Araç genel katalogdan gizlendi",
+        "flaggedToast": "Araç işaretlendi",
+        "status": {
+          "active": "Aktif",
+          "draft": "Taslak",
+          "maintenance": "Bakım",
+          "hidden": "Gizli"
+        }
+      },
+      "reservations": {
+        "title": "Tüm rezervasyonlar",
+        "detail": "Rezervasyon",
+        "anyPayment": "Herhangi bir ödeme",
+        "searchPlaceholder": "Kod, e-posta, firma, TIKO ref...",
+        "payment": "Ödeme",
+        "paidTry": "Ödenen (TRY)",
+        "noReservations": "Rezervasyon yok",
+        "status": {
+          "pending": "Beklemede",
+          "confirmed": "Onaylandı",
+          "active": "Aktif",
+          "completed": "Tamamlandı",
+          "cancelled": "İptal edildi"
+        },
+        "paymentStatus": {
+          "paid": "Ödendi",
+          "pending": "Beklemede",
+          "unpaid": "Ödenmedi",
+          "failed": "Başarısız",
+          "refunded": "İade edildi",
+          "authorized": "Provizyon",
+          "captured": "Tahsil edildi",
+          "cancelled": "İptal edildi"
+        }
+      },
+      "payments": {
+        "anyProvider": "Herhangi bir sağlayıcı",
+        "anyStatus": "Herhangi bir durum",
+        "searchPlaceholder": "Sipariş, işlem, kod, e-posta...",
+        "reservation": "Rezervasyon",
+        "provider": "Sağlayıcı",
+        "amountTry": "Tutar (TRY)",
+        "captured": "Tahsil",
+        "none": "Ödeme yok",
+        "status": {
+          "pending": "Beklemede",
+          "authorized": "Provizyon",
+          "captured": "Tahsil edildi",
+          "failed": "Başarısız",
+          "cancelled": "İptal edildi",
+          "refunded": "İade edildi"
+        }
       },
       "users": {
         "title": "Kullanıcılar",
@@ -450,7 +1257,104 @@
         "statusBanned": "Yasaklı",
         "noUsers": "Kullanıcı bulunamadı",
         "ban": "Yasakla",
-        "unban": "Yasağı kaldır"
+        "unban": "Yasağı kaldır",
+        "reasonForBan": "Yasak nedeni?",
+        "bannedToast": "Kullanıcı yasaklandı",
+        "unbannedToast": "Kullanıcı yasağı kaldırıldı",
+        "roleUnknown": "{{role}}",
+        "statusUnknown": "{{status}}"
+      },
+      "reviews": {
+        "title": "Yorum moderasyonu",
+        "none": "Platformda henüz yorum yok.",
+        "anonymous": "Anonim",
+        "hide": "Gizle",
+        "restore": "Geri yükle",
+        "hiddenToast": "Yorum gizlendi",
+        "restoredToast": "Yorum geri yüklendi",
+        "status": {
+          "visible": "Görünür",
+          "hidden": "Gizli"
+        }
+      },
+      "content": {
+        "placeholder": "İçerik yönetimi (banner, blog, SSS) yol haritasında. Şimdilik başlık metinlerini Ayarlar'dan yönetebilirsiniz."
+      },
+      "finance": {
+        "gmvThisMonth": "Bu ay GMV",
+        "commissionThisMonth": "Bu ay komisyon",
+        "pendingPayouts": "Bekleyen ödemeler",
+        "paidPayouts": "Ödenen ödemeler",
+        "companyPayouts": "Firma ödemeleri",
+        "period": "Dönem",
+        "gross": "Brüt",
+        "commission": "Komisyon",
+        "net": "Net",
+        "noPayouts": "Henüz ödeme yok",
+        "markPaid": "Ödendi işaretle",
+        "bankTransferReference": "Banka havale referansı?",
+        "payoutMarkedPaid": "Ödeme ödendi olarak işaretlendi",
+        "status": {
+          "pending": "Beklemede",
+          "paid": "Ödendi",
+          "failed": "Başarısız",
+          "cancelled": "İptal edildi"
+        }
+      },
+      "settings": {
+        "title": "Platform ayarları",
+        "loading": "Ayarlar yükleniyor...",
+        "none": "Henüz ayar yok.",
+        "saved": "Ayarlar kaydedildi",
+        "saveFailed": "Kaydedilemedi"
+      },
+      "audit": {
+        "subtitle": "Tüm ayrıcalıklı işlemler burada kayıt altına alınır",
+        "allSeverities": "Tüm seviyeler",
+        "filterPlaceholder": "İşleme göre filtrele...",
+        "when": "Zaman",
+        "actor": "İşlemi yapan",
+        "action": "İşlem",
+        "target": "Hedef",
+        "severityLabel": "Seviye",
+        "none": "Filtreye uygun denetim kaydı yok",
+        "system": "sistem",
+        "severity": {
+          "info": "Bilgi",
+          "warning": "Uyarı",
+          "critical": "Kritik"
+        }
+      },
+      "system": {
+        "loading": "Sistem telemetrisi yükleniyor...",
+        "unavailable": "Sistem sağlığı kullanılamıyor.",
+        "subtitle": "Platform servislerinin anlık durumu",
+        "serviceDatabase": "Veritabanı",
+        "serviceDisk": "Disk",
+        "serviceFx": "Kur oranları",
+        "serviceQueue": "İş kuyruğu",
+        "servicePhp": "PHP çalışma zamanı",
+        "serviceMailer": "E-posta (mailer)",
+        "latency": "Gecikme · {{ms}}ms",
+        "connectionFailed": "Bağlantı başarısız",
+        "diskUsed": "Kullanım · {{used}}% / {{total}} GB",
+        "unknown": "Bilinmiyor",
+        "lastRefresh": "Son yenileme · {{value}}",
+        "neverRefreshed": "Hiç yenilenmedi",
+        "queueInfo": "{{pending}} bekliyor · {{failed}} başarısız (7g)",
+        "phpInfo": "v{{version}} · OPcache {{opcache}} · {{memory}}MB tepe",
+        "mailerInfoConfigured": "{{mailer}} · {{host}}:{{port}}",
+        "mailerInfoNotConfigured": "{{mailer}} modu (SMTP yapılandırılmamış)",
+        "allOperational": "Tüm sistemler çalışıyor",
+        "needsAttention": "Bazı kontroller dikkat gerektiriyor",
+        "autoRefresh": "Her 30 sn otomatik yenilenir",
+        "operational": "çalışıyor",
+        "attention": "dikkat",
+        "notes": "Notlar",
+        "databaseLine": "Veritabanı: {{status}}",
+        "databaseConnected": "Bağlı, {{ms}}ms gecikme.",
+        "lastQueueRun": "Son kuyruk çalışması: {{value}}.",
+        "mailerLine": "Mailer: {{mailer}}. {{configured}}"
       },
       "notifications": {
         "title": "Duyurular",
@@ -484,6 +1388,45 @@
         "desc": "Platform anormallikleri burada listelenir.",
         "cta": "İncele"
       }
+    }
+  },
+  "enums": {
+    "transmission": {
+      "automatic": "Otomatik",
+      "manual": "Manuel",
+      "semi_automatic": "Yarı-otomatik (Triptronic)"
+    },
+    "fuel": {
+      "petrol": "Benzin",
+      "diesel": "Dizel",
+      "hybrid": "Hibrit",
+      "electric": "Elektrikli",
+      "lpg": "LPG"
+    },
+    "category": {
+      "economy": "Ekonomik",
+      "compact": "Kompakt",
+      "comfort": "Konfor",
+      "prestige": "Prestij",
+      "premium": "Premium",
+      "luxury": "Lüks",
+      "suv": "SUV",
+      "minivan": "Minivan",
+      "van": "Van",
+      "electric": "Elektrikli"
+    },
+    "feature": {
+      "Air conditioning": "Klima",
+      "GPS navigation": "GPS navigasyon",
+      "Bluetooth": "Bluetooth",
+      "USB charger": "USB şarj",
+      "Backup camera": "Geri görüş kamerası",
+      "Cruise control": "Hız sabitleme",
+      "Heated seats": "Isıtmalı koltuklar",
+      "Sunroof": "Açılır tavan",
+      "Keyless entry": "Anahtarsız giriş",
+      "Apple CarPlay": "Apple CarPlay",
+      "Android Auto": "Android Auto"
     }
   }
 }

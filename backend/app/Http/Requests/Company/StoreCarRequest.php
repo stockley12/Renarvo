@@ -18,7 +18,7 @@ class StoreCarRequest extends FormRequest
             'model' => ['required', 'string', 'max:64'],
             'year' => ['required', 'integer', 'min:1990', 'max:'.(int) date('Y') + 1],
             'category' => ['required', 'in:economy,compact,comfort,prestige,premium,luxury,suv,minivan,van,electric'],
-            'transmission' => ['required', 'in:manual,automatic'],
+            'transmission' => ['required', 'in:manual,automatic,semi_automatic'],
             'fuel' => ['required', 'in:petrol,diesel,hybrid,electric'],
             'seats' => ['required', 'integer', 'min:1', 'max:9'],
             'doors' => ['required', 'integer', 'min:2', 'max:6'],

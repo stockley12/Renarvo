@@ -9,6 +9,7 @@ use App\Models\Car;
 use App\Models\CompanyExtra;
 use App\Models\InsurancePackage;
 use App\Models\Reservation;
+use App\Models\ReservationDocument;
 use App\Models\ReservationExtra;
 use App\Services\AuditService;
 use App\Services\AvailabilityService;
@@ -59,7 +60,7 @@ class CustomerReservationController extends Controller
     public function show(Request $request, int $id): JsonResponse
     {
         $reservation = Reservation::query()
-            ->with(['car', 'company', 'extras', 'insurancePackage', 'currentPayment'])
+            ->with(['car', 'company', 'extras', 'insurancePackage', 'currentPayment', 'documents'])
             ->where('customer_id', $request->user()->id)
             ->findOrFail($id);
 
@@ -189,6 +190,7 @@ class CustomerReservationController extends Controller
                 'promo_code' => $quote['promo_applied'],
                 'flight_number' => $data['flight_number'] ?? null,
                 'driving_license_number' => $data['driving_license_number'] ?? null,
+                'id_number' => $data['id_number'] ?? null,
                 'date_of_birth' => $data['date_of_birth'] ?? null,
                 'notes' => $data['notes'] ?? null,
             ]);
@@ -209,6 +211,21 @@ class CustomerReservationController extends Controller
             'code' => $reservation->code,
             'company_id' => $reservation->company_id,
         ], 'info', $request);
+
+        // Store uploaded document photos
+        foreach (['driving_license_photo' => 'driving_license', 'id_photo' => 'id_passport'] as $field => $type) {
+            if ($request->hasFile($field)) {
+                $file = $request->file($field);
+                $path = $file->store("reservation-docs/{$reservation->id}", 'public');
+                ReservationDocument::query()->create([
+                    'reservation_id' => $reservation->id,
+                    'type' => $type,
+                    'path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                ]);
+            }
+        }
 
         $this->jobs->dispatch('email.reservation_confirmation', [
             'reservation_id' => $reservation->id,

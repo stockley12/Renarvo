@@ -20,7 +20,7 @@ export default function DashOverview() {
   if (overview.isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh] text-muted-foreground">
-        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> Loading overview...
+        <Loader2 className="h-6 w-6 mr-2 animate-spin" /> {t('panel.company.overview.loading')}
         
       </div>
     );
@@ -42,7 +42,7 @@ export default function DashOverview() {
     <div className="space-y-6 max-w-7xl">
       <div>
         <h1 className="font-display text-3xl font-extrabold">
-          Welcome back{settings.data?.name ? `, ${settings.data.name}` : ''}
+          {t('panel.company.overview.welcomeBack')}{settings.data?.name ? `, ${settings.data.name}` : ''}
         </h1>
         <p className="text-muted-foreground mt-1">{t('panel.company.overview.subtitle')}</p>
       </div>
@@ -148,7 +148,7 @@ export default function DashOverview() {
                     <td className="py-3 text-muted-foreground">{formatDate(r.pickup_at, locale)}</td>
                     <td className="py-3">
                       <Badge variant="outline" className="capitalize">
-                        {r.status}
+                        {t(`panel.company.reservations.status.${r.status}`)}
                       </Badge>
                     </td>
                     <td className="py-3 text-right font-semibold">{formatPrice(r.total_price, currency, locale)}</td>

@@ -34,7 +34,7 @@ class Reservation extends Model
         'actual_return_at', 'pickup_location', 'return_location', 'days',
         'base_price', 'extras_price', 'discount_amount', 'service_fee', 'tax_amount', 'total_price',
         'currency_snapshot', 'fx_rate_snapshot', 'status', 'idempotency_key', 'promo_code',
-        'cancellation_reason', 'notes', 'flight_number', 'driving_license_number', 'date_of_birth',
+        'cancellation_reason', 'notes', 'flight_number', 'driving_license_number', 'id_number', 'date_of_birth',
         'insurance_package_id', 'insurance_price', 'deposit_amount_snapshot',
         'payment_status', 'current_payment_id',
     ];
@@ -82,6 +82,11 @@ class Reservation extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(ReservationDocument::class);
     }
 
     public function currentPayment(): BelongsTo

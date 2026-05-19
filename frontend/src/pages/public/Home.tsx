@@ -13,7 +13,7 @@ import { categoryIcon, categoryName } from '@/lib/categories';
 
 export default function Home() {
   const { t, i18n } = useTranslation();
-  const lang = (i18n.language?.slice(0, 2) === 'ru' ? 'ru' : i18n.language?.slice(0, 2) === 'en' ? 'en' : 'tr') as 'tr' | 'en' | 'ru';
+  const lang = (i18n.language?.slice(0, 2) === 'ru' ? 'ru' : i18n.language?.slice(0, 2) === 'en' ? 'en' : i18n.language?.slice(0, 2) === 'fa' ? 'fa' : 'tr') as 'tr' | 'en' | 'ru' | 'fa';
 
   const popularQ = usePublicCars({ limit: 8, sort: 'rating_desc' });
   const popular = popularQ.data?.data ?? [];

@@ -22,7 +22,7 @@ export function CarCard({ car }: Props) {
         <CarImage seed={seed} className="group-hover:scale-105 transition-transform duration-500" />
         {car.instant_book && (
           <Badge className="absolute top-3 left-3 bg-success text-success-foreground border-0 gap-1">
-            <Zap className="h-3 w-3" /> Instant book
+            <Zap className="h-3 w-3" /> {t('cars.instantBook')}
           </Badge>
         )}
         {car.rating_avg > 0 && (
@@ -36,14 +36,14 @@ export function CarCard({ car }: Props) {
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3 className="font-display font-bold text-lg leading-tight">{car.brand} {car.model}</h3>
-              <p className="text-xs text-muted-foreground capitalize">{car.year} • {car.category}</p>
+              <p className="text-xs text-muted-foreground capitalize">{car.year} • {t(`enums.category.${car.category}`, car.category)}</p>
             </div>
           </div>
         </div>
         <div className="flex flex-wrap gap-1.5 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1"><Settings2 className="h-3 w-3" />{car.transmission}</span>
+          <span className="inline-flex items-center gap-1"><Settings2 className="h-3 w-3" />{t(`enums.transmission.${car.transmission}`, car.transmission)}</span>
           <span>•</span>
-          <span className="inline-flex items-center gap-1"><Fuel className="h-3 w-3" />{car.fuel}</span>
+          <span className="inline-flex items-center gap-1"><Fuel className="h-3 w-3" />{t(`enums.fuel.${car.fuel}`, car.fuel)}</span>
           <span>•</span>
           <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" />{car.seats}</span>
           <span>•</span>

@@ -85,6 +85,7 @@ rsync -a --delete \
   --exclude '_api.php' \
   --exclude '.htaccess' \
   --exclude 'uploads' \
+  --exclude 'storage' \
   "$REPO_ROOT/frontend/dist/" \
   "$PUBLIC_HTML/"
 
@@ -95,6 +96,10 @@ chmod 644 "$PUBLIC_HTML/_api.php" "$PUBLIC_HTML/.htaccess"
 
 if [ ! -e "$PUBLIC_HTML/uploads" ]; then
   ln -snf "$REPO_ROOT/backend/storage/app/uploads" "$PUBLIC_HTML/uploads" || true
+fi
+
+if [ ! -e "$PUBLIC_HTML/storage" ]; then
+  ln -snf "$REPO_ROOT/backend/storage/app/public" "$PUBLIC_HTML/storage" || true
 fi
 
 # ----- OPcache reset -----

@@ -56,8 +56,11 @@ export default function Booking() {
   const [email, setEmail] = useState(user?.email ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [licenseNumber, setLicenseNumber] = useState('');
+  const [idNumber, setIdNumber] = useState('');
   const [dob, setDob] = useState('');
   const [flight, setFlight] = useState('');
+  const [licensePhoto, setLicensePhoto] = useState<File | null>(null);
+  const [idPhoto, setIdPhoto] = useState<File | null>(null);
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
   const [confirmedReservationId, setConfirmedReservationId] = useState<number | null>(null);
   const [tikoIframeUrl, setTikoIframeUrl] = useState<string | null>(null);
@@ -68,7 +71,7 @@ export default function Booking() {
   const tikoEnabled = tikoConfig.data?.enabled === true;
 
   useEffect(() => {
-    if (car && !pickupLocation) setPickupLocation(`${car.city} Havalimanı`);
+    if (car && !pickupLocation) setPickupLocation(t('booking.defaultPickupAirport', { city: car.city }));
   }, [car, pickupLocation]);
   useEffect(() => {
     if (user) {
@@ -84,7 +87,7 @@ export default function Booking() {
   if (sessionLoading || carQ.isLoading) {
     return (
       <div className="container py-20 text-center text-muted-foreground flex flex-col items-center gap-2">
-        <Loader2 className="h-5 w-5 animate-spin" /> Loading…
+        <Loader2 className="h-5 w-5 animate-spin" /> {t('common.loading')}
       </div>
     );
   }
@@ -97,14 +100,13 @@ export default function Booking() {
   if (user.role !== 'customer') {
     return (
       <div className="container py-20 text-center max-w-md">
-        <h1 className="font-display text-2xl font-bold mb-2">Bookings are for customer accounts</h1>
+        <h1 className="font-display text-2xl font-bold mb-2">{t('booking.roleGateTitle')}</h1>
         <p className="text-sm text-muted-foreground mb-5">
-          You're signed in as <span className="font-mono">{user.role}</span>. Please sign out and use a customer account, or
-          create a new one.
+          {t('booking.signedInAs')} <span className="font-mono">{user.role}</span>. {t('booking.roleGateBody')}
         </p>
         <div className="flex justify-center gap-3">
-          <Button asChild variant="outline"><Link to="/">Back home</Link></Button>
-          <Button asChild className="bg-gradient-brand text-white border-0"><Link to="/register">Create customer account</Link></Button>
+          <Button asChild variant="outline"><Link to="/">{t('booking.backHome')}</Link></Button>
+          <Button asChild className="bg-gradient-brand text-white border-0"><Link to="/register">{t('booking.createAccount')}</Link></Button>
         </div>
       </div>
     );
@@ -113,7 +115,7 @@ export default function Booking() {
   if (carQ.isError || !car) {
     return (
       <div className="container py-20 text-center">
-        Car not found. <Link to="/cars" className="text-primary">Browse cars</Link>
+        {t('carDetail.notFound')} <Link to="/cars" className="text-primary">{t('carDetail.browseCars')}</Link>
       </div>
     );
   }
@@ -150,9 +152,13 @@ export default function Booking() {
   const minDaysViolated = days < minDays;
 
   function validateCustomerStep(): string | null {
-    if (!first.trim() || !last.trim()) return 'Enter your first and last name';
-    if (!email.trim() || !email.includes('@')) return 'Enter a valid email';
-    if (!phone.trim()) return 'Enter a phone number';
+    if (!first.trim() || !last.trim()) return t('booking.validationName');
+    if (!email.trim() || !email.includes('@')) return t('booking.validationEmail');
+    if (!phone.trim()) return t('booking.validationPhone');
+    if (!licenseNumber.trim()) return t('booking.validationLicense');
+    if (!idNumber.trim()) return t('booking.validationId');
+    if (!licensePhoto) return t('booking.validationLicensePhoto');
+    if (!idPhoto) return t('booking.validationIdPhoto');
     return null;
   }
 
@@ -171,9 +177,12 @@ export default function Booking() {
       pickup_location: pickupLocation,
       flight_number: flight || undefined,
       driving_license_number: licenseNumber || undefined,
+      id_number: idNumber || undefined,
       date_of_birth: dob || undefined,
       insurance_package_id: insurancePackageId,
       extra_ids: extraIds.length > 0 ? extraIds : undefined,
+      driving_license_photo: licensePhoto,
+      id_photo: idPhoto,
     };
     const res = await create.mutateAsync(payload);
     setConfirmCode(res.code);
@@ -194,7 +203,7 @@ export default function Booking() {
       if (!tikoEnabled) {
         // Pay-on-pickup fallback (existing flow)
         setStep(3);
-        toast.success(t('booking.success'), { description: `Reservation ${reservation.code} confirmed.` });
+        toast.success(t('booking.success'), { description: t('booking.reservationConfirmed', { code: reservation.code }) });
         return;
       }
 
@@ -203,7 +212,7 @@ export default function Booking() {
       setTikoOrderId(result.order_id);
       setTikoIframeUrl(result.iframe_url);
     } catch (err) {
-      const msg = err instanceof ApiClientError ? err.message : err instanceof Error ? err.message : 'Could not create reservation';
+      const msg = err instanceof ApiClientError ? err.message : err instanceof Error ? err.message : t('booking.createFailed');
       toast.error(msg);
     }
   }
@@ -294,7 +303,7 @@ export default function Booking() {
                           <div className="text-sm font-semibold capitalize">{p.name || tierLabel}</div>
                           <div className="text-xs text-muted-foreground mt-1">{tierLabel}</div>
                           <div className="text-sm font-bold text-primary mt-2">
-                            +{formatPrice(Number(p.price_per_day), currency, locale)}/day
+                            +{formatPrice(Number(p.price_per_day), currency, locale)}{t('booking.perDay')}
                           </div>
                           {p.description && <div className="text-[11px] text-muted-foreground mt-1 line-clamp-2">{p.description}</div>}
                         </button>
@@ -320,7 +329,7 @@ export default function Booking() {
                           ? t('common.free')
                           : ex.charge_mode === 'per_rental'
                           ? `+${formatPrice(Number(ex.price_per_rental), currency, locale)}`
-                          : `+${formatPrice(Number(ex.price_per_day), currency, locale)}/day`;
+                          : `+${formatPrice(Number(ex.price_per_day), currency, locale)}${t('booking.perDay')}`;
                       return (
                         <label key={ex.id} className="flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-muted/50 active:bg-muted">
                           <div className="flex items-center gap-3 min-w-0">
@@ -348,13 +357,43 @@ export default function Booking() {
                 <User className="h-5 w-5 text-primary" /> {t('booking.step2')}
               </h2>
               <div className="grid sm:grid-cols-2 gap-4">
-                <div><Label>First name</Label><Input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="Ahmet" autoComplete="given-name" /></div>
-                <div><Label>Last name</Label><Input value={last} onChange={(e) => setLast(e.target.value)} placeholder="Yılmaz" autoComplete="family-name" /></div>
-                <div><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ahmet@example.com" autoComplete="email" /></div>
-                <div><Label>Phone</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+90 555 ..." autoComplete="tel" /></div>
-                <div><Label>Driving license #</Label><Input value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} placeholder="34 AB 123456" /></div>
-                <div><Label>Date of birth</Label><Input type="date" value={dob} onChange={(e) => setDob(e.target.value)} /></div>
-                <div className="sm:col-span-2"><Label>Flight number (optional)</Label><Input value={flight} onChange={(e) => setFlight(e.target.value)} placeholder="TK 1234" /></div>
+                <div><Label>{t('booking.firstName')}</Label><Input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="Ahmet" autoComplete="given-name" /></div>
+                <div><Label>{t('booking.lastName')}</Label><Input value={last} onChange={(e) => setLast(e.target.value)} placeholder="Yılmaz" autoComplete="family-name" /></div>
+                <div><Label>{t('booking.email')}</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ahmet@example.com" autoComplete="email" /></div>
+                <div><Label>{t('booking.phone')}</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+90 555 ..." autoComplete="tel" /></div>
+                <div><Label>{t('booking.drivingLicense')} *</Label><Input value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} placeholder="34 AB 123456" required /></div>
+                <div><Label>{t('booking.idNumber')} *</Label><Input value={idNumber} onChange={(e) => setIdNumber(e.target.value)} placeholder="12345678901" required /></div>
+                <div><Label>{t('booking.dateOfBirth')}</Label><Input type="date" value={dob} onChange={(e) => setDob(e.target.value)} /></div>
+                <div><Label>{t('booking.flightNumber')}</Label><Input value={flight} onChange={(e) => setFlight(e.target.value)} placeholder="TK 1234" /></div>
+              </div>
+
+              <Separator className="my-4" />
+              <h3 className="font-semibold text-sm mb-3">{t('booking.documentUploads')} *</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm">{t('booking.licensePhoto')}</Label>
+                  <div className="mt-1.5">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setLicensePhoto(e.target.files?.[0] ?? null)}
+                      className="text-sm"
+                    />
+                    {licensePhoto && <p className="text-xs text-success mt-1">{licensePhoto.name}</p>}
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-sm">{t('booking.idPhoto')}</Label>
+                  <div className="mt-1.5">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setIdPhoto(e.target.files?.[0] ?? null)}
+                      className="text-sm"
+                    />
+                    {idPhoto && <p className="text-xs text-success mt-1">{idPhoto.name}</p>}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -389,11 +428,11 @@ export default function Booking() {
                 <PartyPopper className="h-10 w-10 text-white" />
               </div>
               <h2 className="font-display text-2xl sm:text-3xl font-extrabold mb-2">{t('booking.success')}</h2>
-              <p className="text-muted-foreground mb-6">Reservation code: <span className="font-mono font-bold text-foreground">{confirmCode ?? '—'}</span></p>
-              <p className="text-sm text-muted-foreground mb-6">A confirmation will be sent to your email shortly.</p>
+              <p className="text-muted-foreground mb-6">{t('booking.reservationCode')} <span className="font-mono font-bold text-foreground">{confirmCode ?? '—'}</span></p>
+              <p className="text-sm text-muted-foreground mb-6">{t('booking.confirmationEmail')}</p>
               <div className="flex flex-col sm:flex-row justify-center gap-3">
-                <Button variant="outline" asChild><Link to="/cars">Browse more cars</Link></Button>
-                <Button className="bg-gradient-brand text-white border-0" onClick={() => navigate('/')}>Back home</Button>
+                <Button variant="outline" asChild><Link to="/cars">{t('booking.browseMoreCars')}</Link></Button>
+                <Button className="bg-gradient-brand text-white border-0" onClick={() => navigate('/')}>{t('booking.backHome')}</Button>
               </div>
             </div>
           )}
@@ -438,7 +477,7 @@ export default function Booking() {
           <div className="text-xs text-muted-foreground mb-4">{car.year} • {car.city}</div>
           <Separator className="mb-3" />
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">{days} day{days > 1 ? 's' : ''} × {formatPrice(car.price_per_day, currency, locale)}</span><span>{formatPrice(baseSubtotal, currency, locale)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">{t('booking.daysCount', { count: days })} × {formatPrice(car.price_per_day, currency, locale)}</span><span>{formatPrice(baseSubtotal, currency, locale)}</span></div>
             {extrasPrice > 0 && (
               <div className="flex justify-between"><span className="text-muted-foreground">{t('booking.extras')}</span><span>{formatPrice(extrasPrice, currency, locale)}</span></div>
             )}

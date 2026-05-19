@@ -14,12 +14,14 @@ import { CarCard } from '@/components/public/CarCard';
 import { useApp } from '@/store/app';
 import { formatPrice, storageUrl } from '@/lib/format';
 import { usePublicCar, usePublicCars } from '@/lib/hooks/useCars';
+import { categoryName } from '@/lib/categories';
 
 export default function CarDetail() {
   const { id } = useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { currency, locale } = useApp();
   const navigate = useNavigate();
+  const lang = (i18n.language?.slice(0, 2) === 'ru' ? 'ru' : i18n.language?.slice(0, 2) === 'en' ? 'en' : i18n.language?.slice(0, 2) === 'fa' ? 'fa' : 'tr') as 'tr' | 'en' | 'ru' | 'fa';
 
   const carQ = usePublicCar(id);
   const car = carQ.data;
@@ -67,25 +69,32 @@ export default function CarDetail() {
           <div className="flex items-start justify-between gap-4 mb-3">
             <div>
               <h1 className="font-display text-3xl md:text-4xl font-extrabold">{car.brand} {car.model}</h1>
-              <p className="text-muted-foreground mt-1">{car.year} • {car.category}</p>
+              <p className="text-muted-foreground mt-1">{car.year} • {categoryName(car.category, lang)}</p>
             </div>
-            {car.rating_avg > 0 && (
-              <Badge className="bg-warning/15 text-warning border-warning/30 text-sm">
-                <Star className="h-3.5 w-3.5 mr-1 fill-warning" /> {Number(car.rating_avg).toFixed(1)} ({car.review_count})
-              </Badge>
-            )}
+            <div className="flex items-center gap-2">
+              {company?.student_friendly && (
+                <Badge className="bg-primary/10 text-primary border-primary/30 text-sm gap-1">
+                  <GraduationCap className="h-3.5 w-3.5" /> {t('carDetail.studentFriendly')}
+                </Badge>
+              )}
+              {car.rating_avg > 0 && (
+                <Badge className="bg-warning/15 text-warning border-warning/30 text-sm">
+                  <Star className="h-3.5 w-3.5 mr-1 fill-warning" /> {Number(car.rating_avg).toFixed(1)} ({car.review_count})
+                </Badge>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6">
             {[
               { icon: Users, label: t('carDetail.seats', { count: car.seats }) },
-              { icon: Settings2, label: car.transmission },
-              { icon: Fuel, label: car.fuel },
+              { icon: Settings2, label: t(`enums.transmission.${car.transmission}`, car.transmission) },
+              { icon: Fuel, label: t(`enums.fuel.${car.fuel}`, car.fuel) },
               { icon: MapPin, label: car.city },
             ].map((s, i) => (
               <Card key={i} className="p-4 flex items-center gap-3">
                 <s.icon className="h-5 w-5 text-primary" />
-                <span className="capitalize text-sm font-medium">{s.label}</span>
+                <span className="text-sm font-medium">{s.label}</span>
               </Card>
             ))}
           </div>
@@ -144,7 +153,7 @@ export default function CarDetail() {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {features.map((f) => (
                   <div key={f} className="flex items-center gap-2 text-sm">
-                    <Check className="h-4 w-4 text-success" /> {f}
+                    <Check className="h-4 w-4 text-success" /> {t(`enums.feature.${f}`, f)}
                   </div>
                 ))}
               </div>

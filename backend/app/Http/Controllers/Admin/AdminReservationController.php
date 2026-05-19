@@ -20,6 +20,7 @@ class AdminReservationController extends Controller
             'company:id,name,slug',
             'customer:id,name,email,phone',
             'currentPayment',
+            'documents',
         ]);
 
         if ($status = $request->query('status')) {

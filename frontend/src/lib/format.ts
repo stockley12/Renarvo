@@ -4,6 +4,7 @@ const localeMap: Record<Locale, string> = {
   tr: 'tr-TR',
   en: 'en-US',
   ru: 'ru-RU',
+  fa: 'fa-IR',
 };
 
 // Display-only conversion factors (mock, vs TRY base)

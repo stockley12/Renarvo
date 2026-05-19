@@ -3,12 +3,14 @@ import { initReactI18next } from 'react-i18next';
 import tr from './tr.json';
 import en from './en.json';
 import ru from './ru.json';
+import fa from './fa.json';
 
 i18n.use(initReactI18next).init({
   resources: {
     tr: { translation: tr },
     en: { translation: en },
     ru: { translation: ru },
+    fa: { translation: fa },
   },
   lng: (() => {
     try {
