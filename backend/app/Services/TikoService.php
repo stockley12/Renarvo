@@ -115,6 +115,7 @@ class TikoService
         }
 
         $merchantId = (string) config('services.tiko.merchant_id');
+        $userName = (string) config('services.tiko.username');
         $orderId = $payment->order_id ?: $this->mintOrderId($reservation->id);
         $amount = $this->formatAmount((int) $payment->amount_try);
         $currency = (string) config('services.tiko.currency', 'TRY');
@@ -130,6 +131,7 @@ class TikoService
 
         $payload = [
             'MerchantId' => $merchantId,
+            'UserName' => $userName,
             'OrderId' => $orderId,
             'Amount' => $amount,
             'Currency' => $currency,

@@ -41,6 +41,7 @@ return [
     'tiko' => [
         'mode' => env('TIKO_MODE', 'disabled'),
         'merchant_id' => env('TIKO_MERCHANT_ID'),
+        'username' => env('TIKO_USERNAME'),
         'secret' => env('TIKO_SECRET'),
         'password' => env('TIKO_PASSWORD'),
         'currency' => env('TIKO_CURRENCY', 'TRY'),
