@@ -15,7 +15,7 @@ class CreateReservationRequest extends FormRequest
     {
         return [
             'car_id' => ['required', 'integer', 'exists:cars,id'],
-            'pickup_at' => ['required', 'date', 'after:now'],
+            'pickup_at' => ['required', 'date', 'after:yesterday'],
             'return_at' => ['required', 'date', 'after:pickup_at'],
             'pickup_location' => ['required', 'string', 'max:191'],
             'return_location' => ['nullable', 'string', 'max:191'],
