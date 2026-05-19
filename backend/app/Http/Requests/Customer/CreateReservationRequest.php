@@ -20,9 +20,9 @@ class CreateReservationRequest extends FormRequest
             'pickup_location' => ['required', 'string', 'max:191'],
             'return_location' => ['nullable', 'string', 'max:191'],
             'flight_number' => ['nullable', 'string', 'max:16'],
-            'driving_license_number' => ['required', 'string', 'max:64'],
-            'id_number' => ['required', 'string', 'max:64'],
-            'date_of_birth' => ['required', 'date', 'before:today'],
+            'driving_license_number' => ['nullable', 'string', 'max:64'],
+            'id_number' => ['nullable', 'string', 'max:64'],
+            'date_of_birth' => ['nullable', 'date', 'before:today'],
             'notes' => ['nullable', 'string', 'max:2000'],
             'promo_code' => ['nullable', 'string', 'max:32'],
             // Document uploads
