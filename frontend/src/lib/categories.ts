@@ -21,7 +21,7 @@ export const CATEGORY_META: Record<string, CategoryMeta> = {
   prestige: { icon: 'Crown',       nameTr: 'Prestij',    nameEn: 'Prestige', nameRu: 'Престиж',     nameFa: 'پرستیژ' },
   premium:  { icon: 'Award',       nameTr: 'Premium',    nameEn: 'Premium',  nameRu: 'Премиум',     nameFa: 'ممتاز' },
   luxury:   { icon: 'Sparkles',    nameTr: 'Lüks',       nameEn: 'Luxury',   nameRu: 'Люкс',        nameFa: 'لوکس' },
-  suv:      { icon: 'Truck',       nameTr: 'SUV',        nameEn: 'SUV',      nameRu: 'Внедорожник', nameFa: 'شاسی‌بلند' },
+  suv:      { icon: 'Compass',     nameTr: 'SUV',        nameEn: 'SUV',      nameRu: 'Внедорожник', nameFa: 'شاسی‌بلند' },
   minivan:  { icon: 'Bus',         nameTr: 'Minivan',    nameEn: 'Minivan',  nameRu: 'Минивэн',     nameFa: 'مینی‌ون' },
   van:      { icon: 'Caravan',     nameTr: 'Van',        nameEn: 'Van',      nameRu: 'Фургон',      nameFa: 'ون' },
   electric: { icon: 'Zap',         nameTr: 'Elektrikli', nameEn: 'Electric', nameRu: 'Электро',     nameFa: 'برقی' },
