@@ -125,10 +125,14 @@ class TikoService
         $urlOk = (string) config('services.tiko.urls.return_ok');
         $urlFail = (string) config('services.tiko.urls.return_fail');
 
-        // hashStr for onus3D request (v1.1.3 spec):
-        //   MerchantId + OrderId + UrlOk + UrlFail + Amount + Currency + IsTest
-        $hashStr = $merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
+        // hashStr for onus3D request — trying with UserName included (H6 test):
+        //   MerchantId + UserName + OrderId + UrlOk + UrlFail + Amount + Currency + IsTest
+        $hashStr = $merchantId.$userName.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
         $hash = $this->generateHash($hashStr);
+
+        // Also compute hash WITHOUT UserName for fallback test (H6 alternative)
+        $hashStrAlt = $merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
+        $hashAlt = $this->generateHash($hashStrAlt);
 
         $payload = [
             'MerchantId' => $merchantId,
@@ -157,8 +161,9 @@ class TikoService
             'urlOk' => $urlOk,
             'urlFail' => $urlFail,
             'hashStr' => $hashStr,
-            'hashStr_fields' => 'MerchantId+OrderId+UrlOk+UrlFail+Amount+Currency+IsTest',
+            'hashStr_fields' => 'MerchantId+UserName+OrderId+UrlOk+UrlFail+Amount+Currency+IsTest',
             'hash' => $hash,
+            'hashAlt_without_username' => $hashAlt,
         ]);
 
         $resp = Http::asForm()
@@ -167,10 +172,54 @@ class TikoService
 
         $body = $this->safeJson($resp->body());
 
-        Log::info('TIKO onus3D response', [
+        Log::info('TIKO onus3D response attempt 1', [
             'http_status' => $resp->status(),
             'body' => $body,
         ]);
+
+        // If first attempt fails with UserName error, try with MerchantId as UserName (H7)
+        if (($body['Status'] ?? '') === '400' && str_contains((string) ($body['Description'] ?? ''), 'UserName')) {
+            Log::info('TIKO onus3D: H7 fallback — trying MerchantId as UserName');
+
+            $hashStrH7 = $merchantId.$merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
+            $hashH7 = $this->generateHash($hashStrH7);
+
+            $payloadH7 = $payload;
+            $payloadH7['UserName'] = $merchantId;
+            $payloadH7['Hash'] = $hashH7;
+
+            $resp = Http::asForm()
+                ->timeout((int) config('services.tiko.http_timeout', 20))
+                ->post($url, $payloadH7);
+
+            $body = $this->safeJson($resp->body());
+
+            Log::info('TIKO onus3D response H7 (MerchantId as UserName)', [
+                'http_status' => $resp->status(),
+                'body' => $body,
+            ]);
+
+            // If H7 also fails, try without UserName in hash
+            if (($body['Status'] ?? '') === '400') {
+                Log::info('TIKO onus3D: H7b fallback — MerchantId as UserName, hash WITHOUT UserName');
+
+                $hashStrH7b = $merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
+                $hashH7b = $this->generateHash($hashStrH7b);
+
+                $payloadH7['Hash'] = $hashH7b;
+
+                $resp = Http::asForm()
+                    ->timeout((int) config('services.tiko.http_timeout', 20))
+                    ->post($url, $payloadH7);
+
+                $body = $this->safeJson($resp->body());
+
+                Log::info('TIKO onus3D response H7b (MerchantId as UserName, hash without UserName)', [
+                    'http_status' => $resp->status(),
+                    'body' => $body,
+                ]);
+            }
+        }
 
         $payment->fill([
             'order_id' => $orderId,
