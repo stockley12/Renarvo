@@ -147,13 +147,18 @@ class TikoService
 
         Log::info('TIKO onus3D request', [
             'url' => $url,
+            'mode' => $this->mode(),
             'merchantId' => $merchantId,
             'userName' => $userName,
             'orderId' => $orderId,
             'amount' => $amount,
             'currency' => $currency,
             'isTest' => $isTest,
+            'urlOk' => $urlOk,
+            'urlFail' => $urlFail,
+            'hashStr' => $hashStr,
             'hashStr_fields' => 'MerchantId+OrderId+UrlOk+UrlFail+Amount+Currency+IsTest',
+            'hash' => $hash,
         ]);
 
         $resp = Http::asForm()
