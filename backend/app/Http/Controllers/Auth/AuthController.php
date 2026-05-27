@@ -28,7 +28,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        $this->throttle("register:{$request->ip()}", 10, 3600);
+        $this->throttle("register:{$request->ip()}", 20, 1800);
 
         $data = $request->validated();
 
@@ -48,8 +48,8 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $this->throttle("login:{$request->ip()}", 10, 600);
-        $this->throttle('login:'.strtolower((string) $request->input('email')), 8, 600);
+        $this->throttle("login:{$request->ip()}", 30, 300);
+        $this->throttle('login:'.strtolower((string) $request->input('email')), 20, 300);
 
         $user = User::query()->where('email', strtolower((string) $request->input('email')))->first();
 

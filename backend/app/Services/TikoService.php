@@ -35,6 +35,7 @@ class TikoService
     {
         return in_array($this->mode(), ['sandbox', 'live'], true)
             && (string) config('services.tiko.merchant_id') !== ''
+            && (string) config('services.tiko.username') !== ''
             && (string) config('services.tiko.secret') !== ''
             && (string) config('services.tiko.password') !== '';
     }
@@ -124,9 +125,9 @@ class TikoService
         $urlOk = (string) config('services.tiko.urls.return_ok');
         $urlFail = (string) config('services.tiko.urls.return_fail');
 
-        // hashStr for onus3D request (v1.1.3):
-        //   MerchantId + UserName + OrderId + UrlOk + UrlFail + Amount + Currency + IsTest
-        $hashStr = $merchantId.$userName.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
+        // hashStr for onus3D request (v1.1.3 spec):
+        //   MerchantId + OrderId + UrlOk + UrlFail + Amount + Currency + IsTest
+        $hashStr = $merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
         $hash = $this->generateHash($hashStr);
 
         $payload = [
@@ -143,11 +144,29 @@ class TikoService
         ];
 
         $url = $this->endpoint('onus3d');
+
+        Log::info('TIKO onus3D request', [
+            'url' => $url,
+            'merchantId' => $merchantId,
+            'userName' => $userName,
+            'orderId' => $orderId,
+            'amount' => $amount,
+            'currency' => $currency,
+            'isTest' => $isTest,
+            'hashStr_fields' => 'MerchantId+OrderId+UrlOk+UrlFail+Amount+Currency+IsTest',
+        ]);
+
         $resp = Http::asForm()
             ->timeout((int) config('services.tiko.http_timeout', 20))
             ->post($url, $payload);
 
         $body = $this->safeJson($resp->body());
+
+        Log::info('TIKO onus3D response', [
+            'http_status' => $resp->status(),
+            'body' => $body,
+        ]);
+
         $payment->fill([
             'order_id' => $orderId,
             'raw_request' => $payload,

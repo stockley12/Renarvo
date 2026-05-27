@@ -22,8 +22,8 @@ class PasswordResetController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
-        if (! $this->limiter->consume("pwreset:{$request->ip()}", 5, 3600)) {
-            throw new TooManyRequestsHttpException(3600, 'Too many requests.');
+        if (! $this->limiter->consume("pwreset:{$request->ip()}", 10, 1800)) {
+            throw new TooManyRequestsHttpException(1800, 'Too many requests.');
         }
 
         $email = strtolower((string) $request->input('email'));
