@@ -9,9 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
-} from '@/components/ui/dialog';
-import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
@@ -20,7 +17,7 @@ import { useSession } from '@/store/session';
 import { formatPrice } from '@/lib/format';
 import { usePublicCar, usePublicCompanyExtras, usePublicCompanyInsurance } from '@/lib/hooks/useCars';
 import { useCreateReservation } from '@/lib/hooks/useReservations';
-import { useTikoConfig, useTikoCheckout } from '@/lib/hooks/useTiko';
+import { useTikoConfig, useTikoCheckout, submitPay3dForm } from '@/lib/hooks/useTiko';
 import { ApiClientError } from '@/lib/api';
 
 const steps = ['step1', 'step2', 'step3', 'step4'];
@@ -63,7 +60,6 @@ export default function Booking() {
   const [idPhoto, setIdPhoto] = useState<File | null>(null);
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
   const [confirmedReservationId, setConfirmedReservationId] = useState<number | null>(null);
-  const [tikoIframeUrl, setTikoIframeUrl] = useState<string | null>(null);
   const [tikoOrderId, setTikoOrderId] = useState<string | null>(null);
   const create = useCreateReservation();
   const tikoConfig = useTikoConfig();
@@ -207,10 +203,12 @@ export default function Booking() {
         return;
       }
 
-      // TIKO 3DS iframe checkout
+      // TIKO 3DS pay3d redirect
       const result = await tikoCheckout.mutateAsync({ reservationId: reservation.id });
       setTikoOrderId(result.order_id);
-      setTikoIframeUrl(result.iframe_url);
+      setConfirmedReservationId(reservation.id);
+      // Redirect user to TIKO's 3DS page via form POST
+      submitPay3dForm(result.action_url, result.fields);
     } catch (err) {
       const msg = err instanceof ApiClientError ? err.message : err instanceof Error ? err.message : t('booking.createFailed');
       toast.error(msg);
@@ -496,37 +494,6 @@ export default function Booking() {
           </div>
         </Card>
       </div>
-
-      <Dialog
-        open={tikoIframeUrl !== null}
-        onOpenChange={(open) => {
-          if (!open) {
-            setTikoIframeUrl(null);
-            if (confirmedReservationId) {
-              navigate(`/payment/result?reservation=${confirmedReservationId}${tikoOrderId ? `&order=${encodeURIComponent(tikoOrderId)}` : ''}`);
-            }
-          }
-        }}
-      >
-        <DialogContent className="max-w-3xl w-[95vw] sm:w-full p-0 overflow-hidden">
-          <DialogHeader className="px-4 py-3 border-b">
-            <DialogTitle className="text-base">{t('booking.payWithCard')}</DialogTitle>
-            <DialogDescription className="text-xs">
-              {t('carDetail.total')}: <span className="font-semibold">{formatPrice(total, currency, locale)}</span>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="bg-muted/30">
-            {tikoIframeUrl && (
-              <iframe
-                src={tikoIframeUrl}
-                title="TIKO 3D Secure"
-                className="w-full h-[70vh] border-0 bg-white"
-                allow="payment *"
-              />
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

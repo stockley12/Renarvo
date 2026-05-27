@@ -102,14 +102,14 @@ class TikoService
     }
 
     /**
-     * Initiate the 3DS hosted iframe flow (TIKO `onus3D`).
+     * Generate pay3d form data for browser-redirect 3DS flow.
      *
-     * Returns the redirect URL to embed inside an iframe and updates the
-     * Payment row with sent payload + sync response.
+     * Returns the form action URL and hidden field values that the frontend
+     * must render as a hidden form and auto-submit to TIKO's pay3d endpoint.
      *
-     * @return array{ url: string, order_id: string, payment: Payment }
+     * @return array{ action_url: string, fields: array<string,string>, order_id: string, payment: Payment }
      */
-    public function createIframeLink(Reservation $reservation, Payment $payment, string $userIp): array
+    public function createPay3dForm(Reservation $reservation, Payment $payment, string $userIp): array
     {
         if (! $this->isEnabled()) {
             throw new RuntimeException('TIKO integration is not enabled.');
@@ -121,36 +121,34 @@ class TikoService
         $amount = $this->formatAmount((int) $payment->amount_try);
         $currency = (string) config('services.tiko.currency', 'TRY');
         $isTest = $this->isTestFlag();
+        $installment = '0';
 
         $urlOk = (string) config('services.tiko.urls.return_ok');
         $urlFail = (string) config('services.tiko.urls.return_fail');
 
-        // hashStr for onus3D request — trying with UserName included (H6 test):
-        //   MerchantId + UserName + OrderId + UrlOk + UrlFail + Amount + Currency + IsTest
-        $hashStr = $merchantId.$userName.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
+        // pay3d hashStr (v1.1.3 spec):
+        //   MerchantId + UserIp + OrderId + UrlOk + UrlFail + Amount + Currency + Installment + IsTest
+        $hashStr = $merchantId.$userIp.$orderId.$urlOk.$urlFail.$amount.$currency.$installment.$isTest;
         $hash = $this->generateHash($hashStr);
 
-        // Also compute hash WITHOUT UserName for fallback test (H6 alternative)
-        $hashStrAlt = $merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
-        $hashAlt = $this->generateHash($hashStrAlt);
-
-        $payload = [
+        $fields = [
             'MerchantId' => $merchantId,
             'UserName' => $userName,
+            'UserIp' => $userIp,
             'OrderId' => $orderId,
             'Amount' => $amount,
             'Currency' => $currency,
+            'Installment' => $installment,
             'UrlOk' => $urlOk,
             'UrlFail' => $urlFail,
             'IsTest' => $isTest,
-            'UserIp' => $userIp,
             'Hash' => $hash,
         ];
 
-        $url = $this->endpoint('onus3d');
+        $actionUrl = $this->endpoint('pay3d');
 
-        Log::info('TIKO onus3D request', [
-            'url' => $url,
+        Log::info('TIKO pay3d form generated', [
+            'action_url' => $actionUrl,
             'mode' => $this->mode(),
             'merchantId' => $merchantId,
             'userName' => $userName,
@@ -158,94 +156,30 @@ class TikoService
             'amount' => $amount,
             'currency' => $currency,
             'isTest' => $isTest,
+            'installment' => $installment,
+            'userIp' => $userIp,
             'urlOk' => $urlOk,
             'urlFail' => $urlFail,
             'hashStr' => $hashStr,
-            'hashStr_fields' => 'MerchantId+UserName+OrderId+UrlOk+UrlFail+Amount+Currency+IsTest',
+            'hashStr_fields' => 'MerchantId+UserIp+OrderId+UrlOk+UrlFail+Amount+Currency+Installment+IsTest',
             'hash' => $hash,
-            'hashAlt_without_username' => $hashAlt,
         ]);
-
-        $resp = Http::asForm()
-            ->timeout((int) config('services.tiko.http_timeout', 20))
-            ->post($url, $payload);
-
-        $body = $this->safeJson($resp->body());
-
-        Log::info('TIKO onus3D response attempt 1', [
-            'http_status' => $resp->status(),
-            'body' => $body,
-        ]);
-
-        // If first attempt fails with UserName error, try with MerchantId as UserName (H7)
-        if (($body['Status'] ?? '') === '400' && str_contains((string) ($body['Description'] ?? ''), 'UserName')) {
-            Log::info('TIKO onus3D: H7 fallback — trying MerchantId as UserName');
-
-            $hashStrH7 = $merchantId.$merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
-            $hashH7 = $this->generateHash($hashStrH7);
-
-            $payloadH7 = $payload;
-            $payloadH7['UserName'] = $merchantId;
-            $payloadH7['Hash'] = $hashH7;
-
-            $resp = Http::asForm()
-                ->timeout((int) config('services.tiko.http_timeout', 20))
-                ->post($url, $payloadH7);
-
-            $body = $this->safeJson($resp->body());
-
-            Log::info('TIKO onus3D response H7 (MerchantId as UserName)', [
-                'http_status' => $resp->status(),
-                'body' => $body,
-            ]);
-
-            // If H7 also fails, try without UserName in hash
-            if (($body['Status'] ?? '') === '400') {
-                Log::info('TIKO onus3D: H7b fallback — MerchantId as UserName, hash WITHOUT UserName');
-
-                $hashStrH7b = $merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
-                $hashH7b = $this->generateHash($hashStrH7b);
-
-                $payloadH7['Hash'] = $hashH7b;
-
-                $resp = Http::asForm()
-                    ->timeout((int) config('services.tiko.http_timeout', 20))
-                    ->post($url, $payloadH7);
-
-                $body = $this->safeJson($resp->body());
-
-                Log::info('TIKO onus3D response H7b (MerchantId as UserName, hash without UserName)', [
-                    'http_status' => $resp->status(),
-                    'body' => $body,
-                ]);
-            }
-        }
 
         $payment->fill([
             'order_id' => $orderId,
-            'raw_request' => $payload,
-            'raw_response' => $body,
+            'raw_request' => $fields,
         ])->save();
 
         $this->audit->log(
-            'tiko.checkout.initiated',
+            'tiko.pay3d.form_generated',
             null,
             'Payment',
             $payment->id,
-            ['reservation_id' => $reservation->id, 'order_id' => $orderId, 'http_status' => $resp->status()],
+            ['reservation_id' => $reservation->id, 'order_id' => $orderId],
             'info',
         );
 
-        if (! $resp->ok()) {
-            throw new RuntimeException('TIKO onus3D HTTP error: '.$resp->status());
-        }
-
-        $iframeUrl = $body['Url'] ?? $body['url'] ?? null;
-        if (! is_string($iframeUrl) || $iframeUrl === '') {
-            throw new RuntimeException('TIKO did not return an iframe URL: '.json_encode($body));
-        }
-
-        return ['url' => $iframeUrl, 'order_id' => $orderId, 'payment' => $payment];
+        return ['action_url' => $actionUrl, 'fields' => $fields, 'order_id' => $orderId, 'payment' => $payment];
     }
 
     /**
