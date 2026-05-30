@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class RateLimiterService
@@ -32,9 +33,13 @@ class RateLimiterService
                 return true;
             }
 
-            $elapsed = $now->diffInSeconds($bucket->last_refill_at);
+            // Carbon 3 returns a SIGNED diff (negative for past dates), so take
+            // the absolute elapsed seconds to avoid negative "refills" that
+            // would drain the bucket on every call.
+            $elapsed = (int) abs(Carbon::parse($bucket->last_refill_at)->diffInSeconds($now));
             $refill = (int) floor($elapsed * ($maxTokens / max(1, $refillSeconds)));
-            $tokens = min($maxTokens, $bucket->tokens + $refill);
+            // Clamp into [0, maxTokens] so a bucket can never go negative.
+            $tokens = max(0, min($maxTokens, (int) $bucket->tokens + $refill));
 
             if ($tokens < $cost) {
                 DB::table('rate_limit_buckets')

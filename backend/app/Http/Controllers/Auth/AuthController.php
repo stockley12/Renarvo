@@ -48,8 +48,8 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $this->throttle("login:{$request->ip()}", 30, 300);
-        $this->throttle('login:'.strtolower((string) $request->input('email')), 20, 300);
+        $this->throttle("login:{$request->ip()}", 50, 300);
+        $this->throttle('login:'.strtolower((string) $request->input('email')), 30, 300);
 
         $user = User::query()->where('email', strtolower((string) $request->input('email')))->first();
 
