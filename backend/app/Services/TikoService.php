@@ -35,7 +35,6 @@ class TikoService
     {
         return in_array($this->mode(), ['sandbox', 'live'], true)
             && (string) config('services.tiko.merchant_id') !== ''
-            && (string) config('services.tiko.username') !== ''
             && (string) config('services.tiko.secret') !== ''
             && (string) config('services.tiko.password') !== '';
     }
@@ -102,84 +101,103 @@ class TikoService
     }
 
     /**
-     * Generate pay3d form data for browser-redirect 3DS flow.
+     * Initiate the 3DS hosted iframe flow (TIKO `onus3D`).
      *
-     * Returns the form action URL and hidden field values that the frontend
-     * must render as a hidden form and auto-submit to TIKO's pay3d endpoint.
+     * Per v1.1.3 spec, onus3D requires the *customer's* full name (UserName)
+     * and email (UserEmail) — these are NOT merchant credentials. TIKO returns
+     * a hosted payment page URL in Result.Link which we embed in an iframe.
      *
-     * @return array{ action_url: string, fields: array<string,string>, order_id: string, payment: Payment }
+     * @return array{ url: string, order_id: string, payment: Payment }
      */
-    public function createPay3dForm(Reservation $reservation, Payment $payment, string $userIp): array
+    public function createIframeLink(Reservation $reservation, Payment $payment, string $userIp): array
     {
         if (! $this->isEnabled()) {
             throw new RuntimeException('TIKO integration is not enabled.');
         }
 
         $merchantId = (string) config('services.tiko.merchant_id');
-        $userName = (string) config('services.tiko.username');
         $orderId = $payment->order_id ?: $this->mintOrderId($reservation->id);
         $amount = $this->formatAmount((int) $payment->amount_try);
         $currency = (string) config('services.tiko.currency', 'TRY');
         $isTest = $this->isTestFlag();
-        $installment = '0';
 
         $urlOk = (string) config('services.tiko.urls.return_ok');
         $urlFail = (string) config('services.tiko.urls.return_fail');
 
-        // pay3d hashStr (v1.1.3 spec):
-        //   MerchantId + UserIp + OrderId + UrlOk + UrlFail + Amount + Currency + Installment + IsTest
-        $hashStr = $merchantId.$userIp.$orderId.$urlOk.$urlFail.$amount.$currency.$installment.$isTest;
+        // UserName / UserEmail describe the PAYING CUSTOMER (spec page 15), not
+        // a merchant login. Pull from the reservation's customer.
+        $customer = $reservation->customer;
+        $customerName = trim((string) ($customer->name ?? '')) ?: 'Customer';
+        $customerEmail = (string) ($customer->email ?? '');
+        $customerPhone = (string) ($customer->phone ?? '');
+
+        // onus3D hashStr (v1.1.3 spec, page 15):
+        //   MerchantId + OrderId + UrlOk + UrlFail + Amount + Currency + IsTest
+        $hashStr = $merchantId.$orderId.$urlOk.$urlFail.$amount.$currency.$isTest;
         $hash = $this->generateHash($hashStr);
 
-        $fields = [
+        $payload = [
             'MerchantId' => $merchantId,
-            'UserName' => $userName,
-            'UserIp' => $userIp,
             'OrderId' => $orderId,
-            'Amount' => $amount,
             'Currency' => $currency,
-            'Installment' => $installment,
+            'Amount' => $amount,
             'UrlOk' => $urlOk,
             'UrlFail' => $urlFail,
-            'IsTest' => $isTest,
+            'UserName' => $customerName,
+            'UserEmail' => $customerEmail,
+            'UserLang' => 'tr',
             'Hash' => $hash,
         ];
+        if ($customerPhone !== '') {
+            $payload['UserPhone'] = $customerPhone;
+        }
 
-        $actionUrl = $this->endpoint('pay3d');
+        $url = $this->endpoint('onus3d');
 
-        Log::info('TIKO pay3d form generated', [
-            'action_url' => $actionUrl,
-            'mode' => $this->mode(),
-            'merchantId' => $merchantId,
-            'userName' => $userName,
-            'orderId' => $orderId,
-            'amount' => $amount,
-            'currency' => $currency,
-            'isTest' => $isTest,
-            'installment' => $installment,
-            'userIp' => $userIp,
-            'urlOk' => $urlOk,
-            'urlFail' => $urlFail,
-            'hashStr' => $hashStr,
-            'hashStr_fields' => 'MerchantId+UserIp+OrderId+UrlOk+UrlFail+Amount+Currency+Installment+IsTest',
-            'hash' => $hash,
+        $resp = Http::asForm()
+            ->timeout((int) config('services.tiko.http_timeout', 20))
+            ->post($url, $payload);
+
+        $body = $this->safeJson($resp->body());
+
+        Log::info('TIKO onus3D response', [
+            'http_status' => $resp->status(),
+            'order_id' => $orderId,
+            'user_name_sent' => $customerName,
+            'user_email_present' => $customerEmail !== '',
+            'body' => $body,
         ]);
 
+        // Never log card data; UserName/UserEmail are the customer's, which is fine to omit too.
         $payment->fill([
             'order_id' => $orderId,
-            'raw_request' => $fields,
+            'raw_request' => array_diff_key($payload, ['Hash' => null]),
+            'raw_response' => $body,
         ])->save();
 
         $this->audit->log(
-            'tiko.pay3d.form_generated',
+            'tiko.checkout.initiated',
             null,
             'Payment',
             $payment->id,
-            ['reservation_id' => $reservation->id, 'order_id' => $orderId],
+            ['reservation_id' => $reservation->id, 'order_id' => $orderId, 'http_status' => $resp->status()],
             'info',
         );
 
-        return ['action_url' => $actionUrl, 'fields' => $fields, 'order_id' => $orderId, 'payment' => $payment];
+        if (! $resp->ok()) {
+            throw new RuntimeException('TIKO onus3D HTTP error: '.$resp->status());
+        }
+
+        // Spec: success returns { Status: "200", Result: { Link: "https://..." } }
+        $status = (string) ($body['Status'] ?? '');
+        $link = $body['Result']['Link'] ?? $body['Link'] ?? null;
+
+        if ($status !== '200' || ! is_string($link) || $link === '') {
+            $desc = (string) ($body['Description'] ?? 'unknown error');
+            throw new RuntimeException('TIKO onus3D rejected request: '.$desc.' (Status '.$status.')');
+        }
+
+        return ['url' => $link, 'order_id' => $orderId, 'payment' => $payment];
     }
 
     /**

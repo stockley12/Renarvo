@@ -83,7 +83,7 @@ class TikoController extends Controller
         ]);
 
         try {
-            $result = $this->tiko->createPay3dForm($reservationModel, $payment, (string) $request->ip());
+            $result = $this->tiko->createIframeLink($reservationModel, $payment, (string) $request->ip());
         } catch (\Throwable $e) {
             $payment->status = Payment::STATUS_FAILED;
             $payment->error_msg = substr($e->getMessage(), 0, 250);
@@ -100,9 +100,7 @@ class TikoController extends Controller
 
         return response()->json([
             'data' => [
-                'method' => 'pay3d_redirect',
-                'action_url' => $result['action_url'],
-                'fields' => $result['fields'],
+                'iframe_url' => $result['url'],
                 'order_id' => $result['order_id'],
                 'payment_id' => $payment->id,
                 'reservation_id' => $reservationModel->id,
