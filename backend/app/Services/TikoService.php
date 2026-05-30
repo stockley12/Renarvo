@@ -160,15 +160,6 @@ class TikoService
 
         $body = $this->safeJson($resp->body());
 
-        Log::info('TIKO onus3D response', [
-            'http_status' => $resp->status(),
-            'order_id' => $orderId,
-            'user_name_sent' => $customerName,
-            'user_email_present' => $customerEmail !== '',
-            'body' => $body,
-        ]);
-
-        // Never log card data; UserName/UserEmail are the customer's, which is fine to omit too.
         $payment->fill([
             'order_id' => $orderId,
             'raw_request' => array_diff_key($payload, ['Hash' => null]),
