@@ -63,7 +63,7 @@ export function DashCalendar() {
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.calendar')}</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.calendar')}</h1>
           <p className="text-muted-foreground mt-1">{t('panel.company.extra.calendar.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -84,7 +84,8 @@ export function DashCalendar() {
           </div>
         )}
         {!events.isLoading && (
-          <>
+          <div className="overflow-x-auto">
+            <div className="min-w-[560px]">
             <div className="grid grid-cols-7 gap-1.5 mb-2 text-[11px] font-semibold uppercase text-muted-foreground">
               {[
                 t('panel.company.extra.calendar.weekdays.mon'),
@@ -150,7 +151,8 @@ export function DashCalendar() {
                 <span className="h-2.5 w-2.5 rounded bg-success/70" /> {t('panel.company.extra.calendar.activeRental')}
               </span>
             </div>
-          </>
+            </div>
+          </div>
         )}
       </Card>
 
@@ -161,13 +163,13 @@ export function DashCalendar() {
         ) : (
           <div className="space-y-2">
             {(events.data ?? []).map((e) => (
-              <div key={e.id} className="grid grid-cols-[80px_1fr_1fr_120px] items-center gap-3 text-sm py-2 border-b last:border-0">
+              <div key={e.id} className="grid grid-cols-[64px_1fr] sm:grid-cols-[80px_1fr_1fr_120px] items-center gap-x-3 gap-y-1 text-sm py-2 border-b last:border-0">
                 <span className="font-mono text-xs">{e.code}</span>
                 <span className="truncate">{e.car ?? '—'}</span>
-                <span className="text-muted-foreground text-xs">
+                <span className="text-muted-foreground text-xs col-span-2 sm:col-span-1">
                   {formatDate(e.start, locale)} → {formatDate(e.end, locale)}
                 </span>
-                <Badge variant="outline" className="capitalize">
+                <Badge variant="outline" className="capitalize w-fit">
                   {e.status}
                 </Badge>
               </div>
@@ -272,7 +274,7 @@ export function DashPricing() {
   return (
     <div className="space-y-5 max-w-6xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.pricingPromos')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.pricingPromos')}</h1>
         <p className="text-muted-foreground mt-1">{t('panel.company.extra.pricing.subtitle')}</p>
       </div>
 
@@ -372,7 +374,8 @@ export function DashPricing() {
             ) : (promos.data ?? []).length === 0 ? (
               <div className="p-10 text-center text-muted-foreground">{t('panel.company.extra.pricing.noPromoCodes')}</div>
             ) : (
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[600px]">
                 <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3">{t('panel.common.code')}</th>
@@ -409,6 +412,7 @@ export function DashPricing() {
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </Card>
         </TabsContent>
@@ -442,7 +446,7 @@ export function DashMessages() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.messages')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.messages')}</h1>
         <p className="text-muted-foreground mt-1">{t('panel.company.extra.messages.subtitle')}</p>
       </div>
 
@@ -455,8 +459,8 @@ export function DashMessages() {
           {t('panel.company.extra.messages.noConversations')}
         </Card>
       ) : (
-        <Card className="grid grid-cols-1 md:grid-cols-[300px_1fr] h-[600px] overflow-hidden">
-          <div className="border-r flex flex-col">
+        <Card className="grid grid-cols-1 md:grid-cols-[300px_1fr] h-[70vh] md:h-[600px] overflow-hidden">
+          <div className={`border-r flex-col ${active ? 'hidden md:flex' : 'flex'}`}>
             <ScrollArea className="flex-1">
               {items.map((threadItem) => (
                 <button
@@ -482,14 +486,21 @@ export function DashMessages() {
             </ScrollArea>
           </div>
 
-          <div className="flex flex-col">
-            {!thread.data ? (
+          <div className={`flex-col ${active ? 'flex' : 'hidden md:flex'}`}>
+            {!active ? (
+              <div className="hidden md:flex items-center justify-center flex-1 text-muted-foreground">
+                {t('panel.company.extra.messages.conversation')}
+              </div>
+            ) : !thread.data ? (
               <div className="flex items-center justify-center flex-1 text-muted-foreground">
                 <Loader2 className="h-5 w-5 mr-2 animate-spin" /> {t('common.loading')}
               </div>
             ) : (
               <>
                 <div className="p-4 border-b flex items-center gap-3">
+                  <Button variant="ghost" size="icon" className="md:hidden -ml-1 shrink-0" onClick={() => setActive(null)} aria-label={t('common.back')}>
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
                   <Avatar className="h-9 w-9">
                     <AvatarFallback className="bg-gradient-brand text-white text-xs">
                       {(thread.data.customer?.name ?? '?').split(' ').map((w) => w[0]).slice(0, 2).join('')}
@@ -550,7 +561,7 @@ export function DashIntegrations() {
   return (
     <div className="space-y-5 max-w-5xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.integrations')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.integrations')}</h1>
         <p className="text-muted-foreground mt-1">{t('panel.company.extra.integrations.subtitle')}</p>
       </div>
       <Card className="p-10 text-center text-muted-foreground">

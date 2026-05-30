@@ -68,7 +68,7 @@ export function AdminOverview() {
   return (
     <div className="space-y-6 max-w-7xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.overview.title')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.overview.title')}</h1>
         <p className="text-muted-foreground mt-1">{t('panel.admin.overview.subtitle')}</p>
       </div>
 
@@ -114,7 +114,7 @@ export function AdminCompanies() {
 
   return (
     <div className="space-y-5 max-w-7xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.companies')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.nav.companies')}</h1>
       <Tabs value={tab} onValueChange={(v) => setTab(v as CompanyStatus)}>
         <TabsList className="flex-wrap h-auto">
           {(['approved', 'pending', 'suspended', 'rejected'] as CompanyStatus[]).map((s) => (
@@ -125,7 +125,8 @@ export function AdminCompanies() {
         </TabsList>
         <TabsContent value={tab} className="mt-4">
           <Card className="overflow-hidden">
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[640px]">
               <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">{t('panel.admin.companies.company')}</th>
@@ -208,6 +209,7 @@ export function AdminCompanies() {
                 })}
               </tbody>
             </table>
+            </div>
           </Card>
         </TabsContent>
       </Tabs>
@@ -245,7 +247,7 @@ export function AdminApprovals() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.approvals.title')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.approvals.title')}</h1>
       <p className="text-muted-foreground">{t('panel.admin.approvals.pendingCount', { count: companies.data?.meta.total ?? 0 })}</p>
 
       {companies.isLoading && (
@@ -332,7 +334,7 @@ export function AdminCatalog() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.catalog.title')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.catalog.title')}</h1>
         <div className="relative w-full max-w-xs">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('panel.admin.catalog.searchPlaceholder')} className="pl-9" />
@@ -340,7 +342,8 @@ export function AdminCatalog() {
       </div>
 
       <Card className="overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[680px]">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
               <th className="px-4 py-3">{t('panel.common.car')}</th>
@@ -401,6 +404,7 @@ export function AdminCatalog() {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );
@@ -433,7 +437,7 @@ export function AdminReservations() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.reservations.title')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.reservations.title')}</h1>
         <div className="flex items-center gap-3 flex-wrap">
           <select
             value={paymentStatus}
@@ -652,7 +656,7 @@ export function AdminPayments() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.payments')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.nav.payments')}</h1>
         <div className="flex items-center gap-3 flex-wrap">
           <select value={provider} onChange={(e) => setProvider(e.target.value)} className="h-9 rounded-lg border bg-background px-3 text-sm">
             <option value="">{t('panel.admin.payments.anyProvider')}</option>
@@ -774,8 +778,8 @@ export function AdminUsers() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.users.title')}</h1>
-        <div className="flex gap-3 items-center">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.users.title')}</h1>
+        <div className="flex gap-3 items-center flex-wrap w-full sm:w-auto">
           <select
             value={kind}
             onChange={(e) => {
@@ -783,7 +787,7 @@ export function AdminUsers() {
               setKind(next);
               setRole('');
             }}
-            className="h-10 rounded-lg border bg-background px-3 text-sm"
+            className="h-10 rounded-lg border bg-background px-3 text-sm flex-1 sm:flex-none min-w-[140px]"
           >
             <option value="all">{t('panel.admin.users.kindAll')}</option>
             <option value="normal_users">{t('panel.admin.users.kindNormal')}</option>
@@ -792,7 +796,7 @@ export function AdminUsers() {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="h-10 rounded-lg border bg-background px-3 text-sm"
+            className="h-10 rounded-lg border bg-background px-3 text-sm flex-1 sm:flex-none min-w-[140px]"
           >
             <option value="">{t('panel.admin.users.rolesAll')}</option>
             <option value="customer">{t('panel.admin.users.roleCustomer')}</option>
@@ -808,7 +812,8 @@ export function AdminUsers() {
       </div>
 
       <Card className="overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[560px]">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
               <th className="px-4 py-3">{t('panel.admin.users.user')}</th>
@@ -870,6 +875,7 @@ export function AdminUsers() {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );
@@ -894,7 +900,7 @@ export function AdminReviews() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.reviews.title')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.reviews.title')}</h1>
       {reviews.isLoading && (
         <div className="flex items-center justify-center py-12 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
@@ -905,8 +911,8 @@ export function AdminReviews() {
       )}
       {items.map((r) => (
         <Card key={r.id} className="p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
+          <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-semibold">{r.customer?.name ?? t('panel.admin.reviews.anonymous')}</span>
                 {r.car && <Badge variant="outline">{r.car.brand} {r.car.model}</Badge>}
@@ -945,7 +951,7 @@ export function AdminContent() {
   const { t } = useTranslation();
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.content')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.nav.content')}</h1>
       <Card className="p-10 text-center text-muted-foreground">
         {t('panel.admin.content.placeholder')}
       </Card>
@@ -977,7 +983,7 @@ export function AdminFinance() {
 
   return (
     <div className="space-y-5 max-w-7xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.finance')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.nav.finance')}</h1>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
@@ -998,7 +1004,8 @@ export function AdminFinance() {
 
       <Card className="overflow-hidden">
         <div className="p-5 border-b font-display font-bold">{t('panel.admin.finance.companyPayouts')}</div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[700px]">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
               <th className="px-4 py-3">{t('panel.admin.companies.company')}</th>
@@ -1048,6 +1055,7 @@ export function AdminFinance() {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );
@@ -1097,7 +1105,7 @@ export function AdminSettings() {
 
   return (
     <div className="space-y-5 max-w-3xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.settings.title')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.settings.title')}</h1>
       <form onSubmit={onSave}>
         <Card className="p-6 space-y-4">
           {keys.length === 0 && <p className="text-sm text-muted-foreground">{t('panel.admin.settings.none')}</p>}

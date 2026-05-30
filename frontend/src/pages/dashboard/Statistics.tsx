@@ -44,7 +44,7 @@ export default function DashStats() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.statistics')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.statistics')}</h1>
         <p className="text-muted-foreground mt-1">{t('panel.company.stats.subtitle')}</p>
       </div>
 

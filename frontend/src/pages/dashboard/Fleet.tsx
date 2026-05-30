@@ -137,7 +137,7 @@ function CarForm({ initial, carId, existingImages, onClose }: CarFormProps) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 mt-6">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <Label>{t('panel.company.fleet.form.brand')}</Label>
           <Input value={payload.brand} onChange={(e) => set('brand', e.target.value)} placeholder={t('panel.company.fleet.form.brandPlaceholder')} required list="brand-suggestions" />
@@ -420,9 +420,9 @@ export default function DashFleet() {
 
   return (
     <div className="space-y-5 max-w-7xl">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.fleet')}</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.fleet')}</h1>
           <p className="text-muted-foreground mt-1">{t('panel.company.fleet.vehicles', { count: cars.data?.meta.total ?? 0 })}</p>
         </div>
         <Sheet open={creating} onOpenChange={setCreating}>

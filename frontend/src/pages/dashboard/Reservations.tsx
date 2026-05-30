@@ -175,7 +175,7 @@ export default function DashReservations() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.reservations')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.reservations')}</h1>
         <p className="text-muted-foreground mt-1">{t('panel.company.reservations.subtitle')}</p>
       </div>
 
@@ -267,7 +267,7 @@ export default function DashReservations() {
                                 {t('common.view')}
                               </Button>
                             </SheetTrigger>
-                            <SheetContent className="overflow-auto">
+                            <SheetContent className="overflow-auto w-full sm:max-w-lg">
                               <SheetHeader>
                                 <SheetTitle>{t('panel.company.reservations.reservationCode', { code: r.code })}</SheetTitle>
                               </SheetHeader>

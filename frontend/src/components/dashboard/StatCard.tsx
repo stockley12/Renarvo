@@ -19,9 +19,9 @@ export function StatCard({ label, value, hint, icon: Icon, trend, accent = 'bran
     navy: 'bg-navy/10 text-navy dark:text-navy-foreground',
   };
   return (
-    <Card className="p-5 hover:shadow-card transition-shadow">
-      <div className="flex items-start justify-between">
-        <div className={cn('h-10 w-10 rounded-xl flex items-center justify-center', accentMap[accent])}>
+    <Card className="p-4 sm:p-5 hover:shadow-card transition-shadow">
+      <div className="flex items-start justify-between gap-2">
+        <div className={cn('h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center shrink-0', accentMap[accent])}>
           <Icon className="h-5 w-5" />
         </div>
         {trend !== undefined && (
@@ -31,10 +31,10 @@ export function StatCard({ label, value, hint, icon: Icon, trend, accent = 'bran
           </span>
         )}
       </div>
-      <div className="mt-4">
-        <div className="text-2xl font-display font-bold">{value}</div>
-        <div className="text-sm text-muted-foreground mt-0.5">{label}</div>
-        {hint && <div className="text-xs text-muted-foreground/70 mt-1">{hint}</div>}
+      <div className="mt-3 sm:mt-4">
+        <div className="text-xl sm:text-2xl font-display font-bold truncate">{value}</div>
+        <div className="text-xs sm:text-sm text-muted-foreground mt-0.5">{label}</div>
+        {hint && <div className="text-xs text-muted-foreground/70 mt-1 truncate">{hint}</div>}
       </div>
     </Card>
   );

@@ -55,7 +55,7 @@ export function DashCustomers() {
   return (
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.customers')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.customers')}</h1>
       </div>
       <Card className="p-3">
         <div className="relative">
@@ -69,7 +69,8 @@ export function DashCustomers() {
         </div>
       </Card>
       <Card className="overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[640px]">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
               <th className="px-4 py-3 font-medium">{t('panel.common.customer')}</th>
@@ -123,6 +124,7 @@ export function DashCustomers() {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );
@@ -171,8 +173,8 @@ export function DashBranches() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.branches')}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.branches')}</h1>
         <Button className="bg-gradient-brand text-white border-0" onClick={() => setCreating(true)}>
           <Plus className="h-4 w-4 mr-1.5" />
           {t('panel.company.sections.branches.addBranch')}
@@ -282,8 +284,8 @@ export function DashStaff() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.staff')}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.staff')}</h1>
         <Button className="bg-gradient-brand text-white border-0" onClick={() => setInviting(true)}>
           <Plus className="h-4 w-4 mr-1.5" /> {t('panel.company.sections.staff.inviteMember')}
         </Button>
@@ -324,7 +326,8 @@ export function DashStaff() {
       )}
 
       <Card className="overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[560px]">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
               <th className="px-4 py-3 font-medium">{t('auth.register.name')}</th>
@@ -366,6 +369,7 @@ export function DashStaff() {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );
@@ -398,7 +402,7 @@ export function DashReviews() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.reviews')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.reviews')}</h1>
       {reviews.isLoading && (
         <div className="flex items-center justify-center py-12 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
@@ -414,9 +418,9 @@ export function DashReviews() {
           const carLabel = r.car ? `${r.car.brand} ${r.car.model}` : '';
           return (
             <Card key={r.id} className="p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold">{r.customer?.name ?? t('panel.company.sections.reviews.guest')}</span>
                     {carLabel && <Badge variant="outline">{carLabel}</Badge>}
                   </div>
@@ -512,7 +516,7 @@ export function DashPayouts() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.payouts')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.payouts')}</h1>
       <Card className="p-6">
         <h3 className="font-display font-bold mb-4">{t('panel.company.sections.payouts.bankAccount')}</h3>
         <form onSubmit={onSaveBank} className="grid sm:grid-cols-2 gap-4">
@@ -545,7 +549,8 @@ export function DashPayouts() {
         ) : ps.length === 0 ? (
           <div className="p-10 text-center text-muted-foreground">{t('panel.company.sections.payouts.noPayouts')}</div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[480px]">
             <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">{t('panel.admin.finance.period')}</th>
@@ -571,6 +576,7 @@ export function DashPayouts() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </Card>
     </div>
@@ -619,7 +625,7 @@ export function DashDocuments() {
 
   return (
     <div className="space-y-5 max-w-3xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.documents')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.documents')}</h1>
 
       <Card className="p-5">
         <h3 className="font-display font-bold mb-4">{t('panel.company.sections.documents.uploadNewDocument')}</h3>
@@ -793,7 +799,7 @@ export function DashSettings() {
 
   return (
     <div className="space-y-5 max-w-3xl">
-      <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.settings')}</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.settings')}</h1>
       <form onSubmit={onSave} className="space-y-5">
         <Card className="p-6 space-y-4">
           <h3 className="font-display font-bold">{t('panel.company.sections.settings.companyProfile')}</h3>
@@ -968,8 +974,8 @@ export function DashExtras() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.extras')}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.extras')}</h1>
         <Button className="bg-gradient-brand text-white border-0" onClick={() => setDraft(blank())}>
           <Plus className="h-4 w-4 mr-1.5" /> {t('panel.company.sections.extras.addExtra')}
         </Button>
@@ -1123,8 +1129,8 @@ export function DashInsurance() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.nav.insurance')}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.nav.insurance')}</h1>
         <Button className="bg-gradient-brand text-white border-0" onClick={() => setDraft(newPackage())}>
           <Plus className="h-4 w-4 mr-1.5" /> {t('panel.company.sections.insurance.addPackage')}
         </Button>

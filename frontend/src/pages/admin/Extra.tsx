@@ -40,7 +40,7 @@ export function AdminAuditLog() {
     <div className="space-y-5 max-w-6xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.auditLog')}</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.nav.auditLog')}</h1>
           <p className="text-muted-foreground mt-1">{t('panel.admin.audit.subtitle')}</p>
         </div>
         <div className="flex gap-2 flex-wrap items-center">
@@ -58,13 +58,14 @@ export function AdminAuditLog() {
             placeholder={t('panel.admin.audit.filterPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-64"
+            className="w-full sm:w-64"
           />
         </div>
       </div>
 
       <Card className="overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[720px]">
           <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
             <tr>
               <th className="px-4 py-3">{t('panel.admin.audit.when')}</th>
@@ -121,6 +122,7 @@ export function AdminAuditLog() {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );
@@ -159,7 +161,7 @@ export function AdminNotifications() {
   return (
     <div className="space-y-5 max-w-6xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.notifications.title')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.notifications.title')}</h1>
         <p className="text-muted-foreground mt-1">{t('panel.admin.notifications.subtitle')}</p>
       </div>
 
@@ -236,7 +238,8 @@ export function AdminNotifications() {
 
         <TabsContent value="history" className="mt-4">
           <Card className="overflow-hidden">
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[640px]">
               <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">{t('panel.admin.notifications.sent')}</th>
@@ -276,6 +279,7 @@ export function AdminNotifications() {
                 ))}
               </tbody>
             </table>
+            </div>
           </Card>
         </TabsContent>
       </Tabs>
@@ -349,7 +353,7 @@ export function AdminSystem() {
   return (
     <div className="space-y-5 max-w-6xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.admin.nav.systemHealth')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.admin.nav.systemHealth')}</h1>
         <p className="text-muted-foreground mt-1">{t('panel.admin.system.subtitle')}</p>
       </div>
 

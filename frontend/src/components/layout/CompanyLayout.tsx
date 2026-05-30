@@ -212,6 +212,7 @@ function Topbar() {
         <span className="text-[11px] text-muted-foreground">{t('nav.dashboard')}</span>
         <span className="font-display font-semibold text-base capitalize">{title}</span>
       </div>
+      <span className="md:hidden font-display font-semibold text-sm capitalize truncate min-w-0">{title}</span>
       <div className="flex-1 max-w-md mx-auto hidden sm:block">
         <div className="relative">
           <Search className="h-4 w-4 absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground" />

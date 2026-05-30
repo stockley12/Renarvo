@@ -29,7 +29,7 @@ export default function DashOverview() {
   if (overview.isError || !overview.data) {
     return (
       <div className="space-y-4">
-        <h1 className="font-display text-3xl font-extrabold">{t('panel.company.overview.unavailable')}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">{t('panel.company.overview.unavailable')}</h1>
         <p className="text-muted-foreground">{(overview.error as Error)?.message ?? t('panel.company.overview.loadFailed')}</p>
       </div>
     );
@@ -41,7 +41,7 @@ export default function DashOverview() {
   return (
     <div className="space-y-6 max-w-7xl">
       <div>
-        <h1 className="font-display text-3xl font-extrabold">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold">
           {t('panel.company.overview.welcomeBack')}{settings.data?.name ? `, ${settings.data.name}` : ''}
         </h1>
         <p className="text-muted-foreground mt-1">{t('panel.company.overview.subtitle')}</p>
