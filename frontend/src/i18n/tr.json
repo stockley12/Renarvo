@@ -261,6 +261,7 @@
       "termsLink": "Şartlar",
       "privacyLink": "Gizlilik",
       "submit": "Hesap oluştur",
+      "continue": "Devam et",
       "submitting": "Hesap oluşturuluyor…",
       "passwordTooShort": "Şifre en az 8 karakter olmalı",
       "passwordMismatch": "Şifreler eşleşmiyor",
@@ -311,6 +312,16 @@
       "passwordTooShort": "Şifre en az 8 karakter olmalı"
     },
     "signedOut": "Çıkış yapıldı",
+    "otp": {
+      "title": "Doğrulama kodunu girin",
+      "subtitle": "{{phone}} numarasına SMS ile 6 haneli bir kod gönderdik.",
+      "codeLabel": "Doğrulama kodu",
+      "verify": "Doğrula ve devam et",
+      "verifyCreate": "Doğrula ve hesap oluştur",
+      "resend": "Kod gelmedi mi? Tekrar gönder",
+      "sent": "Kod {{phone}} numarasına gönderildi",
+      "resent": "Yeni bir kod gönderildi"
+    },
     "login": "Giriş yap",
     "loggedIn": "Giriş yapıldı",
     "loginFailed": "Giriş başarısız",

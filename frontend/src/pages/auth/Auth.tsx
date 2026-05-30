@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/brand/Logo';
 import { toast } from 'sonner';
-import { api, login as apiLogin, ApiClientError } from '@/lib/api';
+import { api, login as apiLogin, loginOtp as apiLoginOtp, isOtpChallenge, ApiClientError, type ApiUser } from '@/lib/api';
 import { useSession } from '@/store/session';
 
 export function Login() {
@@ -20,20 +20,71 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // OTP second-factor step
+  const [challenge, setChallenge] = useState<string | null>(null);
+  const [phoneMasked, setPhoneMasked] = useState('');
+  const [code, setCode] = useState('');
+
+  function finishLogin(user: ApiUser) {
+    setUser(user);
+    toast.success(t('auth.loggedIn'));
+    const next = params.get('next');
+    const fallback =
+      user.role === 'superadmin' ? '/admin' :
+      user.role === 'company_owner' || user.role === 'company_staff' ? '/dashboard' :
+      '/';
+    const dest = next && next.startsWith('/') ? next : fallback;
+    navigate(dest);
+  }
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
     try {
       const data = await apiLogin(email, password);
-      setUser(data.user);
-      toast.success(t('auth.loggedIn'));
-      const next = params.get('next');
-      const fallback =
-        data.user.role === 'superadmin' ? '/admin' :
-        data.user.role === 'company_owner' || data.user.role === 'company_staff' ? '/dashboard' :
-        '/';
-      const dest = next && next.startsWith('/') ? next : fallback;
-      navigate(dest);
+      if (isOtpChallenge(data)) {
+        setChallenge(data.challenge);
+        setPhoneMasked(data.phone_masked);
+        setCode(data.dev_code ?? '');
+        toast.success(t('auth.otp.sent', { phone: data.phone_masked }));
+      } else {
+        finishLogin(data.user);
+      }
+    } catch (err) {
+      if (err instanceof ApiClientError) toast.error(err.message);
+      else toast.error(t('auth.loginFailed'));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function onVerifyOtp(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!challenge) return;
+    setSubmitting(true);
+    try {
+      const data = await apiLoginOtp(challenge, code.trim());
+      finishLogin(data.user);
+    } catch (err) {
+      if (err instanceof ApiClientError) toast.error(err.message);
+      else toast.error(t('auth.loginFailed'));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function onResend() {
+    setSubmitting(true);
+    try {
+      const data = await apiLogin(email, password);
+      if (isOtpChallenge(data)) {
+        setChallenge(data.challenge);
+        setPhoneMasked(data.phone_masked);
+        setCode(data.dev_code ?? '');
+        toast.success(t('auth.otp.resent'));
+      } else {
+        finishLogin(data.user);
+      }
     } catch (err) {
       if (err instanceof ApiClientError) toast.error(err.message);
       else toast.error(t('auth.loginFailed'));
@@ -44,53 +95,83 @@ export function Login() {
 
   return (
     <div className="container py-10 md:py-16 max-w-md">
-      <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-3 -ml-2">
+      <Button variant="ghost" size="sm" onClick={() => (challenge ? setChallenge(null) : navigate(-1))} className="mb-3 -ml-2">
         <ArrowLeft className="h-4 w-4 mr-1" /> {t('common.back')}
       </Button>
       <Card className="p-6 md:p-8">
         <Logo className="mb-6" />
-        <h1 className="font-display text-2xl font-bold mb-2">{t('auth.login')}</h1>
-        <p className="text-sm text-muted-foreground mb-6">{t('auth.welcomeBack')}</p>
-        <form className="space-y-4" onSubmit={onSubmit}>
-          <div>
-            <Label htmlFor="email">{t('auth.email')}</Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
-          </div>
-          <div>
-            <Label htmlFor="password">{t('auth.password')}</Label>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-          </div>
-          <Button type="submit" disabled={submitting} className="w-full bg-gradient-brand text-white border-0">
-            {submitting ? t('auth.signingIn') : t('auth.login')}
-          </Button>
-          <div className="text-center text-sm">
-            <Link to="/forgot-password" className="text-muted-foreground hover:text-primary">
-              {t('auth.forgotPassword')}
-            </Link>
-          </div>
-          <div className="text-center text-sm">
-            {t('auth.newHere')} <Link to="/register" className="text-primary font-semibold">{t('auth.createAccount')}</Link>
-          </div>
-          <div className="text-center text-xs text-muted-foreground">
-            {t('auth.areYouCompany')} <Link to="/register-company" className="text-primary font-semibold">{t('auth.registerFleet')}</Link>
-          </div>
-        </form>
+        {challenge ? (
+          <>
+            <h1 className="font-display text-2xl font-bold mb-2">{t('auth.otp.title')}</h1>
+            <p className="text-sm text-muted-foreground mb-6">{t('auth.otp.subtitle', { phone: phoneMasked })}</p>
+            <form className="space-y-4" onSubmit={onVerifyOtp}>
+              <div>
+                <Label htmlFor="otp">{t('auth.otp.codeLabel')}</Label>
+                <Input
+                  id="otp"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  required
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="123456"
+                  className="tracking-[0.4em] text-center text-lg"
+                />
+              </div>
+              <Button type="submit" disabled={submitting} className="w-full bg-gradient-brand text-white border-0">
+                {submitting ? t('auth.signingIn') : t('auth.otp.verify')}
+              </Button>
+              <button type="button" onClick={onResend} disabled={submitting} className="block w-full text-center text-sm text-muted-foreground hover:text-primary">
+                {t('auth.otp.resend')}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <h1 className="font-display text-2xl font-bold mb-2">{t('auth.login')}</h1>
+            <p className="text-sm text-muted-foreground mb-6">{t('auth.welcomeBack')}</p>
+            <form className="space-y-4" onSubmit={onSubmit}>
+              <div>
+                <Label htmlFor="email">{t('auth.email')}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </div>
+              <div>
+                <Label htmlFor="password">{t('auth.password')}</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+              </div>
+              <Button type="submit" disabled={submitting} className="w-full bg-gradient-brand text-white border-0">
+                {submitting ? t('auth.signingIn') : t('auth.login')}
+              </Button>
+              <div className="text-center text-sm">
+                <Link to="/forgot-password" className="text-muted-foreground hover:text-primary">
+                  {t('auth.forgotPassword')}
+                </Link>
+              </div>
+              <div className="text-center text-sm">
+                {t('auth.newHere')} <Link to="/register" className="text-primary font-semibold">{t('auth.createAccount')}</Link>
+              </div>
+              <div className="text-center text-xs text-muted-foreground">
+                {t('auth.areYouCompany')} <Link to="/register-company" className="text-primary font-semibold">{t('auth.registerFleet')}</Link>
+              </div>
+            </form>
+          </>
+        )}
       </Card>
     </div>
   );

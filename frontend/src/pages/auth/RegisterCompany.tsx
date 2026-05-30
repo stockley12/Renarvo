@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { registerCompany as apiRegisterCompany, ApiClientError } from '@/lib/api';
+import { registerCompany as apiRegisterCompany, requestRegisterOtp, ApiClientError } from '@/lib/api';
 import { useSession } from '@/store/session';
 
 export default function RegisterCompany() {
@@ -17,6 +17,11 @@ export default function RegisterCompany() {
   const setUser = useSession((s) => s.setUser);
   const [step, setStep] = useState<0 | 1 | 2>(0);
   const [submitting, setSubmitting] = useState(false);
+
+  // SMS OTP sub-stage on the owner step
+  const [otpStage, setOtpStage] = useState(false);
+  const [code, setCode] = useState('');
+  const [phoneMasked, setPhoneMasked] = useState('');
 
   const [companyName, setCompanyName] = useState('');
   const [taxNo, setTaxNo] = useState('');
@@ -43,17 +48,49 @@ export default function RegisterCompany() {
     return ownerName.trim().length >= 2 && /\S+@\S+\.\S+/.test(ownerEmail) && ownerPassword.length >= 8;
   }
 
-  async function submit() {
+  async function requestOtp() {
     if (ownerPassword.length < 8) {
       toast.error(t('auth.registerCompany.passwordTooShort'));
       return;
     }
     setSubmitting(true);
     try {
+      const res = await requestRegisterOtp(phone.trim());
+      setPhoneMasked(res.phone_masked);
+      setCode(res.dev_code ?? '');
+      setOtpStage(true);
+      toast.success(t('auth.otp.sent', { phone: res.phone_masked }));
+    } catch (err) {
+      if (err instanceof ApiClientError) toast.error(err.message);
+      else toast.error(t('auth.registerCompany.failed'));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function resendOtp() {
+    setSubmitting(true);
+    try {
+      const res = await requestRegisterOtp(phone.trim());
+      setPhoneMasked(res.phone_masked);
+      setCode(res.dev_code ?? '');
+      toast.success(t('auth.otp.resent'));
+    } catch (err) {
+      if (err instanceof ApiClientError) toast.error(err.message);
+      else toast.error(t('auth.registerCompany.failed'));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function submit() {
+    setSubmitting(true);
+    try {
       const data = await apiRegisterCompany({
         company_name: companyName.trim(),
         city: city.trim(),
         phone: phone.trim(),
+        otp_code: code.trim(),
         tax_number: taxNo.trim() || undefined,
         address: address.trim() || undefined,
         email_public: emailPublic.trim() || undefined,
@@ -64,6 +101,7 @@ export default function RegisterCompany() {
       });
       setUser(data.user);
       setStep(2);
+      setOtpStage(false);
       toast.success(t('auth.registerCompany.submitted'));
     } catch (err) {
       if (err instanceof ApiClientError) toast.error(err.message);
@@ -124,7 +162,7 @@ export default function RegisterCompany() {
             </div>
           </div>
         )}
-        {step === 1 && (
+        {step === 1 && !otpStage && (
           <div className="space-y-4">
             <div className="rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
               {t('auth.registerCompany.ownerSection')}
@@ -146,6 +184,27 @@ export default function RegisterCompany() {
             </div>
           </div>
         )}
+        {step === 1 && otpStage && (
+          <div className="space-y-4 max-w-sm">
+            <h2 className="font-display text-xl font-bold">{t('auth.otp.title')}</h2>
+            <p className="text-sm text-muted-foreground">{t('auth.otp.subtitle', { phone: phoneMasked })}</p>
+            <div>
+              <Label htmlFor="company-otp">{t('auth.otp.codeLabel')}</Label>
+              <Input
+                id="company-otp"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="123456"
+                className="tracking-[0.4em] text-center text-lg"
+              />
+            </div>
+            <button type="button" onClick={resendOtp} disabled={submitting} className="text-sm text-muted-foreground hover:text-primary">
+              {t('auth.otp.resend')}
+            </button>
+          </div>
+        )}
         {step === 2 && (
           <div className="text-center py-6">
             <div className="h-14 w-14 rounded-full bg-success/15 text-success flex items-center justify-center mx-auto mb-4">
@@ -160,7 +219,11 @@ export default function RegisterCompany() {
         )}
         {step !== 2 && (
           <div className="flex justify-between pt-6 mt-6 border-t">
-            <Button variant="outline" onClick={() => setStep(Math.max(0, step - 1) as 0 | 1)} disabled={step === 0}>
+            <Button
+              variant="outline"
+              onClick={() => (otpStage ? setOtpStage(false) : setStep(Math.max(0, step - 1) as 0 | 1))}
+              disabled={step === 0 && !otpStage}
+            >
               {t('auth.registerCompany.back')}
             </Button>
             {step === 0 && (
@@ -172,13 +235,22 @@ export default function RegisterCompany() {
                 {t('auth.registerCompany.continue')}
               </Button>
             )}
-            {step === 1 && (
+            {step === 1 && !otpStage && (
               <Button
-                onClick={submit}
+                onClick={requestOtp}
                 disabled={!step2Valid() || submitting}
                 className="bg-gradient-brand text-white border-0"
               >
-                {submitting ? t('auth.registerCompany.submitting') : t('auth.registerCompany.submit')}
+                {submitting ? t('auth.registerCompany.submitting') : t('auth.registerCompany.continue')}
+              </Button>
+            )}
+            {step === 1 && otpStage && (
+              <Button
+                onClick={submit}
+                disabled={code.trim().length < 4 || submitting}
+                className="bg-gradient-brand text-white border-0"
+              >
+                {submitting ? t('auth.registerCompany.submitting') : t('auth.otp.verifyCreate')}
               </Button>
             )}
           </div>

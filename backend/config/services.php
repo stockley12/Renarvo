@@ -65,4 +65,31 @@ return [
         'http_timeout' => (int) env('TIKO_HTTP_TIMEOUT', 20),
         'allow_callback_ips' => array_filter(array_map('trim', explode(',', (string) env('TIKO_CALLBACK_IPS', '')))),
     ],
+    /*
+    |--------------------------------------------------------------------------
+    | Posta Güvercini — JSON OTP SMS
+    |--------------------------------------------------------------------------
+    |
+    | Used to send one-time passcodes for login and account creation.
+    |   - SMS_OTP_MODE = 'live'     sends real SMS via the provider
+    |   - SMS_OTP_MODE = 'disabled' skips the provider (codes are logged, and
+    |                                returned in the API response so the flow
+    |                                stays testable before credentials land)
+    |
+    | Docs: https://otpsms.postaguvercini.com/api_json (Send_1_N / Status)
+    |
+    */
+    'postaguvercini' => [
+        'mode' => env('SMS_OTP_MODE', 'disabled'),
+        'base_url' => env('POSTAGUVERCINI_BASE_URL', 'https://otpsms.postaguvercini.com/api_json'),
+        'username' => env('POSTAGUVERCINI_USERNAME'),
+        'password' => env('POSTAGUVERCINI_PASSWORD'),
+        'http_timeout' => (int) env('POSTAGUVERCINI_HTTP_TIMEOUT', 15),
+        // OTP behaviour
+        'code_length' => (int) env('SMS_OTP_LENGTH', 6),
+        'code_ttl' => (int) env('SMS_OTP_TTL', 300),          // seconds a code stays valid
+        'resend_cooldown' => (int) env('SMS_OTP_RESEND_COOLDOWN', 60), // seconds between sends
+        'max_attempts' => (int) env('SMS_OTP_MAX_ATTEMPTS', 5),        // verify tries per code
+        'brand' => env('SMS_OTP_BRAND', 'Renarvo'),
+    ],
 ];

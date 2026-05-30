@@ -146,23 +146,58 @@ export const api = {
 };
 
 // Auth helpers (these don't go through the access-token path / refresh)
-export async function login(email: string, password: string) {
-  const data = await request<{ access_token: string; expires_in: number; user: ApiUser }>(
-    '/auth/login',
-    { method: 'POST', json: { email, password }, skipAuthRefresh: true }
-  );
+type AuthSuccess = { access_token: string; expires_in: number; user: ApiUser };
+export type OtpChallenge = {
+  otp_required: true;
+  challenge: string;
+  phone_masked: string;
+  dev_code?: string | null;
+};
+export type LoginResult = AuthSuccess | OtpChallenge;
+
+export function isOtpChallenge(r: LoginResult): r is OtpChallenge {
+  return (r as OtpChallenge).otp_required === true;
+}
+
+// Step 1: verify credentials. May return an OTP challenge instead of a session.
+export async function login(email: string, password: string): Promise<LoginResult> {
+  const data = await request<LoginResult>('/auth/login', {
+    method: 'POST',
+    json: { email, password },
+    skipAuthRefresh: true,
+  });
+  if (!isOtpChallenge(data)) tokenStore.set(data.access_token);
+  return data;
+}
+
+// Step 2: exchange the SMS code (+ challenge) for a session.
+export async function loginOtp(challenge: string, code: string) {
+  const data = await request<AuthSuccess>('/auth/login/otp', {
+    method: 'POST',
+    json: { challenge, code },
+    skipAuthRefresh: true,
+  });
   tokenStore.set(data.access_token);
   return data;
+}
+
+// Request a verification code for account creation (register flows).
+export async function requestRegisterOtp(phone: string) {
+  return request<{ sent: boolean; phone_masked: string; dev_code?: string | null; resend_in: number }>(
+    '/auth/otp/request',
+    { method: 'POST', json: { phone }, skipAuthRefresh: true }
+  );
 }
 
 export async function register(input: {
   email: string;
   password: string;
   name: string;
-  phone?: string;
+  phone: string;
+  otp_code: string;
   locale?: 'tr' | 'en' | 'ru';
 }) {
-  const data = await request<{ access_token: string; user: ApiUser }>('/auth/register', {
+  const data = await request<AuthSuccess>('/auth/register', {
     method: 'POST',
     json: input,
     skipAuthRefresh: true,
@@ -175,6 +210,7 @@ export async function registerCompany(input: {
   company_name: string;
   city: string;
   phone: string;
+  otp_code: string;
   tax_number?: string;
   address?: string;
   email_public?: string;
@@ -214,6 +250,7 @@ export type ApiUser = {
   locale: 'tr' | 'en' | 'ru';
   status: 'active' | 'banned';
   email_verified_at?: string | null;
+  phone_verified_at?: string | null;
   company_id?: number | null;
 };
 

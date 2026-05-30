@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\AdminSystemHealthController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\CompanyRegistrationController;
+use App\Http\Controllers\Auth\OtpController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Company\CompanyBranchController;
 use App\Http\Controllers\Company\CompanyCarController;
@@ -79,9 +80,11 @@ Route::prefix('v1')->group(function () {
 
     // ---------- Auth ----------
     Route::prefix('auth')->group(function () {
+        Route::post('/otp/request', [OtpController::class, 'requestRegister']);
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/register-company', [CompanyRegistrationController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/login/otp', [AuthController::class, 'loginOtp']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.jwt');
         Route::post('/forgot-password', [PasswordResetController::class, 'sendLink']);

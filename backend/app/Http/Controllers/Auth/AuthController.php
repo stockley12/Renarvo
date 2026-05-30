@@ -7,9 +7,11 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\EmailVerification;
+use App\Models\OtpCode;
 use App\Models\User;
 use App\Services\AuditService;
 use App\Services\JwtService;
+use App\Services\OtpService;
 use App\Services\RateLimiterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,6 +26,7 @@ class AuthController extends Controller
         private readonly JwtService $jwt,
         private readonly RateLimiterService $limiter,
         private readonly AuditService $audit,
+        private readonly OtpService $otp,
     ) {}
 
     public function register(RegisterRequest $request): JsonResponse
@@ -32,13 +35,25 @@ class AuthController extends Controller
 
         $data = $request->validated();
 
+        // Phone must be verified via SMS OTP before the account is created.
+        $phone = $this->otp->normalizePhone((string) ($data['phone'] ?? ''));
+        if (! $phone) {
+            throw ValidationException::withMessages(['phone' => 'A valid phone number is required.']);
+        }
+
+        $result = $this->otp->verifyByPhone($phone, (string) ($data['otp_code'] ?? ''));
+        if (! $result instanceof OtpCode) {
+            throw ValidationException::withMessages(['otp_code' => $this->otpErrorMessage($result)]);
+        }
+
         $user = User::query()->create([
             'email' => strtolower($data['email']),
             'password_hash' => Hash::make($data['password']),
             'name' => $data['name'],
-            'phone' => $data['phone'] ?? null,
+            'phone' => $phone,
+            'phone_verified_at' => now(),
             'role' => User::ROLE_CUSTOMER,
-            'locale' => $data['locale'] ?? 'tr',
+            'locale' => $this->safeLocale($data['locale'] ?? 'tr'),
         ]);
 
         $this->audit->log('user.registered', $user, 'User', $user->id, [], 'info', $request);
@@ -65,10 +80,78 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['email' => 'Account is suspended.']);
         }
 
+        // Second factor: send an SMS code and require verification before
+        // issuing a session. Users without a usable phone number — or when the
+        // SMS provider is live but the send fails — fall through to a direct
+        // login so nobody can be locked out.
+        $phone = $user->phone ? $this->otp->normalizePhone($user->phone) : null;
+        if ($phone) {
+            $sent = $this->otp->send($phone, OtpCode::PURPOSE_LOGIN, $user);
+
+            if ($sent['ok']) {
+                return response()->json([
+                    'data' => [
+                        'otp_required' => true,
+                        'challenge' => $sent['challenge'],
+                        'phone_masked' => $this->otp->mask($phone),
+                        'dev_code' => $sent['dev_code'],
+                    ],
+                ]);
+            }
+
+            $this->audit->log('otp.send_failed', $user, 'User', $user->id, [
+                'context' => 'login',
+            ], 'warn', $request);
+        }
+
         $user->forceFill(['last_login_at' => now()])->save();
         $this->audit->log('user.login', $user, 'User', $user->id, [], 'info', $request);
 
         return $this->tokenResponse($user, $request);
+    }
+
+    public function loginOtp(Request $request): JsonResponse
+    {
+        $this->throttle("login_otp:{$request->ip()}", 60, 300);
+
+        $data = $request->validate([
+            'challenge' => ['required', 'string', 'max:64'],
+            'code' => ['required', 'string', 'max:8'],
+        ]);
+
+        $result = $this->otp->verifyByChallenge($data['challenge'], $data['code']);
+        if (! $result instanceof OtpCode) {
+            $this->audit->log('otp.login_failed', null, null, null, [
+                'reason' => $result,
+            ], 'warn', $request);
+
+            throw ValidationException::withMessages(['code' => $this->otpErrorMessage($result)]);
+        }
+
+        $user = $result->user;
+        if (! $user || $user->status !== 'active') {
+            throw ValidationException::withMessages(['code' => 'Account is unavailable.']);
+        }
+
+        $user->forceFill(['last_login_at' => now()])->save();
+        $this->audit->log('user.login', $user, 'User', $user->id, ['via' => 'otp'], 'info', $request);
+
+        return $this->tokenResponse($user, $request);
+    }
+
+    private function otpErrorMessage(string $reason): string
+    {
+        return match ($reason) {
+            'expired' => 'The code has expired. Please request a new one.',
+            'locked' => 'Too many incorrect attempts. Please request a new code.',
+            'not_found' => 'No active code found. Please request a new one.',
+            default => 'The code is incorrect.',
+        };
+    }
+
+    private function safeLocale(string $locale): string
+    {
+        return in_array($locale, ['tr', 'en', 'ru'], true) ? $locale : 'tr';
     }
 
     public function refresh(Request $request): JsonResponse

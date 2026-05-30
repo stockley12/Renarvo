@@ -20,7 +20,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'email', 'password_hash', 'name', 'phone', 'role', 'avatar_path',
-        'email_verified_at', 'status', 'locale', 'last_login_at',
+        'email_verified_at', 'phone_verified_at', 'status', 'locale', 'last_login_at',
     ];
 
     protected $hidden = ['password_hash', 'token_version'];
@@ -32,6 +32,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'phone_verified_at' => 'datetime',
         'last_login_at' => 'datetime',
         'token_version' => 'integer',
     ];

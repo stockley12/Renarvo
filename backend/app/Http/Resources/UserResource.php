@@ -18,6 +18,7 @@ class UserResource extends JsonResource
             'avatar_path' => $this->avatar_path,
             'locale' => $this->locale,
             'email_verified_at' => $this->email_verified_at?->toIso8601String(),
+            'phone_verified_at' => $this->phone_verified_at?->toIso8601String(),
             'status' => $this->status,
             'company_id' => $this->whenLoaded('ownedCompany', fn () => $this->ownedCompany?->id)
                 ?? $this->whenLoaded('staffCompany', fn () => $this->staffCompany?->company_id),

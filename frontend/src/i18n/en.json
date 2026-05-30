@@ -244,6 +244,16 @@
     }
   },
   "auth": {
+    "otp": {
+      "title": "Enter verification code",
+      "subtitle": "We sent a 6-digit code by SMS to {{phone}}.",
+      "codeLabel": "Verification code",
+      "verify": "Verify & continue",
+      "verifyCreate": "Verify & create account",
+      "resend": "Didn't get it? Resend code",
+      "sent": "Code sent to {{phone}}",
+      "resent": "A new code has been sent"
+    },
     "login": "Log in",
     "loggedIn": "Logged in",
     "loginFailed": "Login failed",
@@ -288,6 +298,7 @@
       "termsLink": "Terms",
       "privacyLink": "Privacy",
       "submit": "Create account",
+      "continue": "Continue",
       "submitting": "Creating account…",
       "passwordTooShort": "Password must be at least 8 characters",
       "passwordMismatch": "Passwords do not match",

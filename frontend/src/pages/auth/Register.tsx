@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/brand/Logo';
 import { toast } from 'sonner';
-import { register as apiRegister, ApiClientError } from '@/lib/api';
+import { register as apiRegister, requestRegisterOtp, ApiClientError } from '@/lib/api';
 import { useSession } from '@/store/session';
 import { useApp } from '@/store/app';
 
@@ -26,6 +26,11 @@ export default function Register() {
   const [accept, setAccept] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // OTP step
+  const [step, setStep] = useState<'form' | 'otp'>('form');
+  const [code, setCode] = useState('');
+  const [phoneMasked, setPhoneMasked] = useState('');
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (password.length < 8) {
@@ -42,11 +47,29 @@ export default function Register() {
     }
     setSubmitting(true);
     try {
+      const res = await requestRegisterOtp(phone);
+      setPhoneMasked(res.phone_masked);
+      setCode(res.dev_code ?? '');
+      setStep('otp');
+      toast.success(t('auth.otp.sent', { phone: res.phone_masked }));
+    } catch (err) {
+      if (err instanceof ApiClientError) toast.error(err.message);
+      else toast.error(t('auth.register.failed'));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function onVerify(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
       const data = await apiRegister({
         email,
         password,
         name,
-        phone: phone || undefined,
+        phone,
+        otp_code: code.trim(),
         locale,
       });
       setUser(data.user);
@@ -59,6 +82,57 @@ export default function Register() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function onResend() {
+    setSubmitting(true);
+    try {
+      const res = await requestRegisterOtp(phone);
+      setPhoneMasked(res.phone_masked);
+      setCode(res.dev_code ?? '');
+      toast.success(t('auth.otp.resent'));
+    } catch (err) {
+      if (err instanceof ApiClientError) toast.error(err.message);
+      else toast.error(t('auth.register.failed'));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (step === 'otp') {
+    return (
+      <div className="container py-10 md:py-16 max-w-md">
+        <Button variant="ghost" size="sm" onClick={() => setStep('form')} className="mb-3 -ml-2">
+          <ArrowLeft className="h-4 w-4 mr-1" /> {t('common.back')}
+        </Button>
+        <Card className="p-6 md:p-8">
+          <Logo className="mb-6" />
+          <h1 className="font-display text-2xl font-bold mb-2">{t('auth.otp.title')}</h1>
+          <p className="text-sm text-muted-foreground mb-6">{t('auth.otp.subtitle', { phone: phoneMasked })}</p>
+          <form className="space-y-4" onSubmit={onVerify}>
+            <div>
+              <Label htmlFor="otp">{t('auth.otp.codeLabel')}</Label>
+              <Input
+                id="otp"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                required
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="123456"
+                className="tracking-[0.4em] text-center text-lg"
+              />
+            </div>
+            <Button type="submit" disabled={submitting} className="w-full bg-gradient-brand text-white border-0">
+              {submitting ? t('auth.register.submitting') : t('auth.otp.verifyCreate')}
+            </Button>
+            <button type="button" onClick={onResend} disabled={submitting} className="block w-full text-center text-sm text-muted-foreground hover:text-primary">
+              {t('auth.otp.resend')}
+            </button>
+          </form>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -98,14 +172,12 @@ export default function Register() {
             />
           </div>
           <div>
-            <Label htmlFor="phone">
-              {t('auth.register.phone')}{' '}
-              <span className="text-muted-foreground font-normal">{t('auth.register.phoneOptional')}</span>
-            </Label>
+            <Label htmlFor="phone">{t('auth.register.phone')}</Label>
             <Input
               id="phone"
               type="tel"
               autoComplete="tel"
+              required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder={t('auth.register.phonePh')}
@@ -150,7 +222,7 @@ export default function Register() {
             </span>
           </label>
           <Button type="submit" disabled={submitting} className="w-full bg-gradient-brand text-white border-0">
-            {submitting ? t('auth.register.submitting') : t('auth.register.submit')}
+            {submitting ? t('auth.register.submitting') : t('auth.register.continue')}
           </Button>
           <div className="text-center text-sm">
             {t('auth.register.alreadyHaveAccount')}{' '}
