@@ -104,9 +104,13 @@ class PricingService
         $discountAmount = min($discountAmount, $subtotal);
         $afterDiscount = $subtotal - $discountAmount;
 
-        $serviceFee = (int) config('services.platform.service_fee_kurus', 12000);
+        // NOTE: All monetary values here are in whole TRY (matching how car
+        // prices are stored and displayed), NOT kuruş. The service fee is a
+        // flat amount and KDV is applied to the discounted subtotal only —
+        // this mirrors the customer-facing breakdown shown at booking time.
+        $serviceFee = (int) config('services.platform.service_fee', 120);
         $kdvBps = (int) config('services.platform.kdv_bps', 1800);
-        $taxAmount = (int) round(($afterDiscount + $serviceFee) * $kdvBps / 10000);
+        $taxAmount = (int) round($afterDiscount * $kdvBps / 10000);
         $total = $afterDiscount + $serviceFee + $taxAmount;
 
         return [

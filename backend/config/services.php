@@ -15,7 +15,8 @@ return [
     'platform' => [
         'kdv_bps' => (int) env('PLATFORM_KDV_BPS', 1800),
         'commission_bps' => (int) env('PLATFORM_COMMISSION_BPS', 1200),
-        'service_fee_kurus' => (int) env('PLATFORM_SERVICE_FEE_KURUS', 12000),
+        // Flat platform service fee in whole TRY (matches stored/displayed prices).
+        'service_fee' => (int) env('PLATFORM_SERVICE_FEE', 120),
     ],
     'payments' => [
         'iyzico' => [
